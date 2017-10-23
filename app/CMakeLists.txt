@@ -19,6 +19,43 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
 
+add_library( filesystem
+             STATIC
+             IMPORTED )
+
+set_target_properties( # Specifies the target library.
+                       filesystem
+
+                       # Specifies the parameter you want to define.
+                       PROPERTIES IMPORTED_LOCATION
+
+                       # Provides the path to the library you want to import.
+                       libs/dynamic-libs/libboost_filesystem.a )
+
+add_library( system
+             STATIC
+             IMPORTED )
+
+set_target_properties( # Specifies the target library.
+                       system
+
+                       # Specifies the parameter you want to define.
+                       PROPERTIES IMPORTED_LOCATION
+
+                       # Provides the path to the library you want to import.
+                       libs/dynamic-libs/libboost_system.a )
+
+include_directories(libs/)
+
+add_library( # Sets the name of the library.
+             simple-ls
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/simple-ls.cpp )
+
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
 # default, you only need to specify the name of the public NDK library
