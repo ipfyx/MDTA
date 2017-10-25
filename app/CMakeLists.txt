@@ -10,19 +10,20 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-set( Boost_DEBUG ON )
+set( Boost_DEBUG DEBUG )
 set( Boost_USE_STATIC_LIBS ON )
 set( Boost_USE_STATIC_RUNTIME ON )
 set( Boost_USE_MULTITHREADED OFF )
 set( Boost_NO_SYSTEM_PATHS ON )
 set( BOOST_ALL_DYN_LINK OFF )
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-set( BOOST_ROOT libs )
-set( BOOST_INCLUDE_DIR ${BOOST_ROOT}/boost)
-set( BOOST_LIBRARY_DIR ${BOOST_ROOT}/dynamic-libs )
+set( BOOST_ROOT /home/manwefm/Ecole/2018/PFE/lib/boost )
+set( BOOST_INCLUDEDIR ${BOOST_ROOT}/include/)
+set( BOOST_LIBRARYDIR ${BOOST_ROOT}/lib/ )
 set( Boost_Version 1.65.1 )
 
-find_package( Boost ${Boost_Version} COMPONENTS system )
+find_package( Boost REQUIRED ${Boost_Version} COMPONENTS system )
 if( Boost_FOUND )
     target_include_directories( MyLib PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
     link_directories( ${Boost_LIBRARY_DIR} )
@@ -64,6 +65,7 @@ set_target_properties( # Specifies the target library.
                        libs/dynamic-libs/libboost_filesystem.so)
 
 include_directories(libs/)
+LINK_DIRECTORIES(libs/dynamic-libs)
 
 add_library( # Sets the name of the library.
              simple-ls
