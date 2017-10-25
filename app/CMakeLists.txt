@@ -10,6 +10,24 @@ cmake_minimum_required(VERSION 3.4.1)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
+set( Boost_DEBUG ON )
+set( Boost_USE_STATIC_LIBS ON )
+set( Boost_USE_STATIC_RUNTIME ON )
+set( Boost_USE_MULTITHREADED OFF )
+set( Boost_NO_SYSTEM_PATHS ON )
+set( BOOST_ALL_DYN_LINK OFF )
+
+set( BOOST_ROOT libs )
+set( BOOST_INCLUDE_DIR ${BOOST_ROOT}/boost)
+set( BOOST_LIBRARY_DIR ${BOOST_ROOT}/dynamic-libs )
+set( Boost_Version 1.65.1 )
+
+find_package( Boost ${Boost_Version} COMPONENTS system )
+if( Boost_FOUND )
+    target_include_directories( MyLib PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
+    link_directories( ${Boost_LIBRARY_DIR} )
+endif()
+
 add_library( # Sets the name of the library.
              native-lib
 
@@ -76,6 +94,7 @@ find_library( # Sets the name of the path variable.
 target_link_libraries( # Specifies the target library.
                        native-lib
                        simple-ls
+                       ${Boost_LIBRARIES}
 
                        # Links the target library to the log library
                        # included in the NDK.
