@@ -105,18 +105,16 @@ BOOST_UTF8_BEGIN_NAMESPACE
 //            See utf8_codecvt_facet.ipp for the implementation.              //
 //----------------------------------------------------------------------------//
 
-#ifndef BOOST_UTF8_DECL
-#define BOOST_UTF8_DECL
-#endif
 
-struct BOOST_SYMBOL_VISIBLE utf8_codecvt_facet :
+struct BOOST_UTF8_DECL utf8_codecvt_facet :
     public std::codecvt<wchar_t, char, std::mbstate_t>  
 {
 public:
-    BOOST_UTF8_DECL explicit utf8_codecvt_facet(std::size_t no_locale_manage=0);
-    virtual  ~utf8_codecvt_facet(){}
+    explicit utf8_codecvt_facet(std::size_t no_locale_manage=0)
+        : std::codecvt<wchar_t, char, std::mbstate_t>(no_locale_manage) 
+    {}
 protected:
-    BOOST_UTF8_DECL virtual std::codecvt_base::result do_in(
+    virtual std::codecvt_base::result do_in(
         std::mbstate_t& state, 
         const char * from,
         const char * from_end, 
@@ -126,7 +124,7 @@ protected:
         wchar_t*& to_next
     ) const;
 
-    BOOST_UTF8_DECL virtual std::codecvt_base::result do_out(
+    virtual std::codecvt_base::result do_out(
         std::mbstate_t & state,
         const wchar_t * from,
         const wchar_t * from_end,
@@ -150,11 +148,11 @@ protected:
         return get_octet_count(lead_octet) - 1;
     }
 
-    BOOST_UTF8_DECL static unsigned int get_octet_count(unsigned char lead_octet);
+    static unsigned int get_octet_count(unsigned char lead_octet);
 
     // How many "continuing octets" will be needed for this word
     // ==   total octets - 1.
-    BOOST_UTF8_DECL int get_cont_octet_out_count(wchar_t word) const ;
+    int get_cont_octet_out_count(wchar_t word) const ;
 
     virtual bool do_always_noconv() const BOOST_NOEXCEPT_OR_NOTHROW {
         return false;
@@ -178,7 +176,7 @@ protected:
 
     // How many char objects can I process to get <= max_limit
     // wchar_t objects?
-    BOOST_UTF8_DECL virtual int do_length(
+    virtual int do_length(
         const std::mbstate_t &,
         const char * from,
         const char * from_end, 

@@ -1,3 +1,4 @@
+
 //  (C) Copyright John Maddock 2010.  
 //  Use, modification and distribution are subject to the Boost Software License,
 //  Version 1.0. (See accompanying file LICENSE_1_0.txt or copy at
@@ -9,16 +10,14 @@
 #ifndef BOOST_TT_CONDITIONAL_HPP_INCLUDED
 #define BOOST_TT_CONDITIONAL_HPP_INCLUDED
 
+#include <boost/mpl/if.hpp>
+
 namespace boost {
 
-template <bool b, class T, class U> struct conditional { typedef T type; };
-template <class T, class U> struct conditional<false, T, U> { typedef U type; };
-
-#if !defined(BOOST_NO_CXX11_TEMPLATE_ALIASES)
-
-   template <bool b, class T, class U> using conditional_t = typename conditional<b, T, U>::type;
-
-#endif
+template <bool b, class T, class U>
+struct conditional : public mpl::if_c<b, T, U>
+{
+};
 
 } // namespace boost
 

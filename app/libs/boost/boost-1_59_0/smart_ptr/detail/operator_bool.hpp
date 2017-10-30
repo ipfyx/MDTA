@@ -6,17 +6,16 @@
 //  See accompanying file LICENSE_1_0.txt or copy at
 //  http://www.boost.org/LICENSE_1_0.txt
 
-#if !defined( BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS ) && !defined( BOOST_NO_CXX11_NULLPTR )\
-    && !(defined(__SUNPRO_CC) && BOOST_WORKAROUND(__SUNPRO_CC, <= 0x5130))
+#if !defined( BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS ) && !defined( BOOST_NO_CXX11_NULLPTR )
 
-    explicit operator bool () const BOOST_SP_NOEXCEPT
+    explicit operator bool () const BOOST_NOEXCEPT
     {
         return px != 0;
     }
 
 #elif ( defined(__SUNPRO_CC) && BOOST_WORKAROUND(__SUNPRO_CC, < 0x570) ) || defined(__CINT__)
 
-    operator bool () const BOOST_SP_NOEXCEPT
+    operator bool () const BOOST_NOEXCEPT
     {
         return px != 0;
     }
@@ -29,7 +28,7 @@
 
     typedef void (*unspecified_bool_type)( this_type*** );
 
-    operator unspecified_bool_type() const BOOST_SP_NOEXCEPT
+    operator unspecified_bool_type() const BOOST_NOEXCEPT
     {
         return px == 0? 0: unspecified_bool;
     }
@@ -41,7 +40,7 @@
 
     typedef element_type * (this_type::*unspecified_bool_type)() const;
 
-    operator unspecified_bool_type() const BOOST_SP_NOEXCEPT
+    operator unspecified_bool_type() const BOOST_NOEXCEPT
     {
         return px == 0? 0: &this_type::get;
     }
@@ -50,7 +49,7 @@
 
     typedef element_type * this_type::*unspecified_bool_type;
 
-    operator unspecified_bool_type() const BOOST_SP_NOEXCEPT
+    operator unspecified_bool_type() const BOOST_NOEXCEPT
     {
         return px == 0? 0: &this_type::px;
     }
@@ -58,7 +57,7 @@
 #endif
 
     // operator! is redundant, but some compilers need it
-    bool operator! () const BOOST_SP_NOEXCEPT
+    bool operator! () const BOOST_NOEXCEPT
     {
         return px == 0;
     }
