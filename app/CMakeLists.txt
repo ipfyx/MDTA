@@ -32,8 +32,10 @@ set( Boost_Version 1.59.0 )
 
 find_package( Boost 1.59.0 REQUIRED COMPONENTS system filesystem )
 if( Boost_FOUND )
-    target_include_directories( simple-ls PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
-    link_directories( ${Boost_LIBRARY_DIR} )
+    add_executable(simple-ls src/main/cpp/simple-ls.cpp)
+    target_link_libraries(simple-ls Boost::system Boost::filesystem)
+    #target_include_directories( simple-ls PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
+    #link_directories( ${Boost_LIBRARY_DIR} )
 endif()
 
 add_library( # Sets the name of the library.
@@ -74,14 +76,14 @@ set_target_properties( # Specifies the target library.
 include_directories(libs/)
 LINK_DIRECTORIES(libs/dynamic-libs)
 
-add_library( # Sets the name of the library.
-             simple-ls
+#add_library( # Sets the name of the library.
+#             simple-ls
 
              # Sets the library as a shared library.
-             SHARED
+#             SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/simple-ls.cpp )
+#             src/main/cpp/simple-ls.cpp )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -102,7 +104,6 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-                       simple-ls
                        ${Boost_LIBRARIES}
 
                        # Links the target library to the log library
