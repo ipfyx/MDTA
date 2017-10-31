@@ -18,10 +18,10 @@
 #  define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include "boost/filesystem/operations.hpp"
-#include "boost/filesystem/path.hpp"
-#include "boost/progress.hpp"
-#include "boost/filesystem.hpp"
+#include "../jniLibs/boost/filesystem/operations.hpp"
+#include "../jniLibs/boost/filesystem/path.hpp"
+#include "../jniLibs/boost/progress.hpp"
+#include "../jniLibs/boost/filesystem.hpp"
 #include <iostream>
 
 namespace fs = boost::filesystem;

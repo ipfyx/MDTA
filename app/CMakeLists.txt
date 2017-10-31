@@ -3,12 +3,36 @@
 
 # Sets the minimum version of CMake required to build the native library.
 
-cmake_minimum_required(VERSION 3.4.1)
+cmake_minimum_required(VERSION 3.6)
 
 # Creates and names a library, sets it as either STATIC
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
+
+set( Boost_DEBUG DEBUG )
+set( Boost_DETAILED_FAILURE_MSG TRUE)
+set( Boost_USE_STATIC_LIBS ON )
+set( Boost_USE_STATIC_RUNTIME ON )
+set( Boost_USE_MULTITHREADED OFF )
+set( Boost_NO_SYSTEM_PATHS ON )
+set( BOOST_ALL_DYN_LINK OFF )
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+set( BOOST_ROOT libs/ )
+set(Boost_INCLUDE_DIR src/main/jniLibs)
+set(Boost_LIBRARY_DIR src/main/jniLibs)
+set( BOOST_LIBRARYDIR src/main/jniLibs )
+set( Boost_LIBRARY_DIR_RELEASE src/main/jniLibs/armeabi )
+set( Boost_Version 1.65.1 )
+
+find_package( Boost 1.65.1 REQUIRED COMPONENTS system filesystem )
+if( Boost_FOUND )
+    add_executable(simple-ls src/main/cpp/simple-ls.cpp)
+    target_link_libraries(simple-ls system filesystem)
+    #target_include_directories( simple-ls PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
+    #link_directories( ${Boost_LIBRARY_DIR} )
+endif()
 
 add_library( # Sets the name of the library.
              native-lib
@@ -48,14 +72,14 @@ set_target_properties( # Specifies the target library.
 include_directories(libs/)
 LINK_DIRECTORIES(libs/dynamic-libs)
 
-add_library( # Sets the name of the library.
-             simple-ls
+#add_library( # Sets the name of the library.
+#             simple-ls
 
              # Sets the library as a shared library.
-             SHARED
+#             SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/cpp/simple-ls.cpp )
+#             src/main/cpp/simple-ls.cpp )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -76,9 +100,7 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-                       simple-ls
-                       filesystem
-                       system
+                       ${Boost_LIBRARIES}
 
                        # Links the target library to the log library
                        # included in the NDK.
