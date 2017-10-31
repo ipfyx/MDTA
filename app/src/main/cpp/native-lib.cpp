@@ -1,5 +1,9 @@
 #include <jni.h>
 #include <string>
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
+#include "boost/progress.hpp"
+#include <iostream>
 
 extern "C"
 JNIEXPORT jstring JNICALL
