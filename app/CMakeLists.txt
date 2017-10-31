@@ -19,14 +19,10 @@ set( Boost_NO_SYSTEM_PATHS ON )
 set( BOOST_ALL_DYN_LINK OFF )
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/manwefm/Ecole/2018/PFE/crystax-ndk-10.3.2/sources/boost/1.59.0/include")
-SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/home/manwefm/Ecole/2018/PFE/crystax-ndk-10.3.2/sources/boost/1.59.0/libs/x86/gnu-4.9")
-
 set( BOOST_ROOT /home/manwefm/AndroidStudioProjects/MDTA/app/libs/ )
-set( BOOST_INCLUDEDIR /home/manwefm/AndroidStudioProjects/MDTA/app/libs/)
 set(Boost_INCLUDE_DIR /home/manwefm/AndroidStudioProjects/MDTA/app/libs)
-set(Boost_LIBRARY_DIR /home/manwefm/AndroidStudioProjects/MDTA/app/libs/dynamic-libs)
-set( BOOST_LIBRARYDIR /home/manwefm/AndroidStudioProjects/MDTA/app/libs/dynamic-libs )
+set(Boost_LIBRARY_DIR src/main/jniLibs)
+set( BOOST_LIBRARYDIR src/main/jniLibs )
 set( Boost_LIBRARY_DIR_RELEASE /home/manwefm/AndroidStudioProjects/MDTA/app/libs/dynamic-libs)
 set( Boost_Version 1.59.0 )
 
