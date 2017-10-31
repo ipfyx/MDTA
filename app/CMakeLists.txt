@@ -20,10 +20,10 @@ set( BOOST_ALL_DYN_LINK OFF )
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 set( BOOST_ROOT libs/ )
-set(Boost_INCLUDE_DIR libs)
+set(Boost_INCLUDE_DIR src/main/jniLibs)
 set(Boost_LIBRARY_DIR src/main/jniLibs)
 set( BOOST_LIBRARYDIR src/main/jniLibs )
-set( Boost_LIBRARY_DIR_RELEASE libs/dynamic-libs )
+set( Boost_LIBRARY_DIR_RELEASE src/main/jniLibs/armeabi )
 set( Boost_Version 1.65.1 )
 
 find_package( Boost 1.65.1 REQUIRED COMPONENTS system filesystem )
