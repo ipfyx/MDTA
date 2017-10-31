@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 3.6)
 
 set( Boost_DEBUG DEBUG )
 set( Boost_DETAILED_FAILURE_MSG TRUE)
-set( Boost_USE_STATIC_LIBS OFF )
+set( Boost_USE_STATIC_LIBS ON )
 set( Boost_USE_STATIC_RUNTIME ON )
 set( Boost_USE_MULTITHREADED OFF )
 set( Boost_NO_SYSTEM_PATHS ON )
