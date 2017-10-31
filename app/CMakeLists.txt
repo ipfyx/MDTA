@@ -42,34 +42,34 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
+#
+#add_library( system
+#             SHARED
+#             IMPORTED )
+#
+#set_target_properties( # Specifies the target library.
+#                       system
+#
+#                       # Specifies the parameter you want to define.
+#                       PROPERTIES IMPORTED_LOCATION
+#
+#                       # Provides the path to the library you want to import.
+#                       libs/dynamic-libs/libboost_system.so)
+#
+#add_library( filesystem
+#             SHARED
+#             IMPORTED )
+#
+#set_target_properties( # Specifies the target library.
+#                       filesystem
+#
+#                       # Specifies the parameter you want to define.
+#                       PROPERTIES IMPORTED_LOCATION
+#
+#                       # Provides the path to the library you want to import.
+#                       libs/dynamic-libs/libboost_filesystem.so)
 
-add_library( system
-             SHARED
-             IMPORTED )
-
-set_target_properties( # Specifies the target library.
-                       system
-
-                       # Specifies the parameter you want to define.
-                       PROPERTIES IMPORTED_LOCATION
-
-                       # Provides the path to the library you want to import.
-                       libs/dynamic-libs/libboost_system.so)
-
-add_library( filesystem
-             SHARED
-             IMPORTED )
-
-set_target_properties( # Specifies the target library.
-                       filesystem
-
-                       # Specifies the parameter you want to define.
-                       PROPERTIES IMPORTED_LOCATION
-
-                       # Provides the path to the library you want to import.
-                       libs/dynamic-libs/libboost_filesystem.so)
-
-include_directories(libs/)
+include_directories(src/main/jniLibs/)
 LINK_DIRECTORIES(libs/dynamic-libs)
 
 #add_library( # Sets the name of the library.

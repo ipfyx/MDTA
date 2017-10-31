@@ -18,23 +18,21 @@
 #  define BOOST_SYSTEM_NO_DEPRECATED
 #endif
 
-#include "../jniLibs/boost/filesystem/operations.hpp"
-#include "../jniLibs/boost/filesystem/path.hpp"
-#include "../jniLibs/boost/progress.hpp"
-#include "../jniLibs/boost/filesystem.hpp"
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
+#include "boost/progress.hpp"
 #include <iostream>
 
 namespace fs = boost::filesystem;
 
-int maxRecursionLevel(10);
-int recursionLevel(0);
-
-int scanDirectory(fs::path path){
-
+int main(int argc, char* argv[])
+{
     fs::path p(fs::current_path());
-    if ( fs::is_directory(path) ) {
-        p = fs::system_complete(path);
-    }
+
+    if (argc > 1)
+        p = fs::system_complete(argv[1]);
+    else
+        std::cout << "\nusage:   simple_ls [path]" << std::endl;
 
     unsigned long file_count = 0;
     unsigned long dir_count = 0;
@@ -61,14 +59,6 @@ int scanDirectory(fs::path path){
                 {
                     ++dir_count;
                     std::cout << dir_itr->path().filename() << " [directory]\n";
-                    if ( recursionLevel < maxRecursionLevel ) {
-                        ++recursionLevel;
-                        std::cout << "\nRecursion Level: " << recursionLevel << "\n";
-                        scanDirectory(dir_itr->path());
-                        --recursionLevel;
-                    } else {
-                        std::cout << "\nMax recursion Level reached : " << maxRecursionLevel << "\n";
-                    }
                 }
                 else if (fs::is_regular_file(dir_itr->status()))
                 {
@@ -97,19 +87,5 @@ int scanDirectory(fs::path path){
     {
         std::cout << "\nFound: " << p << "\n";
     }
-    return 0;
-
-}
-
-int main(int argc, char* argv[])
-{
-    if (argc > 1) {
-        scanDirectory(argv[1]);
-    } else {
-        std::cout << "\nusage:   simple_ls [path]" << std::endl;
-        fs::path p(fs::current_path());
-        scanDirectory(p);
-    }
-
     return 0;
 }

@@ -16,7 +16,6 @@
 #define BOOST_FILESYSTEM_PATH_HPP
 
 #include <boost/config.hpp>
-
 # if defined( BOOST_NO_STD_WSTRING )
 #   error Configuration not supported: Boost.Filesystem V3 and later requires std::wstring support
 # endif
