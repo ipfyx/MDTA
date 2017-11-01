@@ -5,12 +5,17 @@
 #include "boost/progress.hpp"
 #include <iostream>
 
+namespace fs = boost::filesystem;
+
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_fr_mdta_mdta_MainActivity_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
-    std::string hello = "Hello from C++";
+    fs::path p(fs::current_path());
+    //std::string hello = "Hello from C++";
+    std::string hello = p.string();
+    //printf(p.string());
     return env->NewStringUTF(hello.c_str());
 }
 
@@ -19,6 +24,9 @@ JNIEXPORT jstring JNICALL
 Java_fr_mdta_mdta_FilesScanner_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
-    std::string hello = "Hello from C++";
+    fs::path p(fs::current_path());
+    //std::string hello = "Hello from C++";
+    std::string hello = p.string();
+    //printf(p.string());
     return env->NewStringUTF(hello.c_str());
 }
