@@ -10,7 +10,7 @@ cmake_minimum_required(VERSION 3.6)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-#https://raw.githubusercontent.com/jomof/ndk-stl/master/ndk-stl-config.cmake
+# https://raw.githubusercontent.com/jomof/ndk-stl/master/ndk-stl-config.cmake
 
 set( Boost_DEBUG DEBUG )
 set( Boost_DETAILED_FAILURE_MSG TRUE)
@@ -21,10 +21,7 @@ set( Boost_NO_SYSTEM_PATHS ON )
 set( BOOST_ALL_DYN_LINK OFF )
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
-set( BOOST_ROOT libs/ )
 set(Boost_INCLUDE_DIR src/main/jniLibs)
-set(Boost_LIBRARY_DIR src/main/jniLibs)
-set( BOOST_LIBRARYDIR src/main/jniLibs )
 set( Boost_LIBRARY_DIR_RELEASE src/main/jniLibs/armeabi )
 set( Boost_Version 1.65.1 )
 
@@ -39,7 +36,7 @@ set_target_properties( # Specifies the target library.
                        PROPERTIES IMPORTED_LOCATION
 
                        # Provides the path to the library you want to import.
-                       /home/manwefm/AndroidStudioProjects/MDTA/app/src/main/jniLibs/armeabi/libboost_system.a)
+                       src/main/jniLibs/armeabi/libboost_system.a)
 
 add_library( filesystem
              STATIC
@@ -52,37 +49,17 @@ set_target_properties( # Specifies the target library.
                        PROPERTIES IMPORTED_LOCATION
 
                        # Provides the path to the library you want to import.
-                       /home/manwefm/AndroidStudioProjects/MDTA/app/src/main/jniLibs/armeabi/libboost_filesystem.a)
+                       src/main/jniLibs/armeabi/libboost_filesystem.a)
+
 
 find_package( Boost 1.65.1 REQUIRED COMPONENTS system filesystem )
 if( Boost_FOUND )
-    #add_executable(simple-ls src/main/cpp/simple-ls.cpp)
     add_library(simple-ls STATIC src/main/cpp/simple-ls.cpp)
     target_link_libraries(simple-ls system filesystem)
-    #target_include_directories( simple-ls PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
-    #link_directories( ${Boost_LIBRARY_DIR} )
 endif()
 
-add_library( # Sets the name of the library.
-             native-lib
-
-             # Sets the library as a shared library.
-             SHARED
-
-             # Provides a relative path to your source file(s).
-             src/main/cpp/native-lib.cpp )
-
+# Necessary for boost headers
 include_directories(src/main/jniLibs/)
-LINK_DIRECTORIES(src/main/jniLibs/armeabi/)
-
-#add_library( # Sets the name of the library.
-#             simple-ls
-
-             # Sets the library as a shared library.
-#             SHARED
-
-             # Provides a relative path to your source file(s).
-#             src/main/cpp/simple-ls.cpp )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -97,17 +74,18 @@ find_library( # Sets the name of the path variable.
               # you want CMake to locate.
               log )
 
-
-find_library( # Sets the name of the path variable.
-              c++_shared
-
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
-
 # Specifies libraries CMake should link to your target library. You
 # can link multiple libraries, such as libraries you define in this
 # build script, prebuilt third-party libraries, or system libraries.
+
+add_library( # Sets the name of the library.
+             native-lib
+
+             # Sets the library as a shared library.
+             SHARED
+
+             # Provides a relative path to your source file(s).
+             src/main/cpp/native-lib.cpp )
 
 target_link_libraries( # Specifies the target library.
                        native-lib
