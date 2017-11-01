@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         final Button button = (Button) findViewById(R.id.filesScanner);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(acitivty, FilesScanner.class);
+                Intent intent = new Intent(MainActivity.this, FilesScanner.class);
                 startActivity(intent);
             }
         });
