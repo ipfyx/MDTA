@@ -1,8 +1,10 @@
-package fr.mdta.mdta;
+package fr.mdta.mdta.FilesScanner;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import fr.mdta.mdta.R;
 
 public class FilesScanner extends AppCompatActivity {
 
