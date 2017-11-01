@@ -12,7 +12,8 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-frtti -fexceptions -DBOOST_SYSTEM_NO_DEPRECATED "
+                cppFlags "-frtti -fexceptions -DBOOST_SYSTEM_NO_DEPRECATED"
+                arguments "-DANDROID_STL=c++_shared"
                 ndk {
                     // Specifies the ABI configurations of your native
                     // libraries Gradle should build and package with your APK.
