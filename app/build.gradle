@@ -12,7 +12,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags "-frtti -fexceptions -DBOOST_SYSTEM_NO_DEPRECATED"
+                cppFlags "-frtti -fexceptions -DBOOST_SYSTEM_NO_DEPRECATED "
                 ndk {
                     // Specifies the ABI configurations of your native
                     // libraries Gradle should build and package with your APK.
@@ -36,7 +36,7 @@ android {
     }
     sourceSets {
         main {
-            jniLibs.srcDirs 'libs/dynamic-libs'
+            jniLibs.srcDirs 'src/main/jniLibs/armeabi'
         }
     }
 

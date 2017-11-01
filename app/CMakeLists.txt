@@ -26,9 +26,36 @@ set( BOOST_LIBRARYDIR src/main/jniLibs )
 set( Boost_LIBRARY_DIR_RELEASE src/main/jniLibs/armeabi )
 set( Boost_Version 1.65.1 )
 
+add_library( system
+             SHARED
+             IMPORTED )
+
+set_target_properties( # Specifies the target library.
+                       system
+
+                       # Specifies the parameter you want to define.
+                       PROPERTIES IMPORTED_LOCATION
+
+                       # Provides the path to the library you want to import.
+                       /home/manwefm/AndroidStudioProjects/MDTA/app/src/main/jniLibs/armeabi/libboost_system.so)
+
+add_library( filesystem
+             SHARED
+             IMPORTED )
+
+set_target_properties( # Specifies the target library.
+                       filesystem
+
+                       # Specifies the parameter you want to define.
+                       PROPERTIES IMPORTED_LOCATION
+
+                       # Provides the path to the library you want to import.
+                       /home/manwefm/AndroidStudioProjects/MDTA/app/src/main/jniLibs/armeabi/libboost_filesystem.so)
+
 find_package( Boost 1.65.1 REQUIRED COMPONENTS system filesystem )
 if( Boost_FOUND )
-    add_executable(simple-ls src/main/cpp/simple-ls.cpp)
+    #add_executable(simple-ls src/main/cpp/simple-ls.cpp)
+    add_library(simple-ls SHARED src/main/cpp/simple-ls.cpp)
     target_link_libraries(simple-ls system filesystem)
     #target_include_directories( simple-ls PUBLIC/PRIVATE ${Boost_INCLUDE_DIR} )
     #link_directories( ${Boost_LIBRARY_DIR} )
@@ -42,35 +69,9 @@ add_library( # Sets the name of the library.
 
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
-#
-#add_library( system
-#             SHARED
-#             IMPORTED )
-#
-#set_target_properties( # Specifies the target library.
-#                       system
-#
-#                       # Specifies the parameter you want to define.
-#                       PROPERTIES IMPORTED_LOCATION
-#
-#                       # Provides the path to the library you want to import.
-#                       libs/dynamic-libs/libboost_system.so)
-#
-#add_library( filesystem
-#             SHARED
-#             IMPORTED )
-#
-#set_target_properties( # Specifies the target library.
-#                       filesystem
-#
-#                       # Specifies the parameter you want to define.
-#                       PROPERTIES IMPORTED_LOCATION
-#
-#                       # Provides the path to the library you want to import.
-#                       libs/dynamic-libs/libboost_filesystem.so)
 
 include_directories(src/main/jniLibs/)
-LINK_DIRECTORIES(libs/dynamic-libs)
+LINK_DIRECTORIES(src/main/jniLibs/armeabi/)
 
 #add_library( # Sets the name of the library.
 #             simple-ls
@@ -100,7 +101,6 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
                        native-lib
-                       ${Boost_LIBRARIES}
 
                        # Links the target library to the log library
                        # included in the NDK.
