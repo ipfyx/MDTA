@@ -59,4 +59,5 @@ freeline_project_description.json
 *.*~
 
 #API conf
-app/src/main/java/fr/mdta/mdta/API/APIconf
+app/src/main/java/fr/mdta/mdta/API/APIconf.java
+
