@@ -2,18 +2,19 @@ package fr.mdta.mdta.PermissionsScanner;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.mdta.mdta.API.APIModel.SentItem.SimplifiedPackageInfo;
+import fr.mdta.mdta.PermissionsScanner.Model.SimplifiedPackageInfo;
 
 /**
  * This public class is there to provide static method to deal with Android Package Manager.
  */
 public class PackageInfoFactory {
 
-    private ArrayList<SimplifiedPackageInfo> getInstalledPackages(Context context) {
+    public static ArrayList<SimplifiedPackageInfo> getInstalledPackages(Context context) {
 
         ArrayList<SimplifiedPackageInfo> packageInfoArrayList = new ArrayList<SimplifiedPackageInfo>();
 
@@ -21,6 +22,7 @@ public class PackageInfoFactory {
         List<PackageInfo> installedPackages = context.getPackageManager().getInstalledPackages(context.getPackageManager().GET_PERMISSIONS);
 
 
+        //TODO: Deal with too much application sent to db HTTP error 413
         for (int i = 0; i < installedPackages.size(); i++) {
             PackageInfo packageInfo = installedPackages.get(i);
 
@@ -52,7 +54,7 @@ public class PackageInfoFactory {
 
         }
 
-
+        Log.d("nbpackageinfo", packageInfoArrayList.size() + "");
         return packageInfoArrayList;
     }
 }

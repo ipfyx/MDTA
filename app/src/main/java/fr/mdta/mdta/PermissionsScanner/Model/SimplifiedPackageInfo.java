@@ -1,4 +1,4 @@
-package fr.mdta.mdta.API.APIModel.SentItem;
+package fr.mdta.mdta.PermissionsScanner.Model;
 
 import java.util.ArrayList;
 
