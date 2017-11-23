@@ -19,6 +19,7 @@ public class APItools {
 
     //API URLs
     private final static String URL_API_BASE = APIconf.URL_API_SERVER;
+    public final static String URL_API_BASIC_SCAN = URL_API_BASE + "/permissions/basicscan";
 
     /**
      * Convert every Object into JSON string

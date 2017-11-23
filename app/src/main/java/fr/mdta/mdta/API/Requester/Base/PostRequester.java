@@ -3,6 +3,7 @@ package fr.mdta.mdta.API.Requester.Base;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -83,6 +84,7 @@ public abstract class PostRequester extends AsyncTask<String, String, String> {
 
             // Send the post body
             if (this.mPostData != null) {
+                Log.d("postcontent", this.mPostData);
                 OutputStreamWriter writer = new OutputStreamWriter(mUrlConnection.getOutputStream());
                 writer.write(this.mPostData);
                 writer.flush();

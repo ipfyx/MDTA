@@ -13,6 +13,7 @@ import java.net.URL;
 
 import fr.mdta.mdta.API.Callback.Callback;
 
+
 public abstract class GetRequester extends AsyncTask<String, String, String> {
 
     protected HttpURLConnection mUrlConnection;
