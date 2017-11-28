@@ -39,4 +39,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'com.android.support:design:26.+'
     testCompile 'junit:junit:4.12'
+
+    dependencies {
+        compile 'eu.chainfire:libsuperuser:1.0.0.+'
+    }
 }
