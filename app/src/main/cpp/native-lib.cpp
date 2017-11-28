@@ -21,11 +21,12 @@ Java_fr_mdta_mdta_MainActivity_stringFromJNI(
 
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_fr_mdta_mdta_FilesScanner_stringFromJNI(
+Java_fr_mdta_mdta_FilesScanner_FilesScanner_stringFromJNI(
         JNIEnv *env,
         jobject /* this */) {
     fs::path p(fs::current_path());
-    p = fs::system_complete("/data/app/fr.mdta.mdta-2/");
+    //p = fs::system_complete("/data/app/fr.mdta.mdta-2/");
+    p = fs::system_complete("/data/data/fr.mdta.mdta/");
 
     std::string hello = p.string();
     unsigned long file_count = 0;
