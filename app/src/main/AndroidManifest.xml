@@ -20,6 +20,8 @@
         </activity>
         <activity android:name=".PermissionsScanner.PermissionsScannerActivity" />
         <activity android:name=".FilesScanner.FilesScannerActivity"></activity>
+        <activity android:name=".SignaturesScanner.SignaturesScannerActivity"></activity>
+
     </application>
 
 </manifest>
