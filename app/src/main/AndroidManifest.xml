@@ -18,6 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".PermissionsScanner.PermissionsScannerActivity"></activity>
+        <activity android:name=".SignaturesScanner.SignaturesScannerActivity"></activity>
     </application>
 
 </manifest>
