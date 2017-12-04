@@ -24,8 +24,6 @@ class Command extends AsyncTask<String, Void, String> {
     private Context context = null;
     private Activity activity = null;
     private boolean suAvailable = false;
-    private String suVersion = null;
-    private String suVersionInternal = null;
     private List<String> suResult = null;
 
     public Command setContext(Context context) {
@@ -45,10 +43,10 @@ class Command extends AsyncTask<String, Void, String> {
         // don't do the dialog thing.
 
         dialog = new ProgressDialog(context);
-        dialog.setTitle("Some title");
-        dialog.setMessage("Doing something interesting ...");
+        dialog.setTitle("Executing shell command");
+        dialog.setMessage("Please wait");
         dialog.setIndeterminate(true);
-        dialog.setCancelable(false);
+        dialog.setCancelable(true);
         dialog.show();
     }
 
@@ -57,13 +55,10 @@ class Command extends AsyncTask<String, Void, String> {
         // Let's do some SU stuff
         suAvailable = Shell.SU.available();
         if (suAvailable) {
-            suVersion = Shell.SU.version(false);
-            suVersionInternal = Shell.SU.version(true);
             suResult = Shell.SU.run(new String[]{
                     params[0],
             });
         }
-
         return suResult.toString();
     }
 
@@ -71,16 +66,14 @@ class Command extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         dialog.dismiss();
 
-        // output
-        StringBuilder sb = (new StringBuilder()).
-                append("Root? ").append(suAvailable ? "Yes" : "No").append((char) 10).
-                append("Version: ").append(suVersion == null ? "N/A" : suVersion).append((char) 10).
-                append("Version (internal): ").append(suVersionInternal == null ? "N/A" : suVersionInternal).append((char) 10).
-                append((char) 10);
+        StringBuilder sb = (new StringBuilder()).append((char) 10);
         if (suResult != null) {
             for (String line : suResult) {
                 sb.append(line).append((char) 10);
             }
+        }
+        else {
+            sb.append("The shell command did not display anything to stdout");
         }
         TextView tv = (TextView) activity.findViewById(R.id.sample_text);
         tv.setText(sb.toString());
