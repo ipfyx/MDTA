@@ -12,7 +12,9 @@ public class FilesScannerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files_scanner);
-        CommandFactory.execCommand("ls");
-
+        /**
+         * https://stackoverflow.com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable-to-add-window
+         */
+        CommandFactory.execCommand("ls",this);
     }
 }
