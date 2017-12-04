@@ -73,8 +73,8 @@ public class SignaturesScannerActivity extends AppCompatActivity {
                 suVersion = Shell.SU.version(false);
                 suVersionInternal = Shell.SU.version(true);
                 suResult = Shell.SU.run(new String[] {
-                        "touch /data/local/a/a"
-                        "chown -R "
+                        "mkdir -p /data/local/mdta",
+                        "touch /data/local/mdta/mdta"
                 });
             }
 
