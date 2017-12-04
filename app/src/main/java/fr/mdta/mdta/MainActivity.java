@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import fr.mdta.mdta.FilesScanner.FilesScannerActivity;
 import fr.mdta.mdta.PermissionsScanner.PermissionsScannerActivity;
-
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +31,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, PermissionsScannerActivity.class);
+                startActivity(i);
+            }
+        });
+
+        Button buttonFilesScanner = (Button) findViewById(R.id.filesScanner);
+        buttonFilesScanner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, FilesScannerActivity.class);
                 startActivity(i);
             }
         });
