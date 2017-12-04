@@ -1,5 +1,6 @@
 package fr.mdta.mdta.FilesScanner;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -15,9 +16,10 @@ import eu.chainfire.libsuperuser.Shell;
 
 public final class CommandFactory {
 
-    public static void execCommand (String command, Context context) {
+    public static void execCommand (String command, Activity activity) {
         Command ls = new Command();
-        ls.setContext(context);
+        ls.setContext(activity);
+        ls.setActivity(activity);
         ls.execute(command);
     }
 

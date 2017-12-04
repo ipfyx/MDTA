@@ -1,13 +1,16 @@
 package fr.mdta.mdta.FilesScanner;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.TextView;
 
 import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
+import fr.mdta.mdta.R;
 
 /**
  * Created by manwefm on 04/12/17.
@@ -19,6 +22,7 @@ import eu.chainfire.libsuperuser.Shell;
 class Command extends AsyncTask<String, Void, String> {
     private ProgressDialog dialog = null;
     private Context context = null;
+    private Activity activity = null;
     private boolean suAvailable = false;
     private String suVersion = null;
     private String suVersionInternal = null;
@@ -26,6 +30,11 @@ class Command extends AsyncTask<String, Void, String> {
 
     public Command setContext(Context context) {
         this.context = context;
+        return this;
+    }
+
+    public Command setActivity(Activity activity) {
+        this.activity=activity;
         return this;
     }
 
@@ -55,7 +64,7 @@ class Command extends AsyncTask<String, Void, String> {
             });
         }
 
-        return null;
+        return suResult.toString();
     }
 
     @Override
@@ -73,6 +82,8 @@ class Command extends AsyncTask<String, Void, String> {
                 sb.append(line).append((char) 10);
             }
         }
+        TextView tv = (TextView) activity.findViewById(R.id.sample_text);
+        tv.setText(sb.toString());
         Log.d("CommandFactory", sb.toString());
     }
 }
