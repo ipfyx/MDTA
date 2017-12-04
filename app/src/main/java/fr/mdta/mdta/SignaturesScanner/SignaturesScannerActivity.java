@@ -10,8 +10,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.List;
+import java.io.IOException;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
 
 import fr.mdta.mdta.R;
+import fr.mdta.mdta.SignaturesScanner.Model.PackageSignaturesInfo;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -33,7 +37,15 @@ public class SignaturesScannerActivity extends AppCompatActivity {
         launchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mResultTextView.setText("This is not already implemented");
+                try {
+                    ArrayList<PackageSignaturesInfo> result = SignaturesInfoFactory.getInstalledPackages(SignaturesScannerActivity.this);
+                    //From there you can have access to the good object to make something with signature
+
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
