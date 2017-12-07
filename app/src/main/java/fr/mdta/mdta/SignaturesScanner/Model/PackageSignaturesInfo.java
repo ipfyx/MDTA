@@ -46,6 +46,7 @@ public class PackageSignaturesInfo {
         return mApkFileSignatures;
     }
 
+
     public static class ApkFileSignature {
         private String mPath;
         private String mHashingMethod;
@@ -96,6 +97,14 @@ public class PackageSignaturesInfo {
             return mHashingMethod;
         }
 
+        @Override
+        public String toString() {
+            return "ApkFileSignature{" +
+                    "mPath='" + mPath + '\'' +
+                    ", mHashingMethod='" + mHashingMethod + '\'' +
+                    ", mHash='" + mHash + '\'' +
+                    '}';
+        }
     }
 
 }
