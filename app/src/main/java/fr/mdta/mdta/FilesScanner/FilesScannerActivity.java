@@ -27,7 +27,8 @@ public class FilesScannerActivity extends AppCompatActivity {
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
-    String unzipApkToFolder="/data/local/unzipedApk";
+    private String pathToApkUnzipFolder="/data/local/";
+    private String unzipApkToFolder="unzipedApk";
 
     boolean suAvailable = false;
 
@@ -87,11 +88,11 @@ public class FilesScannerActivity extends AppCompatActivity {
         if ( suAvailable ) {
             //Just in case unzipApkToFolder is empty, we move to directory /data/local since there could be a
             // risk to rm -rf /
-            CommandFactory.execCommand("cd /data/local",this);
-            CommandFactory.execCommand("rm -rRf "+unzipApkToFolder,this);
-            CommandFactory.execCommand("mkdir -p "+unzipApkToFolder,this);
-            CommandFactory.execCommand("unzip "+sourceDir+" -d "+unzipApkToFolder,this);
-            CommandFactory.execCommand("chown -R "+uid+":"+uid+" "+unzipApkToFolder,this);
+            CommandFactory.execCommand("cd "+pathToApkUnzipFolder,this);
+            CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
+            CommandFactory.execCommand("mkdir -p "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
+            CommandFactory.execCommand("unzip "+sourceDir+" -d "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
+            CommandFactory.execCommand("chown -R "+uid+":"+uid+" "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
 
         }
         else {
@@ -112,6 +113,13 @@ public class FilesScannerActivity extends AppCompatActivity {
         Log.d(app.packageName,sourceDir+" "+dataDir+" "+nativeLibraryDir+" "+privateSourceDir+" "+publicSourceDir+" "+Integer.toString(uid));
 
         unzipApk(uid,sourceDir);
+
+        endScanApp(app);
+    }
+
+    protected void endScanApp(ApplicationInfo app) {
+        CommandFactory.execCommand("cd /data/local",this);
+        CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid),this);
     }
 
 }
