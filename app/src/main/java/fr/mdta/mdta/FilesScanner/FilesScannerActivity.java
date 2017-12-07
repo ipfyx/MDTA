@@ -118,6 +118,8 @@ public class FilesScannerActivity extends AppCompatActivity {
     }
 
     protected void endScanApp(ApplicationInfo app) {
+        //Just in case unzipApkToFolder is empty, we move to directory /data/local since there could be a
+        // risk to rm -rf /&
         CommandFactory.execCommand("cd /data/local",this);
         CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid),this);
     }
