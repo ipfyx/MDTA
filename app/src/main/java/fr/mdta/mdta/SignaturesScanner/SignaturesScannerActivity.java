@@ -1,16 +1,11 @@
 package fr.mdta.mdta.SignaturesScanner;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.List;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -18,12 +13,9 @@ import java.util.ArrayList;
 import fr.mdta.mdta.R;
 import fr.mdta.mdta.SignaturesScanner.Model.PackageSignaturesInfo;
 
-import eu.chainfire.libsuperuser.Shell;
-
 public class SignaturesScannerActivity extends AppCompatActivity {
 
     private TextView mResultTextView;
-    ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

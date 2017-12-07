@@ -60,14 +60,16 @@ public class SignaturesInfoFactory {
                 JarEntry entry = entries.nextElement();
                 Attributes attributes = entry.getAttributes();
                 try {
-                    for (Iterator it = attributes.keySet().iterator(); it.hasNext(); ) {
-                        String attrName = (String) it.next();
-                        String attrValue = attributes.getValue(attrName);
-                        apkFileSignature = new PackageSignaturesInfo.ApkFileSignature(entry.toString(), attrName, attrValue);
-                        apkFileSignatures.add(apkFileSignature);
+                    if (attributes != null) {
+                        for (Iterator it = attributes.keySet().iterator(); it.hasNext(); ) {
+                            String attrName = it.next().toString();
+                            String attrValue = attributes.getValue(attrName);
+                            apkFileSignature = new PackageSignaturesInfo.ApkFileSignature(entry.toString(), attrName, attrValue);
+                            apkFileSignatures.add(apkFileSignature);
+                        }
                     }
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
             }
             if (appDeveloperCertificate != null) {
