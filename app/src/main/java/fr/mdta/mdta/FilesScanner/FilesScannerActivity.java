@@ -32,6 +32,8 @@ public class FilesScannerActivity extends AppCompatActivity {
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
+    //TODO:need to agree on a syntax on variable containing path, should they all finish with a / or not
+
     private String pathToApkUnzipFolder="/data/local";
     private String unzipApkToFolder="unzipedApk";
 
