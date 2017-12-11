@@ -11,14 +11,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jf.dexlib2.analysis.*;
+
 import eu.chainfire.libsuperuser.Shell;
 
-import fr.mdta.mdta.MainActivity;
-import fr.mdta.mdta.PermissionsScanner.PermissionsScannerActivity;
 import fr.mdta.mdta.R;
 
 public class FilesScannerActivity extends AppCompatActivity {
@@ -114,7 +117,7 @@ public class FilesScannerActivity extends AppCompatActivity {
 
         unzipApk(uid,sourceDir);
 
-        endScanApp(app);
+        //TODO : endScanApp(app);
     }
 
     protected void endScanApp(ApplicationInfo app) {

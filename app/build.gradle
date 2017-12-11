@@ -5,7 +5,7 @@ android {
     buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "fr.mdta.mdta"
-        minSdkVersion 17
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -16,6 +16,7 @@ android {
             }
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -42,5 +43,8 @@ dependencies {
     dependencies {
         compile 'eu.chainfire:libsuperuser:1.0.0.+'
     }
-    compile files('src/main/libs/smali-2.2.2.jar')
+    //sourceCompatibility = 1.7
+    //targetCompatibility = 1.7
+
+    //compile files('src/main/libs/smali-2.2.2.jar')
 }
