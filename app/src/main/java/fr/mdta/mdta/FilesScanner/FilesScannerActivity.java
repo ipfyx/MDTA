@@ -129,11 +129,13 @@ public class FilesScannerActivity extends AppCompatActivity {
         unzipApk(uid,sourceDir);
 
         //TODO : wait for unzipApkToFinish
-        try {
-            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
-        } catch (HashGenerationException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
+//        } catch (HashGenerationException e) {
+//            e.printStackTrace();
+//        }
+        Log.d("path","sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
+        CommandFactory.execCommand("sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml",this);
 
         //TODO : endScanApp(app);
     }
