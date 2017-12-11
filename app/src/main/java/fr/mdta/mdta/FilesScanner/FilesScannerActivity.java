@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -18,10 +19,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jf.dexlib2.analysis.*;
-
 import eu.chainfire.libsuperuser.Shell;
 
+import fr.mdta.mdta.FilesScanner.HashFile.HashGenerationException;
+import fr.mdta.mdta.FilesScanner.HashFile.HashGeneratorUtils;
 import fr.mdta.mdta.R;
 
 public class FilesScannerActivity extends AppCompatActivity {
@@ -32,6 +33,8 @@ public class FilesScannerActivity extends AppCompatActivity {
 
     private String pathToApkUnzipFolder="/data/local/";
     private String unzipApkToFolder="unzipedApk";
+
+    private int my_uid = 0;
 
     boolean suAvailable = false;
 
@@ -73,6 +76,9 @@ public class FilesScannerActivity extends AppCompatActivity {
             if ( ( installedApplications.get(i).flags & ApplicationInfo.FLAG_SYSTEM ) != 0 ) {
                 systemApps.add(installedApplications.get(i));
             }
+            if ( installedApplications.get(i).packageName.equals(this.getPackageName()) ) {
+                my_uid = installedApplications.get(i).uid;
+            }
         }
     }
 
@@ -80,6 +86,9 @@ public class FilesScannerActivity extends AppCompatActivity {
         for (int i = 0; i < installedApplications.size(); i++) {
             if (  ( installedApplications.get(i).flags & ApplicationInfo.FLAG_SYSTEM ) == 0 ) {
                 nonSystemApps.add(installedApplications.get(i));
+            }
+            if ( installedApplications.get(i).packageName.equals(this.getPackageName()) ) {
+                my_uid = installedApplications.get(i).uid;
             }
         }
     }
@@ -95,7 +104,7 @@ public class FilesScannerActivity extends AppCompatActivity {
             CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
             CommandFactory.execCommand("mkdir -p "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
             CommandFactory.execCommand("unzip "+sourceDir+" -d "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
-            CommandFactory.execCommand("chown -R "+uid+":"+uid+" "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
+            CommandFactory.execCommand("chown -R "+my_uid+":"+my_uid+" "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
 
         }
         else {
@@ -115,7 +124,16 @@ public class FilesScannerActivity extends AppCompatActivity {
 
         Log.d(app.packageName,sourceDir+" "+dataDir+" "+nativeLibraryDir+" "+privateSourceDir+" "+publicSourceDir+" "+Integer.toString(uid));
 
+        File file = new File(pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
+
         unzipApk(uid,sourceDir);
+
+        //TODO : wait for unzipApkToFinish
+        try {
+            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
+        } catch (HashGenerationException e) {
+            e.printStackTrace();
+        }
 
         //TODO : endScanApp(app);
     }

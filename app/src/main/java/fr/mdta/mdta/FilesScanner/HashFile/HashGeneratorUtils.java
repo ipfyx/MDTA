@@ -13,13 +13,10 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Hash functions utility class.
  * @author www.codejava.net
- *
+ * http://www.codejava.net/coding/how-to-calculate-md5-and-sha-hash-values-in-java
  */
 public class HashGeneratorUtils {
-	private HashGeneratorUtils() {
-		
-	}
-	
+
 	public static String generateMD5(String message) throws HashGenerationException {
 		return hashString(message, "MD5");
 	}
