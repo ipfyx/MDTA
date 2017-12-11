@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class FilesScannerActivity extends AppCompatActivity {
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
-    private String pathToApkUnzipFolder="/data/local/";
+    private String pathToApkUnzipFolder="/data/local";
     private String unzipApkToFolder="unzipedApk";
 
     private int my_uid = 0;
@@ -56,6 +57,8 @@ public class FilesScannerActivity extends AppCompatActivity {
         installedApplications = this.getPackageManager().getInstalledApplications(PackageManager.GET_SHARED_LIBRARY_FILES);
 
         suAvailable = Shell.SU.available();
+
+        pathToApkUnzipFolder=getFilesDir().toString()+"/";
     }
 
     protected String getSuVersion() {
@@ -126,14 +129,16 @@ public class FilesScannerActivity extends AppCompatActivity {
 
         File file = new File(pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
 
-        unzipApk(uid,sourceDir);
+        //unzipApk(uid,sourceDir);
+
+        Log.d("root",getFilesDir().toString());
 
         //TODO : wait for unzipApkToFinish
-//        try {
-//            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
-//        } catch (HashGenerationException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
+        } catch (HashGenerationException e) {
+            e.printStackTrace();
+        }
         Log.d("path","sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
         CommandFactory.execCommand("sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml",this);
 
