@@ -55,7 +55,7 @@ public class PermissionsScannerActivity extends AppCompatActivity implements Cal
     }
 
     @Override
-    public String OnTaskCompleted(Object object) {
+    public void OnTaskCompleted(Object object) {
         Log.d("result", object.toString());
         mResultTextView.setText(((BasicScanResultItem) object).toString());
     }

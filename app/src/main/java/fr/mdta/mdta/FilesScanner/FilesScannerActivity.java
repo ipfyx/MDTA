@@ -92,7 +92,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
-    protected void unzipApk(int uid, String sourceDir) {
+    protected void unzipApk(final int uid, String sourceDir) {
         /**
          * https://stackoverflow
          * .com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable
@@ -117,7 +117,22 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                             unzipApkToFolder + "_" + Integer.toString(uid)
 
             };
-            CommandFactory.execCommand(listCommand, this, this);
+            CommandFactory.execCommand(listCommand, new Callback() {
+                @Override
+                public void OnErrorHappended() {
+
+                }
+
+                @Override
+                public void OnErrorHappended(String error) {
+
+                }
+
+                @Override
+                public void OnTaskCompleted(Object object) {
+                    Sha256File(uid);
+                }
+            }, this);
 
         } else {
             TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -144,31 +159,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         Log.d("root", getFilesDir().toString());
 
-        //TODO : wait for unzipApkToFinish
+        //TODO : Manage AsyncTask properly
 //        try {
 //            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
 //        } catch (HashGenerationException e) {
 //            e.printStackTrace();
 //        }
-        Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
-                .toString(app.uid) + "/AndroidManifest.xml");
-        /* CommandFactory.execCommand("sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" +
-        Integer.toString(app.uid) + "/AndroidManifest.xml", new Callback() {
-            @Override
-            public void OnErrorHappended() {
-
-            }
-
-            @Override
-            public void OnErrorHappended(String error) {
-
-            }
-
-            @Override
-            public void OnTaskCompleted(Object object) {
-
-            }
-        }, this); */
 
         //TODO : endScanApp(app);
     }
@@ -187,6 +183,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.execCommand(listCommand, this, this);
     }
 
+    protected void Sha256File(final int uid) {
+        Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
+                .toString(uid) + "/AndroidManifest.xml");
+        CommandFactory.execCommand(new String[]{"sha256sum " + pathToApkUnzipFolder +
+                unzipApkToFolder + "_" +
+                Integer.toString(uid) + "/AndroidManifest.xml"}, this, this);
+    }
+
     @Override
     public void OnErrorHappended() {
 
@@ -203,8 +207,4 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         tv.setText(((String) object));
     }
 
-    public String OnTaskCompletedString(Object object) {
-        this.OnTaskCompleted(object);
-        return (String) object;
-    }
 }
