@@ -22,11 +22,12 @@ import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
 
+import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.FilesScanner.HashFile.HashGenerationException;
 import fr.mdta.mdta.FilesScanner.HashFile.HashGeneratorUtils;
 import fr.mdta.mdta.R;
 
-public class FilesScannerActivity extends AppCompatActivity {
+public class FilesScannerActivity extends AppCompatActivity implements Callback {
 
     List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
@@ -136,11 +137,11 @@ public class FilesScannerActivity extends AppCompatActivity {
         Log.d("root",getFilesDir().toString());
 
         //TODO : wait for unzipApkToFinish
-        try {
-            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
-        } catch (HashGenerationException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
+//        } catch (HashGenerationException e) {
+//            e.printStackTrace();
+//        }
         Log.d("path","sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
         CommandFactory.execCommand("sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml",this);
 
@@ -154,4 +155,20 @@ public class FilesScannerActivity extends AppCompatActivity {
         CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid),this);
     }
 
+    @Override
+    public void OnErrorHappended() {
+
+    }
+
+    @Override
+    public void OnErrorHappended(String error) {
+
+    }
+
+    @Override
+    public void OnTaskCompleted(Object object) {
+        Log.d("result", object.toString());
+        TextView tv = (TextView) findViewById(R.id.sample_text);
+        tv.setText(((String) object));
+    }
 }
