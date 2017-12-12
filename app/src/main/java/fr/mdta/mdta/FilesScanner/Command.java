@@ -24,11 +24,16 @@ import fr.mdta.mdta.R;
 class Command extends AsyncTask<String, Void, String> {
     private ProgressDialog dialog = null;
     private Callback callback;
+    private Context context;
     private boolean suAvailable = false;
     private List<String> suResult = null;
-&
-    private void setCallback(Callback callback) {
+
+    protected void setCallback(Callback callback) {
         this.callback = callback;
+    }
+
+    protected void setContext(Context context) {
+        this.context = context;
     }
 
     @Override

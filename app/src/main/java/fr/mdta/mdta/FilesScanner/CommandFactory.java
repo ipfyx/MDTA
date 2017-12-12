@@ -17,10 +17,11 @@ import fr.mdta.mdta.API.Callback.Callback;
 
 public final class CommandFactory {
 
-    public static void execCommand (String command, Callback callback) {
+    public static void execCommand (String command, Callback callback, Context context) {
         Command exec_command = new Command();
-        exec_command.command.setCallback(callback);
-        exec_command.command.execute(command);
+        exec_command.setCallback(callback);
+        exec_command.setContext(context);
+        exec_command.execute(command);
     }
 
 }
