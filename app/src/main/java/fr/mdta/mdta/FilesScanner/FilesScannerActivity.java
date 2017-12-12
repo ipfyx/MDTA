@@ -186,7 +186,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     protected void Sha256File(final int uid) {
         Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
                 .toString(uid) + "/AndroidManifest.xml");
-        CommandFactory.execCommand(new String[]{"sha256sum " + pathToApkUnzipFolder +
+        CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/AndroidManifest.xml"}, this, this);
     }
@@ -205,6 +205,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     public void OnTaskCompleted(Object object) {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(((String) object));
+
     }
 
 }
