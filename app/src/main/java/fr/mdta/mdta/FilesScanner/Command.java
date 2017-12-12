@@ -75,7 +75,7 @@ class Command extends AsyncTask<String, Void, String> {
         else {
             sb.append("The shell command did not display anything to stdout");
         }
-        callback.OnTaskCompleted(sb);
+        callback.OnTaskCompleted(sb.toString());
 
         Log.d("CommandFactory", sb.toString());
     }
