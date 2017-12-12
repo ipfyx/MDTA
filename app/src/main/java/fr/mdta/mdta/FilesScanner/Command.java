@@ -75,8 +75,8 @@ class Command extends AsyncTask<String, Void, String> {
         else {
             sb.append("The shell command did not display anything to stdout");
         }
-        TextView tv = (TextView) activity.findViewById(R.id.sample_text);
-        tv.setText(sb.toString());
+        callback.OnTaskCompleted(sb);
+
         Log.d("CommandFactory", sb.toString());
     }
 }

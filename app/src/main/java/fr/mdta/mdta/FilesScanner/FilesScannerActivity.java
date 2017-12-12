@@ -106,11 +106,11 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         if ( suAvailable ) {
             //Just in case unzipApkToFolder is empty, we move to directory /data/local since there could be a
             // risk to rm -rf /
-            CommandFactory.execCommand("cd "+pathToApkUnzipFolder,this);
-            CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
-            CommandFactory.execCommand("mkdir -p "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
-            CommandFactory.execCommand("unzip "+sourceDir+" -d "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
-            CommandFactory.execCommand("chown -R "+my_uid+":"+my_uid+" "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this);
+            CommandFactory.execCommand("cd "+pathToApkUnzipFolder,this,this);
+            CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this,this);
+            CommandFactory.execCommand("mkdir -p "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this,this);
+            CommandFactory.execCommand("unzip "+sourceDir+" -d "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this,this);
+            CommandFactory.execCommand("chown -R "+my_uid+":"+my_uid+" "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(uid),this,this);
 
         }
         else {
@@ -143,7 +143,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 //            e.printStackTrace();
 //        }
         Log.d("path","sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
-        CommandFactory.execCommand("sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml",this);
+        CommandFactory.execCommand("sha256sum "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml",this,this);
 
         //TODO : endScanApp(app);
     }
@@ -151,8 +151,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     protected void endScanApp(ApplicationInfo app) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there could be a
         // risk to rm -rf /&
-        CommandFactory.execCommand("cd /data/local",this);
-        CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid),this);
+        CommandFactory.execCommand("cd /data/local",this,this);
+        CommandFactory.execCommand("rm -rRf "+pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid),this,this);
     }
 
     @Override
