@@ -23,7 +23,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
-    //TODO:need to agree on a syntax on variable containing path, should they all finish with a / or not
+    //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
+    // or not
 
     private String pathToApkUnzipFolder = "/data/local";
     private String unzipApkToFolder = "unzipedApk";
@@ -47,7 +48,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         });
 
-        installedApplications = this.getPackageManager().getInstalledApplications(PackageManager.GET_SHARED_LIBRARY_FILES);
+        installedApplications = this.getPackageManager().getInstalledApplications(PackageManager
+                .GET_SHARED_LIBRARY_FILES);
 
         suAvailable = Shell.SU.available();
 
@@ -64,7 +66,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
 
     /**
-     * https://stackoverflow.com/questions/8784505/how-do-i-check-if-an-app-is-a-non-system-app-in-android
+     * https://stackoverflow.com/questions/8784505/how-do-i-check-if-an-app-is-a-non-system-app
+     * -in-android
      */
 
     protected void getListSystemApps() {
@@ -91,19 +94,27 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void unzipApk(int uid, String sourceDir) {
         /**
-         * https://stackoverflow.com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable-to-add-window
+         * https://stackoverflow
+         * .com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable
+         * -to-add-window
          */
         if (suAvailable) {
-            //Just in case unzipApkToFolder is empty, we move to directory /data/local since there could be a
+            //Just in case unzipApkToFolder is empty, we move to directory /data/local since
+            // there could be a
             // risk to rm -rf /
 
             //TODO:execute an array of command in same async task
 
             CommandFactory.execCommand("cd " + pathToApkUnzipFolder, this, this);
-            CommandFactory.execCommand("rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(uid), this, this);
-            CommandFactory.execCommand("mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(uid), this, this);
-            CommandFactory.execCommand("unzip " + sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(uid), this, this);
-            CommandFactory.execCommand("chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(uid), this, this);
+            CommandFactory.execCommand("rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_"
+                    + Integer.toString(uid), this, this);
+            CommandFactory.execCommand("mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder +
+                    "_" + Integer.toString(uid), this, this);
+            CommandFactory.execCommand("unzip " + sourceDir + " -d " + pathToApkUnzipFolder +
+                    unzipApkToFolder + "_" + Integer.toString(uid), this, this);
+            CommandFactory.execCommand("chown -R " + my_uid + ":" + my_uid + " " +
+                    pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(uid), this,
+                    this);
 
         } else {
             TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -120,11 +131,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         int uid = app.uid;
         String[] sharedLibraryFiles = app.sharedLibraryFiles;
 
-        Log.d(app.packageName, sourceDir + " " + dataDir + " " + nativeLibraryDir + " " + privateSourceDir + " " + publicSourceDir + " " + Integer.toString(uid));
+        Log.d(app.packageName, sourceDir + " " + dataDir + " " + nativeLibraryDir + " " +
+                privateSourceDir + " " + publicSourceDir + " " + Integer.toString(uid));
 
-        //File file = new File(pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app.uid)+"/AndroidManifest.xml");
+        //File file = new File(pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app
+        // .uid)+"/AndroidManifest.xml");
 
-        unzipApk(uid,sourceDir);
+        unzipApk(uid, sourceDir);
 
         Log.d("root", getFilesDir().toString());
 
@@ -134,8 +147,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 //        } catch (HashGenerationException e) {
 //            e.printStackTrace();
 //        }
-        Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app.uid) + "/AndroidManifest.xml");
-        CommandFactory.execCommand("sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app.uid) + "/AndroidManifest.xml", new Callback() {
+        Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
+                .toString(app.uid) + "/AndroidManifest.xml");
+        CommandFactory.execCommand("sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" +
+                Integer.toString(app.uid) + "/AndroidManifest.xml", new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -156,10 +171,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void endScanApp(ApplicationInfo app) {
-        //Just in case unzipApkToFolder is empty, we move to directory /data/local since there could be a
+        //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
+        // could be a
         // risk to rm -rf /&
         CommandFactory.execCommand("cd /data/local", this, this);
-        CommandFactory.execCommand("rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app.uid), this, this);
+        CommandFactory.execCommand("rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" +
+                Integer.toString(app.uid), this, this);
     }
 
     @Override
