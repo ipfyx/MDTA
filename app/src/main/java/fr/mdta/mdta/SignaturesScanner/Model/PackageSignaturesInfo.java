@@ -84,7 +84,7 @@ public class PackageSignaturesInfo {
 
         public ApkFileSignature(String mPath, String mHashingMethod, String mHash) {
             this.mPath = mPath;
-            this.mHashingMethod = mHashingMethod;
+            this.mHashingMethod = mHashingMethod.replace("-Digest", "");
             this.mHash = mHash;
 
         }
