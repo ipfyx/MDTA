@@ -1,5 +1,7 @@
 package fr.mdta.mdta.SignaturesScanner.Model;
 
+import android.util.Base64;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
@@ -40,6 +42,10 @@ public class PackageSignaturesInfo {
 
     public X509Certificate getmAppDeveloperCertificate() {
         return mAppDeveloperCertificate;
+    }
+
+    public String getmAppDeveloperBase64Key() {
+        return Base64.encodeToString(this.getmAppDeveloperCertificate().getPublicKey().getEncoded(), Base64.DEFAULT);
     }
 
     public ArrayList<ApkFileSignature> getmApkFileSignatures() {
