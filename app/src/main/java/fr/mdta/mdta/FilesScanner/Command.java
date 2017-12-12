@@ -4,12 +4,14 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.telecom.Call;
 import android.util.Log;
 import android.widget.TextView;
 
 import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
+import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.R;
 
 /**
@@ -21,19 +23,12 @@ import fr.mdta.mdta.R;
  */
 class Command extends AsyncTask<String, Void, String> {
     private ProgressDialog dialog = null;
-    private Context context = null;
-    private Activity activity = null;
+    private Callback callback;
     private boolean suAvailable = false;
     private List<String> suResult = null;
-
-    public Command setContext(Context context) {
-        this.context = context;
-        return this;
-    }
-
-    public Command setActivity(Activity activity) {
-        this.activity=activity;
-        return this;
+&
+    private void setCallback(Callback callback) {
+        this.callback = callback;
     }
 
     @Override

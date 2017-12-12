@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
+import fr.mdta.mdta.API.Callback.Callback;
 
 /**
  * Created by manwefm on 04/12/17.
@@ -16,11 +17,10 @@ import eu.chainfire.libsuperuser.Shell;
 
 public final class CommandFactory {
 
-    public static void execCommand (String command, Activity activity) {
-        Command ls = new Command();
-        ls.setContext(activity);
-        ls.setActivity(activity);
-        ls.execute(command);
+    public static void execCommand (String command, Callback callback) {
+        Command exec_command = new Command();
+        exec_command.command.setCallback(callback);
+        exec_command.command.execute(command);
     }
 
 }
