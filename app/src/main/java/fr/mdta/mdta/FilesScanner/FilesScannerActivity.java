@@ -105,16 +105,19 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             //TODO:execute an array of command in same async task
 
-            CommandFactory.execCommand("cd " + pathToApkUnzipFolder, this, this);
-            CommandFactory.execCommand("rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_"
-                    + Integer.toString(uid), this, this);
-            CommandFactory.execCommand("mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder +
-                    "_" + Integer.toString(uid), this, this);
-            CommandFactory.execCommand("unzip " + sourceDir + " -d " + pathToApkUnzipFolder +
-                    unzipApkToFolder + "_" + Integer.toString(uid), this, this);
-            CommandFactory.execCommand("chown -R " + my_uid + ":" + my_uid + " " +
-                    pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(uid), this,
-                    this);
+            String[] listCommand = new String[]{
+                    "cd " + pathToApkUnzipFolder,
+                    "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString
+                            (uid),
+                    "mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
+                            .toString(uid),
+                    "unzip " + sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
+                            + Integer.toString(uid),
+                    "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
+                            unzipApkToFolder + "_" + Integer.toString(uid)
+
+            };
+            CommandFactory.execCommand(listCommand, this, this);
 
         } else {
             TextView tv = (TextView) findViewById(R.id.sample_text);
@@ -149,8 +152,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 //        }
         Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
                 .toString(app.uid) + "/AndroidManifest.xml");
-        CommandFactory.execCommand("sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" +
-                Integer.toString(app.uid) + "/AndroidManifest.xml", new Callback() {
+        /* CommandFactory.execCommand("sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" +
+        Integer.toString(app.uid) + "/AndroidManifest.xml", new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -165,7 +168,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
 
             }
-        }, this);
+        }, this); */
 
         //TODO : endScanApp(app);
     }
@@ -174,9 +177,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
-        CommandFactory.execCommand("cd /data/local", this, this);
-        CommandFactory.execCommand("rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" +
-                Integer.toString(app.uid), this, this);
+
+        String[] listCommand = new String[]{
+                "cd /data/local",
+                "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app
+                        .uid)
+        };
+
+        CommandFactory.execCommand(listCommand, this, this);
     }
 
     @Override
