@@ -55,9 +55,7 @@ class Command extends AsyncTask<String, Void, String> {
         // Let's do some SU stuff
         suAvailable = Shell.SU.available();
         if (suAvailable) {
-            suResult = Shell.SU.run(new String[]{
-                    params[0],
-            });
+            suResult = Shell.SU.run(params);
         }
         return suResult.toString();
     }
