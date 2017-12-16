@@ -1,6 +1,7 @@
 package fr.mdta.mdta.SignaturesScanner.Model;
 
 import android.util.Base64;
+import android.util.Log;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -67,11 +68,18 @@ public class PackageSignaturesInfo {
          */
         public boolean verifySignature(String calculatedHash, X509Certificate packageCertificate) {
             try {
-                Signature verifier = Signature.getInstance(mHashingMethod);
-                verifier.initVerify(packageCertificate);
+
+                Log.d("calculatedHash",calculatedHash+"$");
+                //Signature verifier = Signature.getInstance(mHashingMethod);
+                Signature verifier = Signature.getInstance(packageCertificate.getSigAlgName());
+                Log.d("algo",verifier.getAlgorithm());
+                Log.d("algoPackage",packageCertificate.getSigAlgName());
+
+                verifier.initVerify(packageCertificate.getPublicKey());
                 verifier.update(calculatedHash.getBytes());
 
-                if (verifier.verify(mHash.getBytes())) {
+                if (verifier.verify("teGy3ZnkIh93h53pUyQ14+QLHoWmv/Tv3Rg/UQ+jOrM=".getBytes())) {
+                //if (verifier.verify(calculatedHash.getBytes())) {
                     System.out.println("Signature is valid");
                     return true;
                 } else {

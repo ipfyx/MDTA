@@ -9,19 +9,32 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import eu.chainfire.libsuperuser.Shell;
 
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.R;
+import fr.mdta.mdta.SignaturesScanner.Model.PackageSignaturesInfo;
+import fr.mdta.mdta.SignaturesScanner.SignaturesInfoFactory;
+import fr.mdta.mdta.SignaturesScanner.SignaturesScannerActivity;
 
 public class FilesScannerActivity extends AppCompatActivity implements Callback {
 
     List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
+
+    String hashTest;
+
+    ArrayList<PackageSignaturesInfo> result = new ArrayList<PackageSignaturesInfo>();
 
     //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
     // or not
@@ -188,7 +201,49 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 .toString(uid) + "/AndroidManifest.xml");
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/AndroidManifest.xml"}, this, this);
+                Integer.toString(uid) + "/classes.dex | xxd -r -p | base64"}, this, this);
+    }
+
+    protected void testSignature() {
+        try {
+            int mdta = 0;
+            result = SignaturesInfoFactory.getInstalledPackages(this);
+            for (int i = 0; i < result.size(); i++) {
+                if (result.get(i).getmAppName().equals("MDTA")) {
+                    mdta = i;
+                }
+            }
+            Log.d("mdta",Integer.toString(mdta));
+            Log.d("mdta", result.get(mdta).getmApkFileSignatures().get(0).getmHashingMethod());
+
+            boolean a = result.get(mdta).getmApkFileSignatures().get(0).verifySignature(hashTest, result.get
+                    (mdta).getmAppDeveloperCertificate());
+
+            String source = result.get(mdta).getmApkSourceDir();
+            JarFile jar = new JarFile(source);
+            Manifest mf = jar.getManifest();
+            Map<String, Attributes> map = mf.getEntries();
+
+            Attributes att = map.get("classes.dex");
+            String sha256 = (String)att.getValue("SHA-256-Digest");
+
+            try {
+                Log.d("sha256",sha256);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            if ( hashTest.equals(sha256) ) {
+                Log.d("bool","true");
+            }
+
+            Log.d("a",Boolean.toString(a));
+
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -205,7 +260,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     public void OnTaskCompleted(Object object) {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(((String) object));
+        hashTest = (String) object;
 
+        Log.d("hashTest",hashTest);
+        testSignature();
     }
 
 }
