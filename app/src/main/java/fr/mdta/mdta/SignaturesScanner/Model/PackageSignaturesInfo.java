@@ -78,8 +78,7 @@ public class PackageSignaturesInfo {
                 verifier.initVerify(packageCertificate.getPublicKey());
                 verifier.update(calculatedHash.getBytes());
 
-                if (verifier.verify("teGy3ZnkIh93h53pUyQ14+QLHoWmv/Tv3Rg/UQ+jOrM=".getBytes())) {
-                //if (verifier.verify(calculatedHash.getBytes())) {
+                if (verifier.verify(calculatedHash.getBytes())) {
                     System.out.println("Signature is valid");
                     return true;
                 } else {

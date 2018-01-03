@@ -1,6 +1,7 @@
 package fr.mdta.mdta.FilesScanner;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +11,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.security.CodeSigner;
+import java.security.Signature;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -46,18 +51,30 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     boolean suAvailable = false;
 
+    PackageInfo pi = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files_scanner);
 
-        Button button = (Button) findViewById(R.id.scanApp);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button buttonNonSystemApps = (Button) findViewById(R.id.scanUserApp);
+        buttonNonSystemApps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
                 for (int i = 0; i < nonSystemApps.size(); i++)
                     scanApp(nonSystemApps.get(i));
+            }
+        });
+
+        Button buttonSystemApps = (Button) findViewById(R.id.scanSystemApps);
+        buttonSystemApps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getListSystemApps();
+                for (int i = 0; i < systemApps.size(); i++)
+                    scanApp(systemApps.get(i));
             }
         });
 
@@ -67,7 +84,55 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         suAvailable = Shell.SU.available();
 
         pathToApkUnzipFolder = getFilesDir().toString() + "/";
+
+        /*
+        try {
+            pi = this.getPackageManager().getPackageInfo(getPackageName(), PackageManager
+                    .GET_SIGNATURES);
+
+            result = SignaturesInfoFactory.getInstalledPackages(this);
+            Boolean certRSA = result.get(10).getmApkFileSignatures().get(0).verifySignature(pi.signatures[0].toCharsString(),
+                    result.get(10).getmAppDeveloperCertificate());
+
+            //https://stackoverflow.com/questions/17035271/what-does-hide-mean-in-the-android-source-code
+            android.content.pm.Signature sign = pi.signatures[0];
+            sign.hashCode();
+
+            for (android.content.pm.Signature signs : pi.signatures) {
+                if (sign != null) {
+                    javax.security.cert.X509Certificate cert = createCert(sign.toByteArray());
+                    String dn = (cert == null?"<NULL>":cert.getIssuerDN()).toString();
+                    Log.d("dn",dn);
+                }
+            }
+
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for ( int i = 0; i < pi.signatures.length; i++) {
+            Log.i("appSignature", pi.signatures[i].toCharsString());
+        }
+        */
+
     }
+
+    public static javax.security.cert.X509Certificate createCert (byte [] bytes) {
+        javax.security.cert.X509Certificate cert = null;
+        try {
+            cert = javax.security.cert.X509Certificate.getInstance(bytes);
+        }
+        catch (javax.security.cert.CertificateException e) {
+            e.printStackTrace();
+        }
+        return cert;
+    }
+
+
 
     protected String getSuVersion() {
         return Shell.SU.version(false);
@@ -115,8 +180,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             //Just in case unzipApkToFolder is empty, we move to directory /data/local since
             // there could be a
             // risk to rm -rf /
-
-            //TODO:execute an array of command in same async task
 
             String[] listCommand = new String[]{
                     "cd " + pathToApkUnzipFolder,
@@ -196,13 +259,19 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.execCommand(listCommand, this, this);
     }
 
+    //TODO: need to sha256 all file
+
     protected void Sha256File(final int uid) {
         Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
-                .toString(uid) + "/AndroidManifest.xml");
+                .toString(uid) + "/" + "classes.dex");
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/classes.dex | xxd -r -p | base64"}, this, this);
+                Integer.toString(uid) + "/" + "classes.dex" + "| xxd -r -p | base64"}, this, this);
     }
+
+    /**
+     * https://stackoverflow.com/questions/3392189/reading-android-manifest-mf-file
+     */
 
     protected void testSignature() {
         try {
@@ -213,31 +282,29 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     mdta = i;
                 }
             }
-            Log.d("mdta",Integer.toString(mdta));
-            Log.d("mdta", result.get(mdta).getmApkFileSignatures().get(0).getmHashingMethod());
-
-            boolean a = result.get(mdta).getmApkFileSignatures().get(0).verifySignature(hashTest, result.get
-                    (mdta).getmAppDeveloperCertificate());
-
             String source = result.get(mdta).getmApkSourceDir();
             JarFile jar = new JarFile(source);
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
 
+            Log.d("jarName",jar.getName());
+            //Log.d("jarName",jar.getJarEntry("CERT.RSA").toString());
+
             Attributes att = map.get("classes.dex");
-            String sha256 = (String)att.getValue("SHA-256-Digest");
+            String sha256 = (String) att.getValue("SHA-256-Digest");
 
             try {
-                Log.d("sha256",sha256);
+                Log.d("sha256", sha256);
+                Log.d("hasttest", hashTest);
+                if (hashTest.equals(sha256)) {
+                    Log.d("bool", "true");
+                } else {
+                    Log.d("bool", "false");
+                }
+
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
-
-            if ( hashTest.equals(sha256) ) {
-                Log.d("bool","true");
-            }
-
-            Log.d("a",Boolean.toString(a));
 
         } catch (CertificateException e) {
             e.printStackTrace();
@@ -260,9 +327,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     public void OnTaskCompleted(Object object) {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(((String) object));
-        hashTest = (String) object;
-
-        Log.d("hashTest",hashTest);
+        hashTest = (String) ((String) object).replaceAll("\\n", "").replaceAll("\\r", "");
+        Log.d("hashTest", hashTest);
         testSignature();
     }
 

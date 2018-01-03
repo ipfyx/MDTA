@@ -17,11 +17,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/scanApp"
+        android:id="@+id/scanUserApp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan Applications"
+        android:text="Scan User Applications"
         tools:layout_editor_absoluteX="2dp"
         tools:layout_editor_absoluteY="2dp" />
+
+    <Button
+        android:id="@+id/scanSystemApps"
+        android:layout_width="161dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="8dp"
+        android:text="Scan System Applications"
+        app:layout_constraintTop_toBottomOf="@+id/scanUserApp"
+        tools:layout_editor_absoluteX="0dp" />
 
 </android.support.constraint.ConstraintLayout>
