@@ -37,8 +37,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
-    String hashTest;
-
     ArrayList<PackageSignaturesInfo> result = new ArrayList<PackageSignaturesInfo>();
 
     //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
@@ -50,8 +48,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     private int my_uid = 0;
 
     boolean suAvailable = false;
-
-    PackageInfo pi = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +166,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
-    protected void unzipApk(final int uid, String sourceDir) {
+    protected void unzipApk(final int uid, final ApplicationInfo app) {
         /**
          * https://stackoverflow
          * .com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable
@@ -187,7 +183,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                             (uid),
                     "mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
                             .toString(uid),
-                    "unzip " + sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
+                    "unzip " + app.sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
                             + Integer.toString(uid),
                     "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
                             unzipApkToFolder + "_" + Integer.toString(uid)
@@ -206,7 +202,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
                 @Override
                 public void OnTaskCompleted(Object object) {
-                    Sha256File(uid);
+                    verifyHashesManifest(uid,app);
                 }
             }, this);
 
@@ -223,40 +219,31 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         String privateSourceDir = app.deviceProtectedDataDir;
         String publicSourceDir = app.publicSourceDir;
         int uid = app.uid;
-        String[] sharedLibraryFiles = app.sharedLibraryFiles;
 
         Log.d(app.packageName, sourceDir + " " + dataDir + " " + nativeLibraryDir + " " +
                 privateSourceDir + " " + publicSourceDir + " " + Integer.toString(uid));
 
-        //File file = new File(pathToApkUnzipFolder+unzipApkToFolder+"_"+Integer.toString(app
-        // .uid)+"/AndroidManifest.xml");
+        unzipApk(uid, app);
 
-        unzipApk(uid, sourceDir);
-
-        Log.d("root", getFilesDir().toString());
+        endScanApp(app);
 
         //TODO : Manage AsyncTask properly
-//        try {
-//            Log.d("sha256",HashGeneratorUtils.generateSHA256(file));
-//        } catch (HashGenerationException e) {
-//            e.printStackTrace();
-//        }
-
-        //TODO : endScanApp(app);
     }
 
+
+    //TODO : endScanApp(app);
     protected void endScanApp(ApplicationInfo app) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
 
-        String[] listCommand = new String[]{
+/*        String[] listCommand = new String[]{
                 "cd /data/local",
                 "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app
                         .uid)
         };
 
-        CommandFactory.execCommand(listCommand, this, this);
+        CommandFactory.execCommand(listCommand, this, this);*/
     }
 
     //TODO: need to sha256 all file
@@ -267,6 +254,16 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + "classes.dex" + "| xxd -r -p | base64"}, this, this);
+    }
+
+    protected void verifyHashesManifest(final int uid, ApplicationInfo app) {
+        try {
+            JarFile jar = new JarFile(app.sourceDir);
+            Manifest mf = jar.getManifest();
+            Map<String, Attributes> map = mf.getEntries();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
