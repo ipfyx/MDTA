@@ -259,7 +259,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 this, this);
     }
 
-    protected String verifySha256(String filePath, String sha256, int uid) {
+    protected boolean verifySha256(String filePath, String sha256, int uid) {
         final String[] calculatedHash = new String[1];
 
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
@@ -282,11 +282,16 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         }, this);
 
-        return calculatedHash[0];
+        if (sha256.equals(calculatedHash[0])) {
+            Log.d("false",filePath);
+            return true;
+        } else {
+            return false;
+        }
 
     }
 
-    protected String verifySha1(String filePath, String sha1, int uid) {
+    protected boolean verifySha1(String filePath, String sha1, int uid) {
         final String[] calculatedHash = new String[1];
 
         CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
@@ -309,7 +314,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         }, this);
 
-        return calculatedHash[0];
+        if (sha1.equals(calculatedHash[0])) {
+            return true;
+        } else {
+            Log.d("false",filePath);
+            return false;
+        }
     }
 
     protected void verifyHashesManifest(final int uid, ApplicationInfo app) {
@@ -392,13 +402,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     @Override
     public void OnTaskCompleted(Object object) {
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(((String) object));
+        //TextView tv = (TextView) findViewById(R.id.sample_text);
+        //tv.setText(((String) object));
         /*
         hashTest = (String) ((String) object).replaceAll("\\n", "").replaceAll("\\r", "");
         Log.d("hashTest", hashTest);
         */
-        testSignature();
+        //testSignature();
     }
 
 }
