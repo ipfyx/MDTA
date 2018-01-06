@@ -255,7 +255,61 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 .toString(uid) + "/" + "classes.dex");
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + "classes.dex" + "| xxd -r -p | base64"}, this, this);
+                Integer.toString(uid) + "/" + "classes.dex" + "| xxd -r -p | base64"},
+                this, this);
+    }
+
+    protected String verifySha256(String filePath, String sha256, int uid) {
+        final String[] calculatedHash = new String[1];
+
+        CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
+                unzipApkToFolder + "_" +
+                Integer.toString(uid) + filePath + "| xxd -r -p | base64"}, new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
+            }
+
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                calculatedHash[0] = (String) ((String) object).replaceAll("\\n", "")
+                        .replaceAll("\\r", "");
+            }
+        }, this);
+
+        return calculatedHash[0];
+
+    }
+
+    protected String verifySha1(String filePath, String sha1, int uid) {
+        final String[] calculatedHash = new String[1];
+
+        CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
+                unzipApkToFolder + "_" +
+                Integer.toString(uid) + filePath + "| xxd -r -p | base64"}, new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
+            }
+
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                calculatedHash[0] = (String) ((String) object).replaceAll("\\n", "")
+                        .replaceAll("\\r", "");
+            }
+        }, this);
+
+        return calculatedHash[0];
     }
 
     protected void verifyHashesManifest(final int uid, ApplicationInfo app) {
@@ -265,10 +319,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             Map<String, Attributes> map = mf.getEntries();
 
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
-                String file = entry.getKey();
+                String filePath = entry.getKey();
                 String fileHash = entry.getValue().getValue("SHA-256-Digest");
                 if ( fileHash == null ) {
                     fileHash = entry.getValue().getValue("SHA1-Digest");
+                    verifySha1(filePath,fileHash,uid);
+                } else {
+                    verifySha256(filePath,fileHash,uid);
                 }
 
             }
