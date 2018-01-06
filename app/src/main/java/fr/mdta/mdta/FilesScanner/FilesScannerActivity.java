@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.w3c.dom.Attr;
+
 import java.io.IOException;
 import java.security.CodeSigner;
 import java.security.Signature;
@@ -261,6 +263,16 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             JarFile jar = new JarFile(app.sourceDir);
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
+
+            for (Map.Entry<String, Attributes> entry : map.entrySet()) {
+                String file = entry.getKey();
+                String fileHash = entry.getValue().getValue("SHA-256-Digest");
+                if ( fileHash == null ) {
+                    fileHash = entry.getValue().getValue("SHA1-Digest");
+                }
+
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -292,13 +304,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             try {
                 Log.d("sha256", sha256);
+                /*
                 Log.d("hasttest", hashTest);
                 if (hashTest.equals(sha256)) {
                     Log.d("bool", "true");
                 } else {
                     Log.d("bool", "false");
                 }
-
+                */
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -324,8 +337,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     public void OnTaskCompleted(Object object) {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(((String) object));
+        /*
         hashTest = (String) ((String) object).replaceAll("\\n", "").replaceAll("\\r", "");
         Log.d("hashTest", hashTest);
+        */
         testSignature();
     }
 
