@@ -215,17 +215,11 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void scanApp(ApplicationInfo app) {
-        String sourceDir = app.sourceDir;
-        String dataDir = app.dataDir;
-        String nativeLibraryDir = app.nativeLibraryDir;
-        String privateSourceDir = app.deviceProtectedDataDir;
-        String publicSourceDir = app.publicSourceDir;
-        int uid = app.uid;
 
-        Log.d(app.packageName, sourceDir + " " + dataDir + " " + nativeLibraryDir + " " +
-                privateSourceDir + " " + publicSourceDir + " " + Integer.toString(uid));
+        Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + " " +
+                app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString(app.uid));
 
-        unzipApk(uid, app);
+        unzipApk(app.uid, app);
 
         endScanApp(app);
 
