@@ -332,6 +332,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     } else {
                         verifySha256(filePath,fileHash,uid);
                     }
+                } else {
+                    Log.d(filePath,"not in installed apk");
                 }
 
             }
