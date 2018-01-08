@@ -42,12 +42,12 @@ class Command extends AsyncTask<String, Void, String> {
         // If in your app your user can just continue on with clicking other things,
         // don't do the dialog thing.
 
-        dialog = new ProgressDialog(context);
+/*        dialog = new ProgressDialog(context);
         dialog.setTitle("Executing shell command");
         dialog.setMessage("Please wait");
         dialog.setIndeterminate(true);
         dialog.setCancelable(true);
-        dialog.show();
+        dialog.show();*/
     }
 
     @Override
@@ -62,7 +62,7 @@ class Command extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        dialog.dismiss();
+        //dialog.dismiss();
 
         StringBuilder sb = (new StringBuilder()).append((char) 10);
         if (suResult != null) {
@@ -71,7 +71,7 @@ class Command extends AsyncTask<String, Void, String> {
             }
         }
         else {
-            sb.append("The shell command did not display anything to stdout");
+            sb.append("Error");
         }
         callback.OnTaskCompleted(sb.toString());
 

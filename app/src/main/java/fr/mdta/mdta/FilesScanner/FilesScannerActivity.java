@@ -168,6 +168,18 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
+    protected void scanApp(ApplicationInfo app) {
+
+        Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + " " +
+                app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString(app.uid));
+
+        unzipApk(app.uid, app);
+
+        endScanApp(app);
+
+        //TODO : Manage AsyncTask properly
+    }
+
     protected void unzipApk(final int uid, final ApplicationInfo app) {
         /**
          * https://stackoverflow
@@ -204,7 +216,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
                 @Override
                 public void OnTaskCompleted(Object object) {
-                    verifyHashesManifest(uid,app);
+                    verifyHashesManifest(uid,app,(String) object);
                 }
             }, this);
 
@@ -213,19 +225,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             tv.setText("Non rooted phone");
         }
     }
-
-    protected void scanApp(ApplicationInfo app) {
-
-        Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + " " +
-                app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString(app.uid));
-
-        unzipApk(app.uid, app);
-
-        endScanApp(app);
-
-        //TODO : Manage AsyncTask properly
-    }
-
 
     //TODO : endScanApp(app);
     protected void endScanApp(ApplicationInfo app) {
@@ -253,8 +252,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 this, this);
     }
 
-    protected boolean verifySha256(String filePath, String sha256, int uid) {
-        final String[] calculatedHash = new String[1];
+    protected void verifySha256(final String filePath, final String sha256, final int uid) {
 
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
@@ -271,22 +269,19 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             @Override
             public void OnTaskCompleted(Object object) {
-                calculatedHash[0] = (String) ((String) object).replaceAll("\\n", "")
+                String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
+                if ( sha256.equals(calculatedHash) || calculatedHash.isEmpty() ) {
+                    Log.d("true",calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
+                } else {
+                    Log.d("true",calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
+                }
             }
         }, this);
 
-        if (sha256.equals(calculatedHash[0])) {
-            Log.d("false",filePath);
-            return true;
-        } else {
-            return false;
-        }
-
     }
 
-    protected boolean verifySha1(String filePath, String sha1, int uid) {
-        final String[] calculatedHash = new String[1];
+    protected void verifySha1(final String filePath, final String sha1, final int uid) {
 
         CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
@@ -303,33 +298,40 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             @Override
             public void OnTaskCompleted(Object object) {
-                calculatedHash[0] = (String) ((String) object).replaceAll("\\n", "")
+                String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
+                if ( calculatedHash.isEmpty() ) {
+
+                } else {
+                    if (sha1.equals(calculatedHash)) {
+                        Log.d("true",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
+                    } else {
+                        Log.d("false",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
+                    }
+                }
+
             }
         }, this);
 
-        if (sha1.equals(calculatedHash[0])) {
-            return true;
-        } else {
-            Log.d("false",filePath);
-            return false;
-        }
     }
 
-    protected void verifyHashesManifest(final int uid, ApplicationInfo app) {
+    protected void verifyHashesManifest(final int uid, ApplicationInfo app,String unzipResult) {
         try {
             JarFile jar = new JarFile(app.sourceDir);
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
 
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
+
                 String filePath = entry.getKey();
-                String fileHash = entry.getValue().getValue("SHA-256-Digest");
-                if ( fileHash == null ) {
-                    fileHash = entry.getValue().getValue("SHA1-Digest");
-                    verifySha1(filePath,fileHash,uid);
-                } else {
-                    verifySha256(filePath,fileHash,uid);
+                if ( unzipResult.contains(filePath) ) {
+                    String fileHash = entry.getValue().getValue("SHA-256-Digest");
+                    if ( fileHash == null ) {
+                        fileHash = entry.getValue().getValue("SHA1-Digest");
+                        verifySha1(filePath,fileHash,uid);
+                    } else {
+                        verifySha256(filePath,fileHash,uid);
+                    }
                 }
 
             }
