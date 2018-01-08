@@ -255,7 +255,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void verifySha256(final String filePath, final String sha256, final int uid) {
 
-        CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
+        final Command command = CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"}, new Callback() {
             @Override
@@ -321,6 +321,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             JarFile jar = new JarFile(app.sourceDir);
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
+
+            ArrayList<Command> listProcess = new ArrayList<Command>();
 
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
