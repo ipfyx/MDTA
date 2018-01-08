@@ -75,6 +75,6 @@ class Command extends AsyncTask<String, Void, String> {
         }
         callback.OnTaskCompleted(sb.toString());
 
-        Log.d("CommandFactory", sb.toString());
+        //Log.d("CommandFactory", sb.toString());
     }
 }

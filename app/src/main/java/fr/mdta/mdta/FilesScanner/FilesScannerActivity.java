@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -256,7 +257,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + filePath + "| xxd -r -p | base64"}, new Callback() {
+                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"}, new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -271,10 +272,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                if ( sha256.equals(calculatedHash) || calculatedHash.isEmpty() ) {
-                    Log.d("true",calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
+                if ( sha256.equals(calculatedHash) ) {
+
                 } else {
-                    Log.d("true",calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
+                    Log.d("false","calc: "+calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
                 }
             }
         }, this);
@@ -285,7 +286,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + filePath + "| xxd -r -p | base64"}, new Callback() {
+                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"}, new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -304,7 +305,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
                 } else {
                     if (sha1.equals(calculatedHash)) {
-                        Log.d("true",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
+
                     } else {
                         Log.d("false",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
                     }
@@ -321,23 +322,16 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
 
-            Log.d("zip",unzipResult);
-
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
                 String filePath = entry.getKey();
-                Log.d("filepath",filePath);
-                if ( unzipResult.matches(filePath) ) {
-                    Log.d(filePath,Integer.toString(unzipResult.indexOf(filePath)));
-                    String fileHash = entry.getValue().getValue("SHA-256-Digest");
-                    if ( fileHash == null ) {
-                        fileHash = entry.getValue().getValue("SHA1-Digest");
-                        verifySha1(filePath,fileHash,uid);
-                    } else {
-                        verifySha256(filePath,fileHash,uid);
-                    }
+
+                String fileHash = entry.getValue().getValue("SHA-256-Digest");
+                if ( fileHash == null ) {
+                    fileHash = entry.getValue().getValue("SHA1-Digest");
+                    verifySha1(filePath,fileHash,uid);
                 } else {
-                    Log.d(filePath,"not in installed apk");
+                    verifySha256(filePath,fileHash,uid);
                 }
 
             }
