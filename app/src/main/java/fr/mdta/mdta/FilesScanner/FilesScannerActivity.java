@@ -321,10 +321,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
 
+            Log.d("zip",unzipResult);
+
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
                 String filePath = entry.getKey();
-                if ( unzipResult.contains(filePath) ) {
+                Log.d("filepath",filePath);
+                if ( unzipResult.matches(filePath) ) {
+                    Log.d(filePath,Integer.toString(unzipResult.indexOf(filePath)));
                     String fileHash = entry.getValue().getValue("SHA-256-Digest");
                     if ( fileHash == null ) {
                         fileHash = entry.getValue().getValue("SHA1-Digest");
