@@ -243,24 +243,38 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.execCommand(listCommand, this, this);*/
     }
 
-    //TODO: need to sha256 all file
-
-    protected void Sha256File(final int uid) {
-        Log.d("path", "sha256sum " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
-                .toString(uid) + "/" + "classes.dex");
-        CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
-                unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + "classes.dex" + "| xxd -r -p | base64"},
-                this, this);
-    }
-
     protected void addFileToListVerification(final String filePath, final String hash, final int uid, final String hashMethod) {
 
         final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
 
-        CommandFactory.addCommandToExecute(commandToExecute,this);
+        CommandFactory.addCommandToExecute(commandToExecute,this,new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
+            }
+
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                CommandFactory.COUNT-=1;
+                CommandFactory.removeCommand(commandToExecute);
+                CommandFactory.launchVerification();
+
+                String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
+                        .replaceAll("\\r", "");
+                if ( hash.equals(calculatedHash) ) {
+                    Log.d(filePath,hash+" / "+calculatedHash);
+                } else {
+                    Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+uid);
+                }
+            }
+        });
 
     }
 

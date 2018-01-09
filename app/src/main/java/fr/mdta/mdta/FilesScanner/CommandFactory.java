@@ -29,26 +29,8 @@ public final class CommandFactory {
         exec_command.execute(command);
     }
 
-    public static void addCommandToExecute (final String[] command, Context context) {
-        Command exec_command = new Command(new Callback() {
-            @Override
-            public void OnErrorHappended() {
-
-            }
-
-            @Override
-            public void OnErrorHappended(String error) {
-
-            }
-
-            @Override
-            public void OnTaskCompleted(Object object) {
-                COUNT-=1;
-                Log.d("decreased","COUNT");
-                removeCommand(command);
-                launchVerification();
-            }
-        }, context, command);
+    public static void addCommandToExecute (final String[] command, Context context, Callback callback) {
+        Command exec_command = new Command(callback, context, command);
         listProcess.add(exec_command);
         Log.d("size",Integer.toString(listProcess.size()));
         Log.d("command",exec_command.getCommand()[0]);
