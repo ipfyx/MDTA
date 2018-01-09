@@ -169,12 +169,29 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
-    protected void scanApp(ApplicationInfo app) {
+    protected void scanApp(final ApplicationInfo app) {
 
         Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + " " +
                 app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString(app.uid));
 
-        unzipApk(app.uid, app);
+        //unzipApk(app.uid, app);
+
+        CommandFactory.unzipCommand(new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
+            }
+
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                verifyHashesManifest(app.uid,app,(String) object);
+            }
+        },this,app,my_uid);
 
         endScanApp(app);
 

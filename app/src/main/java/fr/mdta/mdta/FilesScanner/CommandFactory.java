@@ -3,6 +3,7 @@ package fr.mdta.mdta.FilesScanner;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -24,9 +25,31 @@ public final class CommandFactory {
 
     static int COUNT = 0;
 
+    static String pathToApkUnzipFolder = "/data/local";
+    static String unzipApkToFolder = "unzipedApk";
+
     public static void execCommand (String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, context, command);
         exec_command.execute(command);
+    }
+
+    public static void unzipCommand (Callback callback, Context context, ApplicationInfo app, int my_uid) {
+
+        String[] listCommand = new String[]{
+                "cd " + pathToApkUnzipFolder,
+                "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString
+                        (app.uid),
+                "mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
+                        .toString(app.uid),
+                "unzip " + app.sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
+                        + Integer.toString(app.uid),
+                "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
+                        unzipApkToFolder + "_" + Integer.toString(app.uid)
+
+        };
+
+        Command exec_command = new Command(callback, context, listCommand);
+        exec_command.execute(listCommand);
     }
 
     public static void addCommandToExecute (final String[] command, Context context, Callback callback) {
