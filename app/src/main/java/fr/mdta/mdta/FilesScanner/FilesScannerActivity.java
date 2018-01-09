@@ -312,6 +312,11 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         protected void verifyHashesManifest(final int uid, ApplicationInfo app,String unzipResult) {
         try {
+
+            /**
+             * https://stackoverflow.com/questions/3392189/reading-android-manifest-mf-file
+             */
+
             JarFile jar = new JarFile(app.sourceDir);
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
@@ -337,51 +342,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             System.out.println("Launching");
             CommandFactory.launchVerification();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * https://stackoverflow.com/questions/3392189/reading-android-manifest-mf-file
-     */
-
-    protected void testSignature() {
-        try {
-            int mdta = 0;
-            result = SignaturesInfoFactory.getInstalledPackages(this);
-            for (int i = 0; i < result.size(); i++) {
-                if (result.get(i).getmAppName().equals("MDTA")) {
-                    mdta = i;
-                }
-            }
-            String source = result.get(mdta).getmApkSourceDir();
-            JarFile jar = new JarFile(source);
-            Manifest mf = jar.getManifest();
-            Map<String, Attributes> map = mf.getEntries();
-
-            Log.d("jarName",jar.getName());
-            //Log.d("jarName",jar.getJarEntry("CERT.RSA").toString());
-
-            Attributes att = map.get("classes.dex");
-            String sha256 = (String) att.getValue("SHA-256-Digest");
-
-            try {
-                Log.d("sha256", sha256);
-                /*
-                Log.d("hasttest", hashTest);
-                if (hashTest.equals(sha256)) {
-                    Log.d("bool", "true");
-                } else {
-                    Log.d("bool", "false");
-                }
-                */
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-
-        } catch (CertificateException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
