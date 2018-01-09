@@ -62,8 +62,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
-                for (int i = 0; i < nonSystemApps.size(); i++)
-                    scanApp(nonSystemApps.get(i));
+                if (suAvailable) {
+                    for (int i = 0; i < nonSystemApps.size(); i++)
+                        scanApp(nonSystemApps.get(i));
+                } else {
+                    //TODO
+                }
             }
         });
 
@@ -72,8 +76,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListSystemApps();
-                for (int i = 0; i < systemApps.size(); i++)
-                    scanApp(systemApps.get(i));
+                if (suAvailable) {
+                    for (int i = 0; i < systemApps.size(); i++)
+                        scanApp(systemApps.get(i));
+                } else {
+                    //TODO
+                }
             }
         });
 
@@ -197,6 +205,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         //TODO : Manage AsyncTask properly
     }
+
 
     protected void unzipApk(final int uid, final ApplicationInfo app) {
         /**
