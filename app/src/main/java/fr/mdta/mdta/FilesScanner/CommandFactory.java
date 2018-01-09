@@ -52,6 +52,18 @@ public final class CommandFactory {
         exec_command.execute(listCommand);
     }
 
+    public static void endScan (Callback callback, Context context, ApplicationInfo app) {
+
+        String[] listCommand = new String[]{
+                "cd /data/local",
+                "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app
+                        .uid)
+        };
+
+        Command exec_command = new Command(callback, context, listCommand);
+        exec_command.execute(listCommand);
+    }
+
     public static void addCommandToExecute (final String[] command, Context context, Callback callback) {
         Command exec_command = new Command(callback, context, command);
         listProcess.add(exec_command);
@@ -79,14 +91,16 @@ public final class CommandFactory {
         listProcess.add(command);
     }
 
-    public static void launchVerification(Callback callback) {
+    public static void launchVerification(Callback callback, ApplicationInfo app) {
 
         COUNT = 0;
         for (int i = 0; i < listProcess.size(); i++ ) {
             if ( COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING ) {
                 listProcess.get(i).execute(listProcess.get(i).getCommand());
                 COUNT+=1;
-            }else {
+            } else if ( listProcess.isEmpty() ) {
+                callback.OnTaskCompleted(app);
+            } else {
                 return;
             }
         }

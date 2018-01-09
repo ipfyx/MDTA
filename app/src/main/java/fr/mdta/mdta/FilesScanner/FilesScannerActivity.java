@@ -32,9 +32,26 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
+    private Callback mycallback = new Callback() {
+        @Override
+        public void OnErrorHappended() {
+
+        }
+
+        @Override
+        public void OnErrorHappended(String error) {
+
+        }
+
+        @Override
+        public void OnTaskCompleted(Object object) {
+            endScanApp((ApplicationInfo) object);
+        }
+    };
+
     //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
     // or not
-    
+
     private int my_uid = 0;
 
     boolean suAvailable = false;
@@ -200,20 +217,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         // could be a
         // risk to rm -rf /&
 
-/*        String[] listCommand = new String[]{
-                "cd /data/local",
-                "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app
-                        .uid)
-        };
-
-        CommandFactory.execCommand(listCommand, this, this);*/
+        CommandFactory.endScan(this, this,app);
     }
 
-    protected void addFileToListVerification(final String filePath, final String hash, final int uid, final String hashMethod, ArrayList<Command> listProcess) {
+    protected void addFileToListVerification(final String filePath, final String hash, final ApplicationInfo app, final String hashMethod, ArrayList<Command> listProcess) {
 
         final String[] commandToExecute = new String[]{hashMethod+" -b " + CommandFactory.pathToApkUnzipFolder +
                 CommandFactory.unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
+                Integer.toString(app.uid) + "/" + filePath + "| xxd -r -p | base64"};
 
         Command command = new Command(new Callback() {
             @Override
@@ -230,14 +241,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 CommandFactory.COUNT-=1;
                 CommandFactory.removeCommand(commandToExecute);
-                CommandFactory.launchVerification();
+                CommandFactory.launchVerification(mycallback,app);
 
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
                 if ( hash.equals(calculatedHash) ) {
                     Log.d(filePath,hash+" / "+calculatedHash);
                 } else {
-                    Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+uid);
+                    Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+app.uid);
                 }
             }
         },this,commandToExecute);
@@ -269,14 +280,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     if ( fileHash == null ){
                         //MD5 or somethingElse ?
                     } else {
-                        addFileToListVerification(filePath,fileHash,uid,"sha1sum",listProcess);
+                        addFileToListVerification(filePath,fileHash,app,"sha1sum",listProcess);
                     }
                 } else {
-                    addFileToListVerification(filePath,fileHash,uid,"sha256sum",listProcess);
+                    addFileToListVerification(filePath,fileHash,app,"sha256sum",listProcess);
                 }
             }
             CommandFactory.listProcess = listProcess;
-            CommandFactory.launchVerification();
+            CommandFactory.launchVerification(mycallback,app);
 
         } catch (IOException e) {
             e.printStackTrace();
