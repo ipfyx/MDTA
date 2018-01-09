@@ -228,6 +228,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     //TODO : endScanApp(app);
+    //TODO: empty listProcess, rm folder
     protected void endScanApp(ApplicationInfo app) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a

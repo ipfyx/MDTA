@@ -27,6 +27,11 @@ public final class CommandFactory {
         return exec_command;
     }
 
+    public static void addCommandToExecute (String[] command, Callback callback, Context context) {
+        Command exec_command = new Command(callback, context, command);
+        listProcess.add(exec_command);
+    }
+
     public static void removeCommand(String[] command) {
         for ( int i =0; i < listProcess.size(); i++) {
             if ( listProcess.get(i).getCommand().equals(command) ) {
