@@ -307,7 +307,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     addFileToListVerification(filePath,fileHash,uid,"sha256sum");
                 }
             }
-            System.out.println("Launching");
             CommandFactory.launchVerification();
 
         } catch (IOException e) {

@@ -32,15 +32,12 @@ public final class CommandFactory {
     public static void addCommandToExecute (final String[] command, Context context, Callback callback) {
         Command exec_command = new Command(callback, context, command);
         listProcess.add(exec_command);
-        Log.d("size",Integer.toString(listProcess.size()));
-        Log.d("command",exec_command.getCommand()[0]);
     }
 
     public static void removeCommand(String[] command) {
         for ( int i =0; i < listProcess.size(); i++) {
             if ( listProcess.get(i).getCommand().equals(command) ) {
                 listProcess.remove(i);
-                Log.d("CommandFactoryremoved",command[0]);
                 return;
             }
         }
@@ -63,14 +60,10 @@ public final class CommandFactory {
 
         COUNT = 0;
         for (int i = 0; i < listProcess.size(); i++ ) {
-            System.out.println(listProcess.get(i).getCommand()[0]);
-            System.out.println(listProcess.get(i).getStatus());
-            Log.d(Integer.toString(i),Integer.toString(COUNT));
             if ( COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING ) {
                 listProcess.get(i).execute(listProcess.get(i).getCommand());
                 COUNT+=1;
             }else {
-                Log.d("MAX_PROCESS","reached");
                 return;
             }
         }
