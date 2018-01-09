@@ -335,7 +335,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 String fileHash = entry.getValue().getValue("SHA-256-Digest");
                 if ( fileHash == null ) {
                     fileHash = entry.getValue().getValue("SHA1-Digest");
-                    verifySha1(filePath,fileHash,uid,listProcess);
+                    verifySha1(filePath,fileHash,uid);
                 } else {
                     verifySha256(filePath,fileHash,uid);
                 }

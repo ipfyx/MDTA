@@ -20,11 +20,10 @@ public final class CommandFactory {
 
     public static ArrayList<Command> listProcess = new ArrayList<Command>();
 
-    public static Command execCommand (String[] command, Callback callback, Context context) {
+    public static void execCommand (String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, context, command);
         exec_command.execute(command);
         listProcess.add(exec_command);
-        return exec_command;
     }
 
     public static void addCommandToExecute (String[] command, Callback callback, Context context) {
