@@ -253,7 +253,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 this, this);
     }
 
-    protected void verifySha256(final String filePath, final String sha256, final int uid) {
+    protected void verifySha256(final String filePath, final String sha256, final int uid,final ArrayList<Command> listProcess) {
 
         final Command command = CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
@@ -272,17 +272,20 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                if ( sha256.equals(calculatedHash) ) {
-
+                if ( sha256.equals(calculatedHash) && command != null && listProcess.contains(command)  ) {
+                    listProcess.remove(command);
                 } else {
+                    command.cancel(true);
                     Log.d("false","calc: "+calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
                 }
             }
         }, this);
 
+        listProcess.add(command);
+
     }
 
-    protected void verifySha1(final String filePath, final String sha1, final int uid) {
+    protected void verifySha1(final String filePath, final String sha1, final int uid, final ArrayList<Command> listProcess) {
 
         CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
@@ -331,9 +334,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 String fileHash = entry.getValue().getValue("SHA-256-Digest");
                 if ( fileHash == null ) {
                     fileHash = entry.getValue().getValue("SHA1-Digest");
-                    verifySha1(filePath,fileHash,uid);
+                    verifySha1(filePath,fileHash,uid,listProcess);
                 } else {
-                    verifySha256(filePath,fileHash,uid);
+                    verifySha256(filePath,fileHash,uid,listProcess);
                 }
 
             }

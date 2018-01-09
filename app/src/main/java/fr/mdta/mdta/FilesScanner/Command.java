@@ -28,6 +28,13 @@ class Command extends AsyncTask<String, Void, String> {
     private boolean suAvailable = false;
     private List<String> suResult = null;
 
+    public Command() {}
+
+    public Command(Callback callback, Context context) {
+        this.callback = callback;
+        this.context = context;
+    }
+
     protected void setCallback(Callback callback) {
         this.callback = callback;
     }
