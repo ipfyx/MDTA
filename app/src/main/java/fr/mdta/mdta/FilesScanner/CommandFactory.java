@@ -28,12 +28,13 @@ public final class CommandFactory {
     static String pathToApkUnzipFolder = "/data/local";
     static String unzipApkToFolder = "unzipedApk";
 
-    public static void execCommand (String[] command, Callback callback, Context context) {
+    public static void execCommand(String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, context, command);
         exec_command.execute(command);
     }
 
-    public static void unzipCommand (Callback callback, Context context, ApplicationInfo app, int my_uid) {
+    public static void unzipCommand(Callback callback, Context context, ApplicationInfo app, int
+            my_uid) {
 
         String[] listCommand = new String[]{
                 "cd " + pathToApkUnzipFolder,
@@ -52,7 +53,7 @@ public final class CommandFactory {
         exec_command.execute(listCommand);
     }
 
-    public static void endScan (Callback callback, Context context, ApplicationInfo app) {
+    public static void endScanApp(Callback callback, Context context, ApplicationInfo app) {
 
         String[] listCommand = new String[]{
                 "cd /data/local",
@@ -64,14 +65,15 @@ public final class CommandFactory {
         exec_command.execute(listCommand);
     }
 
-    public static void addCommandToExecute (final String[] command, Context context, Callback callback) {
+    public static void addCommandToExecute(final String[] command, Context context, Callback
+            callback) {
         Command exec_command = new Command(callback, context, command);
         listProcess.add(exec_command);
     }
 
     public static void removeCommand(String[] command) {
-        for ( int i =0; i < listProcess.size(); i++) {
-            if ( listProcess.get(i).getCommand().equals(command) ) {
+        for (int i = 0; i < listProcess.size(); i++) {
+            if (listProcess.get(i).getCommand().equals(command)) {
                 listProcess.remove(i);
                 return;
             }
@@ -79,8 +81,8 @@ public final class CommandFactory {
     }
 
     public static void cancelCommand(String[] command) {
-        for ( int i =0; i < listProcess.size(); i++) {
-            if ( listProcess.get(i).getCommand().equals(command) ) {
+        for (int i = 0; i < listProcess.size(); i++) {
+            if (listProcess.get(i).getCommand().equals(command)) {
                 listProcess.get(i).cancel(true);
                 return;
             }
@@ -94,11 +96,11 @@ public final class CommandFactory {
     public static void launchVerification(Callback callback, ApplicationInfo app) {
 
         COUNT = 0;
-        for (int i = 0; i < listProcess.size(); i++ ) {
-            if ( COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING ) {
+        for (int i = 0; i < listProcess.size(); i++) {
+            if (COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING) {
                 listProcess.get(i).execute(listProcess.get(i).getCommand());
-                COUNT+=1;
-            } else if ( listProcess.isEmpty() ) {
+                COUNT += 1;
+            } else if (listProcess.isEmpty()) {
                 callback.OnTaskCompleted(app);
             } else {
                 return;

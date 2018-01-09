@@ -102,10 +102,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     .GET_SIGNATURES);
 
             result = SignaturesInfoFactory.getInstalledPackages(this);
-            Boolean certRSA = result.get(10).getmApkFileSignatures().get(0).verifySignature(pi.signatures[0].toCharsString(),
+            Boolean certRSA = result.get(10).getmApkFileSignatures().get(0).verifySignature(pi
+            .signatures[0].toCharsString(),
                     result.get(10).getmAppDeveloperCertificate());
 
-            //https://stackoverflow.com/questions/17035271/what-does-hide-mean-in-the-android-source-code
+            //https://stackoverflow.com/questions/17035271/what-does-hide-mean-in-the-android
+            -source-code
             android.content.pm.Signature sign = pi.signatures[0];
             sign.hashCode();
 
@@ -132,17 +134,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     }
 
-    public static javax.security.cert.X509Certificate createCert (byte [] bytes) {
+    public static javax.security.cert.X509Certificate createCert(byte[] bytes) {
         javax.security.cert.X509Certificate cert = null;
         try {
             cert = javax.security.cert.X509Certificate.getInstance(bytes);
-        }
-        catch (javax.security.cert.CertificateException e) {
+        } catch (javax.security.cert.CertificateException e) {
             e.printStackTrace();
         }
         return cert;
     }
-
 
 
     protected String getSuVersion() {
@@ -183,8 +183,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void scanApp(final ApplicationInfo app) {
 
-        Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + " " +
-                app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString(app.uid));
+        Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + "" +
+                " " +
+                app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString
+                (app.uid));
 
         //unzipApk(app.uid, app);
 
@@ -201,9 +203,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             @Override
             public void OnTaskCompleted(Object object) {
-                verifyHashesManifest(app.uid,app,(String) object);
+                verifyHashesManifest(app.uid, app, (String) object);
             }
-        },this,app,my_uid);
+        }, this, app, my_uid);
 
         endScanApp(app);
 
@@ -217,12 +219,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         // could be a
         // risk to rm -rf /&
 
-        CommandFactory.endScan(this, this,app);
+        CommandFactory.endScanApp(this, this, app);
     }
 
-    protected void addFileToListVerification(final String filePath, final String hash, final ApplicationInfo app, final String hashMethod, ArrayList<Command> listProcess) {
+    protected void addFileToListVerification(final String filePath, final String hash, final
+    ApplicationInfo app, final String hashMethod, ArrayList<Command> listProcess) {
 
-        final String[] commandToExecute = new String[]{hashMethod+" -b " + CommandFactory.pathToApkUnzipFolder +
+        final String[] commandToExecute = new String[]{hashMethod + " -b " + CommandFactory
+                .pathToApkUnzipFolder +
                 CommandFactory.unzipApkToFolder + "_" +
                 Integer.toString(app.uid) + "/" + filePath + "| xxd -r -p | base64"};
 
@@ -239,25 +243,26 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             @Override
             public void OnTaskCompleted(Object object) {
-                CommandFactory.COUNT-=1;
+                CommandFactory.COUNT -= 1;
                 CommandFactory.removeCommand(commandToExecute);
-                CommandFactory.launchVerification(mycallback,app);
+                CommandFactory.launchVerification(mycallback, app);
 
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                if ( hash.equals(calculatedHash) ) {
-                    Log.d(filePath,hash+" / "+calculatedHash);
+                if (hash.equals(calculatedHash)) {
+                    Log.d(filePath, hash + " / " + calculatedHash);
                 } else {
-                    Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+app.uid);
+                    Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " +
+                            filePath + " " + app.uid);
                 }
             }
-        },this,commandToExecute);
+        }, this, commandToExecute);
 
         listProcess.add(command);
 
     }
 
-        protected void verifyHashesManifest(final int uid, ApplicationInfo app,String unzipResult) {
+    protected void verifyHashesManifest(final int uid, ApplicationInfo app, String unzipResult) {
         try {
 
             /**
@@ -275,19 +280,19 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 String filePath = entry.getKey();
 
                 String fileHash = entry.getValue().getValue("SHA-256-Digest");
-                if ( fileHash == null ) {
+                if (fileHash == null) {
                     fileHash = entry.getValue().getValue("SHA1-Digest");
-                    if ( fileHash == null ){
+                    if (fileHash == null) {
                         //MD5 or somethingElse ?
                     } else {
-                        addFileToListVerification(filePath,fileHash,app,"sha1sum",listProcess);
+                        addFileToListVerification(filePath, fileHash, app, "sha1sum", listProcess);
                     }
                 } else {
-                    addFileToListVerification(filePath,fileHash,app,"sha256sum",listProcess);
+                    addFileToListVerification(filePath, fileHash, app, "sha256sum", listProcess);
                 }
             }
             CommandFactory.listProcess = listProcess;
-            CommandFactory.launchVerification(mycallback,app);
+            CommandFactory.launchVerification(mycallback, app);
 
         } catch (IOException e) {
             e.printStackTrace();

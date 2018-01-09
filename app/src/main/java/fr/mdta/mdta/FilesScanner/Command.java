@@ -29,7 +29,8 @@ class Command extends AsyncTask<String, Void, String> {
     private List<String> suResult = null;
     private String[] command = null;
 
-    public Command() {}
+    public Command() {
+    }
 
     public Command(Callback callback, Context context) {
         this.callback = callback;
@@ -55,7 +56,7 @@ class Command extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
-    protected List<String> getSuResult(){
+    protected List<String> getSuResult() {
         return suResult;
     }
 
@@ -84,7 +85,7 @@ class Command extends AsyncTask<String, Void, String> {
         if (suAvailable) {
             suResult = Shell.SU.run(params);
         }
-        Log.d("Command",suResult.toString());
+        Log.d("Command", suResult.toString());
         return suResult.toString();
     }
 
@@ -97,8 +98,7 @@ class Command extends AsyncTask<String, Void, String> {
             for (String line : suResult) {
                 sb.append(line).append((char) 10);
             }
-        }
-        else {
+        } else {
             sb.append("Error");
         }
         callback.OnTaskCompleted(sb.toString());
