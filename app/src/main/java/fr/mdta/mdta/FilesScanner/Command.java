@@ -85,6 +85,7 @@ class Command extends AsyncTask<String, Void, String> {
         if (suAvailable) {
             suResult = Shell.SU.run(params);
         }
+        Log.d("Command", params[0]);
         Log.d("Command", suResult.toString());
         return suResult.toString();
     }

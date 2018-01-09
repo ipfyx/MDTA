@@ -49,6 +49,12 @@ public final class CommandFactory {
 
         };
 
+        Log.d("CommandFactory",listCommand[0]);
+        Log.d("CommandFactory",listCommand[1]);
+        Log.d("CommandFactory",listCommand[2]);
+        Log.d("CommandFactory",listCommand[3]);
+        Log.d("CommandFactory",listCommand[4]);
+
         Command exec_command = new Command(callback, context, listCommand);
         exec_command.execute(listCommand);
     }

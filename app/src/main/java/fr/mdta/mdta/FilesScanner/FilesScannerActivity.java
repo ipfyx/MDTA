@@ -207,8 +207,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         }, this, app, my_uid);
 
-        endScanApp(app);
-
         //TODO : Manage AsyncTask properly
     }
 
