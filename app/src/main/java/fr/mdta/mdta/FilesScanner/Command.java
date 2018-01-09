@@ -27,6 +27,7 @@ class Command extends AsyncTask<String, Void, String> {
     private Context context;
     private boolean suAvailable = false;
     private List<String> suResult = null;
+    private String[] command = null;
 
     public Command() {}
 
@@ -35,12 +36,26 @@ class Command extends AsyncTask<String, Void, String> {
         this.context = context;
     }
 
+    public Command(Callback callback, Context context, String[] command) {
+        this.callback = callback;
+        this.context = context;
+        this.command = command;
+    }
+
     protected void setCallback(Callback callback) {
         this.callback = callback;
     }
 
     protected void setContext(Context context) {
         this.context = context;
+    }
+
+    protected List<String> getSuResult(){
+        return suResult;
+    }
+
+    protected String[] getCommand() {
+        return command;
     }
 
     @Override

@@ -253,11 +253,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 this, this);
     }
 
-    protected void verifySha256(final String filePath, final String sha256, final int uid,final ArrayList<Command> listProcess) {
+    protected void verifySha256(final String filePath, final String sha256, final int uid) {
 
-        final Command command = CommandFactory.execCommand(new String[]{"sha256sum -b " + pathToApkUnzipFolder +
+        final String[] commandToExecute = new String[]{"sha256sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"}, new Callback() {
+                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
+
+        final Command command = CommandFactory.execCommand(commandToExecute, new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -272,16 +274,17 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                if ( sha256.equals(calculatedHash) && command != null && listProcess.contains(command)  ) {
-                    listProcess.remove(command);
+                if ( sha256.equals(calculatedHash) ) {
+                    CommandFactory.removeCommand(commandToExecute);
+                    Log.d(filePath,sha256+" / "+calculatedHash);
                 } else {
-                    command.cancel(true);
+                    CommandFactory.cancelCommand(commandToExecute);
                     Log.d("false","calc: "+calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
                 }
             }
         }, this);
 
-        listProcess.add(command);
+        CommandFactory.addCommand(command);
 
     }
 
@@ -305,8 +308,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
 
-                if (sha1.equals(calculatedHash) && command != null && listProcess.contains(command)) {
-                    listProcess.remove(command);
+                if (sha1.equals(calculatedHash)) {
                 } else {
                     Log.d("false",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
                 }
@@ -335,7 +337,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     fileHash = entry.getValue().getValue("SHA1-Digest");
                     verifySha1(filePath,fileHash,uid,listProcess);
                 } else {
-                    verifySha256(filePath,fileHash,uid,listProcess);
+                    verifySha256(filePath,fileHash,uid);
                 }
 
             }
