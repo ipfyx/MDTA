@@ -42,6 +42,11 @@ class Command extends AsyncTask<String, Void, String> {
         this.command = command;
     }
 
+    public Command(Context context, String[] command) {
+        this.context = context;
+        this.command = command;
+    }
+
     protected void setCallback(Callback callback) {
         this.callback = callback;
     }

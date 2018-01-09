@@ -26,9 +26,10 @@ public final class CommandFactory {
         listProcess.add(exec_command);
     }
 
-    public static void addCommandToExecute (String[] command, Callback callback, Context context) {
-        Command exec_command = new Command(callback, context, command);
+    public static void addCommandToExecute (String[] command, Context context) {
+        Command exec_command = new Command(context, command);
         listProcess.add(exec_command);
+        Log.d("size",Integer.toString(listProcess.size()));
     }
 
     public static void removeCommand(String[] command) {
@@ -52,6 +53,10 @@ public final class CommandFactory {
 
     public static void addCommand(Command command) {
         listProcess.add(command);
+    }
+
+    public static void launchVerification() {
+
     }
 
 }

@@ -254,6 +254,16 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 this, this);
     }
 
+    protected void addFileToListVerification(final String filePath, final String hash, final int uid, final String hashMethod) {
+
+        final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
+                unzipApkToFolder + "_" +
+                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
+
+        CommandFactory.addCommandToExecute(commandToExecute,this);
+
+    }
+
     protected void verifyHash(final String filePath, final String hash, final int uid, final String hashMethod) {
 
         final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
@@ -284,10 +294,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 }
             }
         }, this);
-
     }
 
-    protected void verifyHashesManifest(final int uid, ApplicationInfo app,String unzipResult) {
+        protected void verifyHashesManifest(final int uid, ApplicationInfo app,String unzipResult) {
         try {
             JarFile jar = new JarFile(app.sourceDir);
             Manifest mf = jar.getManifest();
@@ -305,10 +314,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     if ( fileHash == null ){
                         //MD5 or somethingElse ?
                     } else {
-                        verifyHash(filePath,fileHash,uid,"sha1sum");
+                        addFileToListVerification(filePath,fileHash,uid,"sha1sum");
+                        //verifyHash(filePath,fileHash,uid,"sha1sum");
                     }
                 } else {
-                    verifyHash(filePath,fileHash,uid,"sha256sum");
+                    addFileToListVerification(filePath,fileHash,uid,"sha256sum");
+                    //verifyHash(filePath,fileHash,uid,"sha256sum");
                 }
 
             }
