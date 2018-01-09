@@ -67,8 +67,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void onClick(View v) {
                 getListNonSystemApps();
                 if (suAvailable) {
-                    for (int i = 0; i < nonSystemApps.size(); i++)
-                        scanApp(nonSystemApps.get(i));
+                    if ( !nonSystemApps.isEmpty() ) {
+                        scanApp(nonSystemApps.get(0));
+                    }
                 } else {
                     //TODO
                 }
@@ -81,8 +82,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void onClick(View v) {
                 getListSystemApps();
                 if (suAvailable) {
-                    for (int i = 0; i < systemApps.size(); i++)
-                        scanApp(systemApps.get(i));
+                    if ( !systemApps.isEmpty() ) {
+                        scanApp(systemApps.get(0));
+                    }
                 } else {
                     //TODO
                 }
@@ -182,11 +184,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void scanApp(final ApplicationInfo app) {
-
+/*
         Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + "" +
                 " " +
                 app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString
                 (app.uid));
+*/
+        Log.d("scan",app.packageName);
 
         //unzipApk(app.uid, app);
 
@@ -217,7 +221,20 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         // could be a
         // risk to rm -rf /&
 
+        Log.d("ending",app.packageName);
         CommandFactory.endScanApp(this, this, app);
+        if ( nonSystemApps.contains(app) ) {
+            nonSystemApps.remove(app);
+            if ( !nonSystemApps.isEmpty() ) {
+                scanApp(nonSystemApps.get(0));
+            }
+        } else {
+            systemApps.remove(app);
+            if ( !systemApps.isEmpty() ) {
+                scanApp(systemApps.get(0));
+            }
+        }
+
     }
 
     protected void addFileToListVerification(final String filePath, final String hash, final
@@ -272,12 +289,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             Map<String, Attributes> map = mf.getEntries();
 
             ArrayList<Command> listProcess = new ArrayList<Command>();
-
+            
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
                 String filePath = entry.getKey();
 
                 String fileHash = entry.getValue().getValue("SHA-256-Digest");
+
                 if (fileHash == null) {
                     fileHash = entry.getValue().getValue("SHA1-Digest");
                     if (fileHash == null) {

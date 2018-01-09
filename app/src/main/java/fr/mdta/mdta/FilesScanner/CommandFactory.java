@@ -49,11 +49,11 @@ public final class CommandFactory {
 
         };
 
-        Log.d("CommandFactory",listCommand[0]);
-        Log.d("CommandFactory",listCommand[1]);
-        Log.d("CommandFactory",listCommand[2]);
-        Log.d("CommandFactory",listCommand[3]);
-        Log.d("CommandFactory",listCommand[4]);
+//        Log.d("CommandFactory",listCommand[0]);
+//        Log.d("CommandFactory",listCommand[1]);
+//        Log.d("CommandFactory",listCommand[2]);
+//        Log.d("CommandFactory",listCommand[3]);
+//        Log.d("CommandFactory",listCommand[4]);
 
         Command exec_command = new Command(callback, context, listCommand);
         exec_command.execute(listCommand);
@@ -102,14 +102,16 @@ public final class CommandFactory {
     public static void launchVerification(Callback callback, ApplicationInfo app) {
 
         COUNT = 0;
-        for (int i = 0; i < listProcess.size(); i++) {
-            if (COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING) {
-                listProcess.get(i).execute(listProcess.get(i).getCommand());
-                COUNT += 1;
-            } else if (listProcess.isEmpty()) {
-                callback.OnTaskCompleted(app);
-            } else {
-                return;
+        if ( listProcess.isEmpty() ) {
+            callback.OnTaskCompleted(app);
+        } else {
+            for (int i = 0; i < listProcess.size(); i++) {
+                if (COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING) {
+                    listProcess.get(i).execute(listProcess.get(i).getCommand());
+                    COUNT += 1;
+                } else {
+                    return;
+                }
             }
         }
     }
