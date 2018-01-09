@@ -260,7 +260,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
 
-        final Command command = CommandFactory.execCommand(commandToExecute, new Callback() {
+        CommandFactory.execCommand(commandToExecute, new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -285,15 +285,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         }, this);
 
-        CommandFactory.addCommand(command);
-
     }
 
-    protected void verifySha1(final String filePath, final String sha1, final int uid, final ArrayList<Command> listProcess) {
+    protected void verifySha1(final String filePath, final String sha1, final int uid) {
 
-        final Command command = CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
+        final String[] commandToExecute = new String[]{"sha1sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"}, new Callback() {
+                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
+
+        CommandFactory.execCommand(commandToExecute, new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -308,16 +308,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-
-                if (sha1.equals(calculatedHash)) {
+                if ( sha1.equals(calculatedHash) ) {
+                    CommandFactory.removeCommand(commandToExecute);
+                    Log.d(filePath,sha1+" / "+calculatedHash);
                 } else {
-                    Log.d("false",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
+                    CommandFactory.cancelCommand(commandToExecute);
+                    Log.d("false","calc: "+calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
                 }
-
             }
         }, this);
-
-        listProcess.add(command);
 
     }
 
