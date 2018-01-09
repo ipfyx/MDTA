@@ -238,7 +238,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void addFileToListVerification(final String filePath, final String hash, final
-    ApplicationInfo app, final String hashMethod, ArrayList<Command> listProcess) {
+    ApplicationInfo app, final String hashMethod, final ArrayList<Command> listProcess) {
 
         final String[] commandToExecute = new String[]{hashMethod + " -b " + CommandFactory
                 .pathToApkUnzipFolder +
@@ -267,6 +267,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 if (hash.equals(calculatedHash)) {
                     Log.d(filePath, hash + " / " + calculatedHash);
                 } else {
+                    cancelVerification(app,filePath);
                     Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " +
                             filePath + " " + app.uid);
                 }
@@ -289,7 +290,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             Map<String, Attributes> map = mf.getEntries();
 
             ArrayList<Command> listProcess = new ArrayList<Command>();
-            
+
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
                 String filePath = entry.getKey();
@@ -313,6 +314,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    protected void cancelVerification(ApplicationInfo app, String filepath) {
+        for ( int i = 0; i < CommandFactory.listProcess.size(); i++) {
+            CommandFactory.listProcess.get(i).cancel(true);
+        }
+        CommandFactory.listProcess.clear();
+        mycallback.OnTaskCompleted(app);
+        Log.d("FilesScannerActivity",filepath+" hash is wrong");
     }
 
     @Override
