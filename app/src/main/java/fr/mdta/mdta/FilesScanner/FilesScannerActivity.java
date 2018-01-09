@@ -31,7 +31,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     private List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
-
+    
     private Callback mycallback = new Callback() {
         @Override
         public void OnErrorHappended() {
@@ -264,6 +264,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
+
                 if (hash.equals(calculatedHash)) {
                     Log.d(filePath, hash + " / " + calculatedHash);
                 } else {

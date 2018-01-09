@@ -1,5 +1,8 @@
 package fr.mdta.mdta.SignaturesScanner;
 
+import android.app.Activity;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -9,6 +12,7 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
+import java.util.List;
 
 import fr.mdta.mdta.R;
 import fr.mdta.mdta.SignaturesScanner.Model.PackageSignaturesInfo;
@@ -16,6 +20,10 @@ import fr.mdta.mdta.SignaturesScanner.Model.PackageSignaturesInfo;
 public class SignaturesScannerActivity extends AppCompatActivity {
 
     private TextView mResultTextView;
+
+    private ArrayList<PackageSignaturesInfo> installedApplications = new ArrayList<PackageSignaturesInfo>();
+    private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
+    private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +38,8 @@ public class SignaturesScannerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    ArrayList<PackageSignaturesInfo> result = SignaturesInfoFactory.getInstalledPackages(SignaturesScannerActivity.this);
+                    installedApplications = SignaturesInfoFactory.getInstalledPackages(SignaturesScannerActivity.this);
+
                     //From there you can have access to the good object to make something with signature
                 } catch (CertificateException e) {
                     e.printStackTrace();
