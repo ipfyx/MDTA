@@ -1,16 +1,12 @@
 package fr.mdta.mdta.FilesScanner;
 
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-
-import org.w3c.dom.Attr;
 
 import java.io.IOException;
 import java.security.CodeSigner;
@@ -24,30 +20,21 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.regex.Pattern;
 
 import eu.chainfire.libsuperuser.Shell;
 
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.R;
-import fr.mdta.mdta.SignaturesScanner.Model.PackageSignaturesInfo;
-import fr.mdta.mdta.SignaturesScanner.SignaturesInfoFactory;
-import fr.mdta.mdta.SignaturesScanner.SignaturesScannerActivity;
 
 public class FilesScannerActivity extends AppCompatActivity implements Callback {
 
-    List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
-    List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
-    List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
-
-    ArrayList<PackageSignaturesInfo> result = new ArrayList<PackageSignaturesInfo>();
+    private List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
+    private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
+    private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
     //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
     // or not
-
-    private String pathToApkUnzipFolder = "/data/local";
-    private String unzipApkToFolder = "unzipedApk";
-
+    
     private int my_uid = 0;
 
     boolean suAvailable = false;
@@ -90,7 +77,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         suAvailable = Shell.SU.available();
 
-        pathToApkUnzipFolder = getFilesDir().toString() + "/";
+        CommandFactory.pathToApkUnzipFolder = getFilesDir().toString() + "/";
 
         /*
         try {
@@ -224,8 +211,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void addFileToListVerification(final String filePath, final String hash, final int uid, final String hashMethod, ArrayList<Command> listProcess) {
 
-        final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
-                unzipApkToFolder + "_" +
+        final String[] commandToExecute = new String[]{hashMethod+" -b " + CommandFactory.pathToApkUnzipFolder +
+                CommandFactory.unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
 
         Command command = new Command(new Callback() {
