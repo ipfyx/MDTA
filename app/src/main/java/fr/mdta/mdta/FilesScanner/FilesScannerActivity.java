@@ -315,14 +315,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                         //MD5 or somethingElse ?
                     } else {
                         addFileToListVerification(filePath,fileHash,uid,"sha1sum");
-                        //verifyHash(filePath,fileHash,uid,"sha1sum");
                     }
                 } else {
                     addFileToListVerification(filePath,fileHash,uid,"sha256sum");
-                    //verifyHash(filePath,fileHash,uid,"sha256sum");
                 }
-
             }
+            System.out.println("Launching");
+            CommandFactory.launchVerification();
 
         } catch (IOException e) {
             e.printStackTrace();

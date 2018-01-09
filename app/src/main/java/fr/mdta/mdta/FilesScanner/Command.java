@@ -84,12 +84,16 @@ class Command extends AsyncTask<String, Void, String> {
         if (suAvailable) {
             suResult = Shell.SU.run(params);
         }
+        Log.d("shell",params[0]);
+        Log.d("shellResult",suResult.toString());
         return suResult.toString();
     }
 
     @Override
     protected void onPostExecute(String result) {
         //dialog.dismiss();
+
+        Log.d("command","toto \n");
 
         StringBuilder sb = (new StringBuilder()).append((char) 10);
         if (suResult != null) {
@@ -102,6 +106,6 @@ class Command extends AsyncTask<String, Void, String> {
         }
         callback.OnTaskCompleted(sb.toString());
 
-        //Log.d("CommandFactory", sb.toString());
+        Log.d("Command", sb.toString());
     }
 }

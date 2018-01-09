@@ -20,16 +20,38 @@ public final class CommandFactory {
 
     public static ArrayList<Command> listProcess = new ArrayList<Command>();
 
+    static final int MAX_PROCESS = 5;
+
+    static int COUNT = 0;
+
     public static void execCommand (String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, context, command);
         exec_command.execute(command);
-        listProcess.add(exec_command);
     }
 
-    public static void addCommandToExecute (String[] command, Context context) {
-        Command exec_command = new Command(context, command);
+    public static void addCommandToExecute (final String[] command, Context context) {
+        Command exec_command = new Command(new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
+            }
+
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                COUNT-=1;
+                Log.d("decreased","COUNT");
+                removeCommand(command);
+                launchVerification();
+            }
+        }, context, command);
         listProcess.add(exec_command);
         Log.d("size",Integer.toString(listProcess.size()));
+        Log.d("command",exec_command.getCommand()[0]);
     }
 
     public static void removeCommand(String[] command) {
@@ -57,6 +79,19 @@ public final class CommandFactory {
 
     public static void launchVerification() {
 
+        COUNT = 0;
+        for (int i = 0; i < listProcess.size(); i++ ) {
+            System.out.println(listProcess.get(i).getCommand()[0]);
+            System.out.println(listProcess.get(i).getStatus());
+            Log.d(Integer.toString(i),Integer.toString(COUNT));
+            if ( COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING ) {
+                listProcess.get(i).execute(listProcess.get(i).getCommand());
+                COUNT+=1;
+            }else {
+                Log.d("MAX_PROCESS","reached");
+                return;
+            }
+        }
     }
 
 }
