@@ -254,9 +254,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 this, this);
     }
 
-    protected void verifySha256(final String filePath, final String sha256, final int uid) {
+    protected void verifyHash(final String filePath, final String hash, final int uid, final String hashMethod) {
 
-        final String[] commandToExecute = new String[]{"sha256sum -b " + pathToApkUnzipFolder +
+        final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
 
@@ -275,45 +275,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                if ( sha256.equals(calculatedHash) ) {
+                if ( hash.equals(calculatedHash) ) {
                     CommandFactory.removeCommand(commandToExecute);
-                    Log.d(filePath,sha256+" / "+calculatedHash);
+                    Log.d(filePath,hash+" / "+calculatedHash);
                 } else {
                     CommandFactory.cancelCommand(commandToExecute);
-                    Log.d("false","calc: "+calculatedHash+" sha256:"+sha256+" "+filePath+" "+uid);
-                }
-            }
-        }, this);
-
-    }
-
-    protected void verifySha1(final String filePath, final String sha1, final int uid) {
-
-        final String[] commandToExecute = new String[]{"sha1sum -b " + pathToApkUnzipFolder +
-                unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
-
-        CommandFactory.execCommand(commandToExecute, new Callback() {
-            @Override
-            public void OnErrorHappended() {
-
-            }
-
-            @Override
-            public void OnErrorHappended(String error) {
-
-            }
-
-            @Override
-            public void OnTaskCompleted(Object object) {
-                String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
-                        .replaceAll("\\r", "");
-                if ( sha1.equals(calculatedHash) ) {
-                    CommandFactory.removeCommand(commandToExecute);
-                    Log.d(filePath,sha1+" / "+calculatedHash);
-                } else {
-                    CommandFactory.cancelCommand(commandToExecute);
-                    Log.d("false","calc: "+calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
+                    Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+uid);
                 }
             }
         }, this);
@@ -338,10 +305,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     if ( fileHash == null ){
                         //MD5 or somethingElse ?
                     } else {
-                        verifySha1(filePath,fileHash,uid);
+                        verifyHash(filePath,fileHash,uid,"sha1sum");
                     }
                 } else {
-                    verifySha256(filePath,fileHash,uid);
+                    verifyHash(filePath,fileHash,uid,"sha256sum");
                 }
 
             }
