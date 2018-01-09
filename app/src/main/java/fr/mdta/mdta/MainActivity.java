@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import fr.mdta.mdta.PermissionsScanner.PermissionsScannerActivity;
+import fr.mdta.mdta.SignaturesScanner.SignaturesScannerActivity;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,11 +27,20 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = (TextView) findViewById(R.id.sample_text);
         tv.setText(stringFromJNI());
 
-        Button button = (Button) findViewById(R.id.permissionScanner);
+        Button button = (Button) findViewById(R.id.permissionsScanner);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, PermissionsScannerActivity.class);
+                startActivity(i);
+            }
+        });
+
+        Button signatureButton = (Button) findViewById(R.id.signaturesScanner);
+        signatureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, SignaturesScannerActivity.class);
                 startActivity(i);
             }
         });

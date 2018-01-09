@@ -20,6 +20,8 @@ public class APItools {
     //API URLs
     private final static String URL_API_BASE = APIconf.URL_API_SERVER;
     public final static String URL_API_BASIC_SCAN = URL_API_BASE + "/permissions/basicscan";
+    public final static String URL_API_BLACKLIST = URL_API_BASE + "/signatures/blacklist";
+    public final static String URL_API_DEVELOPER_SIGNATURE_SCAN = URL_API_BASE + "/signatures/developersignaturescan";
 
     /**
      * Convert every Object into JSON string
