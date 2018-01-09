@@ -79,7 +79,7 @@ public final class CommandFactory {
         listProcess.add(command);
     }
 
-    public static void launchVerification() {
+    public static void launchVerification(Callback callback) {
 
         COUNT = 0;
         for (int i = 0; i < listProcess.size(); i++ ) {

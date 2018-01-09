@@ -222,13 +222,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.execCommand(listCommand, this, this);*/
     }
 
-    protected void addFileToListVerification(final String filePath, final String hash, final int uid, final String hashMethod) {
+    protected void addFileToListVerification(final String filePath, final String hash, final int uid, final String hashMethod, ArrayList<Command> listProcess) {
 
         final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
 
-        CommandFactory.addCommandToExecute(commandToExecute,this,new Callback() {
+        Command command = new Command(new Callback() {
             @Override
             public void OnErrorHappended() {
 
@@ -253,7 +253,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+uid);
                 }
             }
-        });
+        },this,commandToExecute);
+
+        listProcess.add(command);
 
     }
 
@@ -280,12 +282,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     if ( fileHash == null ){
                         //MD5 or somethingElse ?
                     } else {
-                        addFileToListVerification(filePath,fileHash,uid,"sha1sum");
+                        addFileToListVerification(filePath,fileHash,uid,"sha1sum",listProcess);
                     }
                 } else {
-                    addFileToListVerification(filePath,fileHash,uid,"sha256sum");
+                    addFileToListVerification(filePath,fileHash,uid,"sha256sum",listProcess);
                 }
             }
+            CommandFactory.listProcess = listProcess;
             CommandFactory.launchVerification();
 
         } catch (IOException e) {
