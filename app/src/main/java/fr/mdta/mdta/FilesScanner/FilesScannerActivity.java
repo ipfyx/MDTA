@@ -278,38 +278,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     }
 
-    protected void verifyHash(final String filePath, final String hash, final int uid, final String hashMethod) {
-
-        final String[] commandToExecute = new String[]{hashMethod+" -b " + pathToApkUnzipFolder +
-                unzipApkToFolder + "_" +
-                Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"};
-
-        CommandFactory.execCommand(commandToExecute, new Callback() {
-            @Override
-            public void OnErrorHappended() {
-
-            }
-
-            @Override
-            public void OnErrorHappended(String error) {
-
-            }
-
-            @Override
-            public void OnTaskCompleted(Object object) {
-                String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
-                        .replaceAll("\\r", "");
-                if ( hash.equals(calculatedHash) ) {
-                    CommandFactory.removeCommand(commandToExecute);
-                    Log.d(filePath,hash+" / "+calculatedHash);
-                } else {
-                    CommandFactory.cancelCommand(commandToExecute);
-                    Log.d("false","calc: "+calculatedHash+hashMethod+" "+hash+" "+filePath+" "+uid);
-                }
-            }
-        }, this);
-    }
-
         protected void verifyHashesManifest(final int uid, ApplicationInfo app,String unzipResult) {
         try {
 
