@@ -91,6 +91,7 @@ public abstract class PostRequester extends AsyncTask<String, String, String> {
             }
 
             int statusCode = mUrlConnection.getResponseCode();
+            Log.d("statuscode", statusCode + "");
             if (statusCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = new BufferedInputStream(mUrlConnection.getInputStream());
                 response = convertStreamToString(inputStream);

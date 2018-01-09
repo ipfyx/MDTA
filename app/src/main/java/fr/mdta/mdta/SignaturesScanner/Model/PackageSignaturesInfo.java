@@ -67,7 +67,7 @@ public class PackageSignaturesInfo {
          */
         public boolean verifySignature(String calculatedHash, X509Certificate packageCertificate) {
             try {
-                Signature verifier = Signature.getInstance(mHashingMethod);
+                Signature verifier = Signature.getInstance(packageCertificate.getSigAlgName());
                 verifier.initVerify(packageCertificate);
                 verifier.update(calculatedHash.getBytes());
 

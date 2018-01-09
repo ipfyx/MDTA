@@ -9,6 +9,7 @@ public class DeveloperSignatureScanResultItem {
     private String error;
     private ArrayList<PackageDeveloperSignatureScanResult> result;
 
+
     private class PackageDeveloperSignatureScanResult {
         private String PackageName;
 
