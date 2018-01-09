@@ -287,7 +287,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void verifySha1(final String filePath, final String sha1, final int uid, final ArrayList<Command> listProcess) {
 
-        CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
+        final Command command = CommandFactory.execCommand(new String[]{"sha1sum -b " + pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
                 Integer.toString(uid) + "/" + filePath + "| xxd -r -p | base64"}, new Callback() {
             @Override
@@ -304,18 +304,17 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                if ( calculatedHash.isEmpty() ) {
 
+                if (sha1.equals(calculatedHash) && command != null && listProcess.contains(command)) {
+                    listProcess.remove(command);
                 } else {
-                    if (sha1.equals(calculatedHash)) {
-
-                    } else {
-                        Log.d("false",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
-                    }
+                    Log.d("false",calculatedHash+" sha1:"+sha1+" "+filePath+" "+uid);
                 }
 
             }
         }, this);
+
+        listProcess.add(command);
 
     }
 
