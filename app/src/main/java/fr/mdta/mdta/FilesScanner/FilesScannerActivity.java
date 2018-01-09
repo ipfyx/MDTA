@@ -206,53 +206,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         //TODO : Manage AsyncTask properly
     }
 
-
-    protected void unzipApk(final int uid, final ApplicationInfo app) {
-        /**
-         * https://stackoverflow
-         * .com/questions/2634991/android-1-6-android-view-windowmanagerbadtokenexception-unable
-         * -to-add-window
-         */
-        if (suAvailable) {
-            //Just in case unzipApkToFolder is empty, we move to directory /data/local since
-            // there could be a
-            // risk to rm -rf /
-
-            String[] listCommand = new String[]{
-                    "cd " + pathToApkUnzipFolder,
-                    "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString
-                            (uid),
-                    "mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
-                            .toString(uid),
-                    "unzip " + app.sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
-                            + Integer.toString(uid),
-                    "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
-                            unzipApkToFolder + "_" + Integer.toString(uid)
-
-            };
-            CommandFactory.execCommand(listCommand, new Callback() {
-                @Override
-                public void OnErrorHappended() {
-
-                }
-
-                @Override
-                public void OnErrorHappended(String error) {
-
-                }
-
-                @Override
-                public void OnTaskCompleted(Object object) {
-                    verifyHashesManifest(uid,app,(String) object);
-                }
-            }, this);
-
-        } else {
-            TextView tv = (TextView) findViewById(R.id.sample_text);
-            tv.setText("Non rooted phone");
-        }
-    }
-
     //TODO : endScanApp(app);
     //TODO: empty listProcess, rm folder
     protected void endScanApp(ApplicationInfo app) {
