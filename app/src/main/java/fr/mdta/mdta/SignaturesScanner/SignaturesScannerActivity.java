@@ -22,8 +22,8 @@ public class SignaturesScannerActivity extends AppCompatActivity {
     private TextView mResultTextView;
 
     private ArrayList<PackageSignaturesInfo> installedApplications = new ArrayList<PackageSignaturesInfo>();
-    private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
-    private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
+    private List<PackageSignaturesInfo> systemApps = new ArrayList<PackageSignaturesInfo>();
+    private List<PackageSignaturesInfo> nonSystemApps = new ArrayList<PackageSignaturesInfo>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
