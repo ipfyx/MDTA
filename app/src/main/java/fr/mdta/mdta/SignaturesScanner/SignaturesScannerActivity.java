@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,6 +42,9 @@ public class SignaturesScannerActivity extends AppCompatActivity {
                     installedApplications = SignaturesInfoFactory.getInstalledPackages(SignaturesScannerActivity.this);
                     getListSystemApps();
                     getListNonSystemApps();
+
+                    Log.d("SignatureScanner",installedApplications.get(0).getmAppDeveloperBase64Key());
+
 
                     //From there you can have access to the good object to make something with signature
                 } catch (CertificateException e) {
