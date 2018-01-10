@@ -39,6 +39,8 @@ public class SignaturesScannerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     installedApplications = SignaturesInfoFactory.getInstalledPackages(SignaturesScannerActivity.this);
+                    getListSystemApps();
+                    getListNonSystemApps();
 
                     //From there you can have access to the good object to make something with signature
                 } catch (CertificateException e) {
@@ -48,5 +50,21 @@ public class SignaturesScannerActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    protected void getListSystemApps() {
+        for (int i = 0; i < installedApplications.size(); i++) {
+            if ((installedApplications.get(i).getmFlag() & ApplicationInfo.FLAG_SYSTEM) != 0) {
+                systemApps.add(installedApplications.get(i));
+            }
+        }
+    }
+
+    protected void getListNonSystemApps() {
+        for (int i = 0; i < installedApplications.size(); i++) {
+            if ((installedApplications.get(i).getmFlag() & ApplicationInfo.FLAG_SYSTEM) == 0) {
+                nonSystemApps.add(installedApplications.get(i));
+            }
+        }
     }
 }
