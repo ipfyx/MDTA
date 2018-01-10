@@ -3,6 +3,7 @@ package fr.mdta.mdta.SignaturesScanner;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -27,16 +28,25 @@ public class SignaturesInfoFactory {
 
     public static ArrayList<PackageSignaturesInfo> getInstalledPackages(Context context) throws IOException, CertificateException {
 
-
         ArrayList<PackageSignaturesInfo> packageInfoArrayList = new ArrayList<PackageSignaturesInfo>();
 
         List<PackageInfo> installedPackages = context.getPackageManager().getInstalledPackages(context.getPackageManager().GET_META_DATA + context.getPackageManager().GET_SIGNATURES);
 
+        List<ApplicationInfo> installedApplications = context.getPackageManager().getInstalledApplications(PackageManager
+                .GET_SHARED_LIBRARY_FILES);
 
         for (int i = 0; i < installedPackages.size(); i++) {
             PackageInfo packageInfo = installedPackages.get(i);
             String appName = packageInfo.applicationInfo.loadLabel(context.getPackageManager()).toString();
             String packageName = packageInfo.packageName;
+            int flag = 0;
+
+            for ( int j = 0; j < installedApplications.size(); j++ ) {
+                if ( installedApplications.get(j).packageName.equals(packageName)) {
+                    flag = installedApplications.get(j).flags;
+                }
+            }
+
             String apkSourceDir;
             X509Certificate appDeveloperCertificate = null;
             ArrayList<PackageSignaturesInfo.ApkFileSignature> apkFileSignatures = new ArrayList<>();
@@ -74,7 +84,7 @@ public class SignaturesInfoFactory {
             }
             if (appDeveloperCertificate != null) {
                 PackageSignaturesInfo packageSignaturesInfo = new PackageSignaturesInfo(appName, packageName, apkSourceDir, appDeveloperCertificate
-                        , apkFileSignatures);
+                        , apkFileSignatures, flag);
                 packageInfoArrayList.add(packageSignaturesInfo);
             }
 

@@ -19,14 +19,16 @@ public class PackageSignaturesInfo {
     private String mApkSourceDir;
     private X509Certificate mAppDeveloperCertificate;
     private ArrayList<ApkFileSignature> mApkFileSignatures;
+    private int mFlag;
 
     public PackageSignaturesInfo(String mAppName, String mPackageName, String mApkSourceDir,
-                                 X509Certificate mAppDeveloperCertificate, ArrayList<ApkFileSignature> mApkFileSignatures) {
+                                 X509Certificate mAppDeveloperCertificate, ArrayList<ApkFileSignature> mApkFileSignatures, int mFlag) {
         this.mAppName = mAppName;
         this.mPackageName = mPackageName;
         this.mApkSourceDir = mApkSourceDir;
         this.mAppDeveloperCertificate = mAppDeveloperCertificate;
         this.mApkFileSignatures = mApkFileSignatures;
+        this.mFlag = mFlag;
     }
 
     public String getmAppName() {
@@ -53,6 +55,7 @@ public class PackageSignaturesInfo {
         return mApkFileSignatures;
     }
 
+    public int getmFlag() { return mFlag; }
 
     public static class ApkFileSignature {
         private String mPath;
