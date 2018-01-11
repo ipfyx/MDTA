@@ -4,10 +4,15 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.util.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -59,13 +64,46 @@ public class SignaturesInfoFactory {
             ArrayList<PackageSignaturesInfo.ApkFileSignature> apkFileSignatures = new ArrayList<>();
 
             //We assume that application has only one signature, this is clearly the 99% case.
-            if (packageInfo.signatures != null && packageInfo.signatures.length >= 0) {
+            if (packageInfo.signatures != null && packageInfo.signatures.length >= 0 && (packageInfo.packageName.equals("fr.mdta.mdta") || packageInfo.packageName.equals("eu.chainfire.supersu"))) {
                 android.content.pm.Signature s = packageInfo.signatures[0];
+                Log.d("hashcode",Integer.toString(s.hashCode()));
+                Class c;
+                try {
+
+                    /**
+                     * https://stackoverflow.com/questions/160970/how-do-i-invoke-a-java-method-when-given-the-method-name-as-a-string
+                     */
+                    c = Class.forName("android.content.pm.Signature");
+                    Method m = c.getMethod("getPublicKey");
+                    Object o = m.invoke(s);
+                    Log.d("pubkey", o.toString());
+
+                    m = c.getMethod("getChainSignatures");
+                    o = m.invoke(s);
+                    Signature[] s2 = (Signature []) o;
+                    Log.d(packageInfo.packageName, s2[0].toCharsString());
+
+
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                }
+
                 byte[] cert = s.toByteArray();
                 InputStream input = new ByteArrayInputStream(cert);
                 CertificateFactory cf = CertificateFactory.getInstance("X509");
                 appDeveloperCertificate = (X509Certificate) cf.generateCertificate(input);
-            }
+                String tbs = bytesToHex(appDeveloperCertificate.getTBSCertificate());
+
+                Log.d("TBS",tbs);
+                String sign = bytesToHex(appDeveloperCertificate.getSignature());
+                Log.d("Signature",sign);
+        }
 
             ApplicationInfo ai = packageInfo.applicationInfo;
             apkSourceDir = ai.sourceDir;
@@ -102,5 +140,18 @@ public class SignaturesInfoFactory {
         }
 
         return packageInfoArrayList;
+    }
+
+    public static String bytesToHex(byte[] bytes) {
+
+        final char[] hexArray = "0123456789ABCDEF".toCharArray();
+
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
     }
 }
