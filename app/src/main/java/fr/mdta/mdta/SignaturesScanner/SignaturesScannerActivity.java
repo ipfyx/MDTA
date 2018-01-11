@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +47,11 @@ public class SignaturesScannerActivity extends AppCompatActivity {
                     getListSystemApps();
                     getListNonSystemApps();
 
-                    Log.d("SignatureScanner",installedApplications.get(0).getmAppDeveloperBase64Key());
-
+                    for ( int i = 0; i < installedApplications.size(); i++) {
+                        if ( ! SignaturesInfoFactory.verifyCertificat(installedApplications.get(i)) ) {
+                            warnUser(installedApplications.get(i));
+                        }
+                    }
 
                     //From there you can have access to the good object to make something with signature
                 } catch (CertificateException e) {
@@ -70,5 +77,10 @@ public class SignaturesScannerActivity extends AppCompatActivity {
                 nonSystemApps.add(installedApplications.get(i));
             }
         }
+    }
+
+    public void warnUser(PackageSignaturesInfo pi) {
+        //TODO
+        Log.d(pi.getmAppName(),"InvalidCertificat");
     }
 }
