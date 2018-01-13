@@ -91,6 +91,22 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         });
 
+        final Button cancelScan = (Button) findViewById(R.id.cancel);
+        cancelScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getListSystemApps();
+                if (suAvailable) {
+                    for ( int i = 0; i < CommandFactory.listProcess.size(); i++) {
+                        CommandFactory.listProcess.get(i).cancel(true);
+                    }
+                    CommandFactory.listProcess.clear();
+                } else {
+                    //TODO
+                }
+            }
+        });
+
         installedApplications = this.getPackageManager().getInstalledApplications(PackageManager
                 .GET_SHARED_LIBRARY_FILES);
 
