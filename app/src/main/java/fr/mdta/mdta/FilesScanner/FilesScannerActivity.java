@@ -8,7 +8,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.CodeSigner;
 import java.security.Signature;
 import java.security.cert.Certificate;
@@ -31,7 +39,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     private List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
-    
+
     private Callback mycallback = new Callback() {
         @Override
         public void OnErrorHappended() {
@@ -95,6 +103,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         cancelScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //TODO clean up directory
                 if (suAvailable) {
                     for ( int i = 0; i < CommandFactory.listProcess.size(); i++) {
                         CommandFactory.listProcess.get(i).cancel(true);
@@ -103,6 +112,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 } else {
                     //TODO
                 }
+            }
+        });
+
+        final Button openFile = (Button) findViewById(R.id.openfile);
+        openFile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readFile();
             }
         });
 
@@ -188,7 +205,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 verifyHashesManifest(app.uid, app, (String) object);
             }
-        }, this, app, my_uid);
+        }, this, app, my_uid, getAppSELinuxContext());
 
         //TODO : Manage AsyncTask properly
     }
@@ -303,6 +320,85 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.listProcess.clear();
         mycallback.OnTaskCompleted(app);
         Log.d("FilesScannerActivity",filepath+" hash is wrong");
+    }
+
+    protected String getAppSELinuxContext() {
+
+        /**
+         * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/SELinux.java
+         */
+        Class seLinux = null;
+        try {
+            seLinux = Class.forName("android.os.SELinux");
+            Method context = seLinux.getMethod("getContext");
+            String result = (String) context.invoke(seLinux.newInstance());
+            Log.d("context",result);
+            return result.replace("untrusted_app","app_data_file")
+                    .replace("r","object_r");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    protected void readFile() {
+        final String fileName = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
+                "10080" + "/" + "AndroidManifest.xml";
+        final String directory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
+                "10080";
+
+        CommandFactory.changeDirectoryContext(new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
+            }
+
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                try {
+
+                    String result = (String) object;
+                    Log.d("result",result);
+
+                    String line = null;
+
+                    // FileReader reads text files in the default encoding.
+                    FileReader fileReader = new FileReader(fileName);
+
+                    // Always wrap FileReader in BufferedReader.
+                    BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+                    while ((line = bufferedReader.readLine()) != null) {
+                        System.out.println(line);
+                    }
+
+                    // Always close files.
+                    bufferedReader.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, this, directory, getAppSELinuxContext());
     }
 
     @Override

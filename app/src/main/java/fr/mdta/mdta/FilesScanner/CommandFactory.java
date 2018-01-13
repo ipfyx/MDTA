@@ -34,7 +34,7 @@ public final class CommandFactory {
     }
 
     public static void unzipCommand(Callback callback, Context context, ApplicationInfo app, int
-            my_uid) {
+            my_uid, String SELinuxContext) {
 
         String[] listCommand = new String[]{
                 "cd " + pathToApkUnzipFolder,
@@ -45,7 +45,9 @@ public final class CommandFactory {
                 "unzip " + app.sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
                         + Integer.toString(app.uid),
                 "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
-                        unzipApkToFolder + "_" + Integer.toString(app.uid)
+                        unzipApkToFolder + "_" + Integer.toString(app.uid),
+                "chcon -R  " + SELinuxContext + " " + pathToApkUnzipFolder + unzipApkToFolder +
+                        "_" + Integer.toString(app.uid)
 
         };
 
@@ -116,4 +118,12 @@ public final class CommandFactory {
         }
     }
 
+    public static void changeDirectoryContext(Callback callback, Context context, String directoryPath, String SELinuxContext) {
+
+        String[] listCommand = new String[]{
+                "chcon -R " + SELinuxContext + " " + directoryPath
+        };
+        Command exec_command = new Command(callback, context, listCommand);
+        exec_command.execute(listCommand);
+    }
 }
