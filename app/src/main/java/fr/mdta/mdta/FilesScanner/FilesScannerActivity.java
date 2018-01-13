@@ -98,42 +98,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         CommandFactory.pathToApkUnzipFolder = getFilesDir().toString() + "/";
 
-        /*
-        try {
-            pi = this.getPackageManager().getPackageInfo(getPackageName(), PackageManager
-                    .GET_SIGNATURES);
-
-            result = SignaturesInfoFactory.getInstalledPackages(this);
-            Boolean certRSA = result.get(10).getmApkFileSignatures().get(0).verifySignature(pi
-            .signatures[0].toCharsString(),
-                    result.get(10).getmAppDeveloperCertificate());
-
-            //https://stackoverflow.com/questions/17035271/what-does-hide-mean-in-the-android
-            -source-code
-            android.content.pm.Signature sign = pi.signatures[0];
-            sign.hashCode();
-
-            for (android.content.pm.Signature signs : pi.signatures) {
-                if (sign != null) {
-                    javax.security.cert.X509Certificate cert = createCert(sign.toByteArray());
-                    String dn = (cert == null?"<NULL>":cert.getIssuerDN()).toString();
-                    Log.d("dn",dn);
-                }
-            }
-
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        for ( int i = 0; i < pi.signatures.length; i++) {
-            Log.i("appSignature", pi.signatures[i].toCharsString());
-        }
-        */
-
     }
 
     public static javax.security.cert.X509Certificate createCert(byte[] bytes) {
