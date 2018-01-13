@@ -95,7 +95,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         cancelScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getListSystemApps();
                 if (suAvailable) {
                     for ( int i = 0; i < CommandFactory.listProcess.size(); i++) {
                         CommandFactory.listProcess.get(i).cancel(true);
