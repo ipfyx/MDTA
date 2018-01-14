@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -119,8 +120,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         openFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                readFile();
+                //readFile();
+                getFileAppSELinuxContext();
             }
+
         });
 
         installedApplications = this.getPackageManager().getInstalledApplications(PackageManager
@@ -348,6 +351,50 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             e.printStackTrace();
             return null;
         } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    protected String getFileAppSELinuxContext() {
+
+        /**
+         * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/SELinux.java
+         */
+
+        final String fileName = CommandFactory.pathToApkUnzipFolder + "testSELinux.txt";
+
+        Class seLinux = null;
+        try {
+
+            PrintWriter writer = new PrintWriter(fileName, "UTF-8");
+            writer.println("testSELinux");
+            writer.close();
+
+            seLinux = Class.forName("android.os.SELinux");
+            Method context = seLinux.getMethod("getFileContext",new Class[] {String.class});
+            String result = (String) context.invoke(seLinux.newInstance(),new Object[]{fileName});
+            Log.d("context",result);
+            return result;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            return null;
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            return null;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
         }
