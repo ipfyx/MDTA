@@ -113,8 +113,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         openFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //readFile();
-                getFileAppSELinuxContext();
+                readFile();
             }
 
         });
@@ -329,8 +328,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             Method context = seLinux.getMethod("getContext");
             String result = (String) context.invoke(seLinux.newInstance());
             Log.d("context",result);
-            return result.replace("untrusted_app","app_data_file")
-                    .replace("r","object_r");
+            return result;
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -443,7 +442,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 }
 
             }
-        }, this, directory, getAppSELinuxContext());
+        }, this, directory, getFileAppSELinuxContext());
     }
 
     @Override
