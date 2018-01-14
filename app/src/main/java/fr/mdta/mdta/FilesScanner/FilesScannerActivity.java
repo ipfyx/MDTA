@@ -398,10 +398,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void readFile() {
-        final String fileName = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
-                "10080" + "/" + "AndroidManifest.xml";
         final String directory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 "10080";
+        final String fileName = directory + "/META-INF/CERT.SF";
+
 
         CommandFactory.changeDirectoryContext(new Callback() {
             @Override
@@ -417,9 +417,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void OnTaskCompleted(Object object) {
                 try {
-
-                    String result = (String) object;
-                    Log.d("result",result);
 
                     String line = null;
 
@@ -440,7 +437,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }, this, directory, getFileAppSELinuxContext());
     }
