@@ -16,13 +16,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.CodeSigner;
-import java.security.Signature;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -362,20 +355,22 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
          * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/SELinux.java
          */
 
-        final String fileName = CommandFactory.pathToApkUnzipFolder + "testSELinux.txt";
+        final String fileName = CommandFactory.pathToApkUnzipFolder + "SELinuxTest.txt";
 
         Class seLinux = null;
+        PrintWriter writer = null;
         try {
 
-            PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-            writer.println("testSELinux");
-            writer.close();
+            writer = new PrintWriter(fileName, "UTF-8");
+            writer.println(fileName);
 
             seLinux = Class.forName("android.os.SELinux");
             Method context = seLinux.getMethod("getFileContext",new Class[] {String.class});
             String result = (String) context.invoke(seLinux.newInstance(),new Object[]{fileName});
             Log.d("context",result);
+
             return result;
+
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return null;
@@ -397,6 +392,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
+        } finally {
+            writer.flush();
+            writer.close();
         }
     }
 
