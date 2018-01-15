@@ -45,6 +45,6 @@ dependencies {
     }
     //sourceCompatibility = 1.7
     //targetCompatibility = 1.7
-
     //compile files('src/main/libs/smali-2.2.2.jar')
+    provided files('src/main/libs/baksmali-2.2.2.jar')
 }
