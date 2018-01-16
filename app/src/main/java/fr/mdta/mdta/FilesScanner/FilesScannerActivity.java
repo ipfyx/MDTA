@@ -412,22 +412,20 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         try {
 
-            File classesDex = new File(appDirectory+"/classes.dex");
+            ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
-            if ( classesDex.exists() ) {
-                DexBackedDexFile dexFile = DexFileFactory.loadDexFile(appDirectory+"/classes.dex", null);
+            for ( int i = 0; i < listDexFile.size(); i++) {
+                DexBackedDexFile dexFile = DexFileFactory.loadDexFile(listDexFile.get(i), null);
+                Log.d("scanning",listDexFile.get(i).getPath());
                 Iterator iterator = dexFile.getMethods().iterator();
-
                 while (iterator.hasNext()) {
                     String a = iterator.next().toString();
                     if ( a.contains("shell")) {
                         System.out.println("Value: " + a + " ");
                     }
                 }
-
-            } else {
-                Log.d(app.packageName,"not classes.dex for "+Integer.toString(app.uid));
             }
+
             endScanApp(app,TypeScan.DEX_SCAN);
 
         } catch (FileNotFoundException e) {
@@ -435,6 +433,20 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    protected ArrayList<File> getDexFiles(String appDirectory) {
+        File classesDex = new File(appDirectory+"/classes.dex");
+        int count = 0;
+
+        ArrayList<File> listDexFile = new ArrayList<File>();
+
+        while ( classesDex.exists() ) {
+            count += 1;
+            listDexFile.add(classesDex);
+            classesDex = new File(appDirectory+"/classes"+count+".dex");
+        }
+        return listDexFile;
     }
 
     @Override
