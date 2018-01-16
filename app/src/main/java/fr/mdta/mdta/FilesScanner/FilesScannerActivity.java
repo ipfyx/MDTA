@@ -8,20 +8,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import org.jf.dexlib2.DexFileFactory;
+import org.jf.dexlib2.dexbacked.DexBackedDexFile;
 
 import eu.chainfire.libsuperuser.Shell;
 
@@ -113,6 +115,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         openFile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                getListNonSystemApps();
                 readFile();
             }
 
@@ -399,9 +402,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void readFile() {
         final String directory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
-                "10080";
-        final String fileName = directory + "/META-INF/CERT.SF";
-
+                my_uid;
 
         CommandFactory.changeDirectoryContext(new Callback() {
             @Override
@@ -418,20 +419,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 try {
 
-                    String line = null;
+                    DexBackedDexFile dexFile = DexFileFactory.loadDexFile(directory+"/classes.dex", null);
+                    Iterator iterator = dexFile.getMethods().iterator();
 
-                    // FileReader reads text files in the default encoding.
-                    FileReader fileReader = new FileReader(fileName);
-
-                    // Always wrap FileReader in BufferedReader.
-                    BufferedReader bufferedReader = new BufferedReader(fileReader);
-
-                    while ((line = bufferedReader.readLine()) != null) {
-                        System.out.println(line);
+                    while (iterator.hasNext()) {
+                        System.out.println("Value: " + iterator.next() + " ");
                     }
-
-                    // Always close files.
-                    bufferedReader.close();
+                    
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
