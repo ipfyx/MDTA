@@ -209,7 +209,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     scanDexFile(app);
                 }
             }
-        }, this, app, my_uid, getAppSELinuxContext());
+        }, this, app, my_uid, getFileAppSELinuxContext());
 
         //TODO : Manage AsyncTask properly
     }
@@ -227,14 +227,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             nonSystemApps.remove(app);
             if ( !nonSystemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN) ) {
                 scanApp(nonSystemApps.get(0),TypeScan.SIGNATURE_SCAN);
-            } else {
+            } else if ( !nonSystemApps.isEmpty() ) {
                 scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
             }
         } else {
             systemApps.remove(app);
             if ( !systemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
                 scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
-            } else {
+            } else if ( !systemApps.isEmpty() ) {
                 scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
             }
         }
