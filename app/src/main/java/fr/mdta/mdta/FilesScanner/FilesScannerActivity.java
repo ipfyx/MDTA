@@ -202,7 +202,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 if ( typeScan.equals("signature") ) {
                     verifyHashesManifest(app.uid, app, (String) object);
                 } else {
-                    scanDexFile(app);
+                    scanAppDexFile(app);
                 }
             }
         }, this, app, my_uid, getFileAppSELinuxContext());
@@ -404,29 +404,35 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
-    protected void scanDexFile(ApplicationInfo app) {
+    protected void scanAppDexFile(ApplicationInfo app) {
         final String appDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 app.uid;
-        final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
-                my_uid;
+        //final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
+                //my_uid;
+
+        ArrayList<File> listDexFile = getDexFiles(appDirectory);
+
+        for ( int i = 0; i < listDexFile.size(); i++) {
+            scanDexFile(listDexFile.get(i));
+        }
+
+        endScanApp(app,TypeScan.DEX_SCAN);
+
+    }
+
+    protected void scanDexFile(File file) {
 
         try {
 
-            ArrayList<File> listDexFile = getDexFiles(appDirectory);
-
-            for ( int i = 0; i < listDexFile.size(); i++) {
-                DexBackedDexFile dexFile = DexFileFactory.loadDexFile(listDexFile.get(i), null);
-                Log.d("scanning",listDexFile.get(i).getPath());
-                Iterator iterator = dexFile.getMethods().iterator();
-                while (iterator.hasNext()) {
-                    String a = iterator.next().toString();
-                    if ( a.contains("shell")) {
-                        System.out.println("Value: " + a + " ");
-                    }
+            DexBackedDexFile dexFile = DexFileFactory.loadDexFile(file, null);
+            Log.d("scanning",file.getPath());
+            Iterator iterator = dexFile.getMethods().iterator();
+            while (iterator.hasNext()) {
+                String a = iterator.next().toString();
+                if ( a.contains("shell")) {
+                    System.out.println("Value: " + a + " ");
                 }
             }
-
-            endScanApp(app,TypeScan.DEX_SCAN);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
