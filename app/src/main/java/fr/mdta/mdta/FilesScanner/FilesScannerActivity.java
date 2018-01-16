@@ -425,7 +425,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     while (iterator.hasNext()) {
                         System.out.println("Value: " + iterator.next() + " ");
                     }
-                    
+
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
