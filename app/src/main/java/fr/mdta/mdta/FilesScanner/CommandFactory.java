@@ -8,7 +8,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
@@ -21,12 +23,18 @@ public final class CommandFactory {
 
     public static ArrayList<Command> listProcess = new ArrayList<Command>();
 
+    public static HashMap<DangerousMethodCall,Integer> mapDangerousMethodCall =
+            new HashMap<DangerousMethodCall,Integer>();
+
     static final int MAX_PROCESS = 5;
 
     static int COUNT = 0;
 
     static String pathToApkUnzipFolder = "/data/local";
     static String unzipApkToFolder = "unzipedApk";
+
+    public static HashMap<String,DangerousMethodCall> mapDangerousMethodPattern =
+            new HashMap<String,DangerousMethodCall>();
 
     public static void execCommand(String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, context, command);
