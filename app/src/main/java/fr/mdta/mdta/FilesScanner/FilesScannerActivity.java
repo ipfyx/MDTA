@@ -84,10 +84,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 "Ljava/lang/Class;->getMethods()[Ljava/lang/reflect/Method".toLowerCase(),DangerousMethodCall.REFLECTION
         );
         CommandFactory.mapDangerousMethodPattern.put(
+                "Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V".toLowerCase(),DangerousMethodCall.LOAD_CPP_LIBRARY
+        );
+        CommandFactory.mapDangerousMethodPattern.put(
                 "shell".toLowerCase(),DangerousMethodCall.SHELL
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V".toLowerCase(),DangerousMethodCall.LOAD_CPP_LIBRARY
+                "superuser".toLowerCase(),DangerousMethodCall.SHELL
         );
 
         Button buttonNonSystemApps = (Button) findViewById(R.id.scanUserApp);
