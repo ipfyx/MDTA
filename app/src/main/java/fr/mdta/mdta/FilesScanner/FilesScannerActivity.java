@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -73,7 +74,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 getListNonSystemApps();
                 if (suAvailable) {
                     if ( !nonSystemApps.isEmpty() ) {
-                        scanApp(nonSystemApps.get(0),CommandFactory.signatureScan);
+                        scanApp(nonSystemApps.get(0),TypeScan.SIGNATURE_SCAN);
                     }
                 } else {
                     //TODO
@@ -88,7 +89,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 getListSystemApps();
                 if (suAvailable) {
                     if ( !systemApps.isEmpty() ) {
-                        scanApp(systemApps.get(0),CommandFactory.signatureScan);
+                        scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
                     }
                 } else {
                     //TODO
@@ -117,7 +118,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
-                scanApp(systemApps.get(0),CommandFactory.dexScan);
+                scanApp(systemApps.get(0),TypeScan.DEX_SCAN);
                 scanDexFile(nonSystemApps.get(0));
             }
 
@@ -179,7 +180,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
-    protected void scanApp(final ApplicationInfo app, final String typeScan) {
+    protected void scanApp(final ApplicationInfo app, final TypeScan typeScan) {
 /*
         Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + "" +
                 " " +
@@ -226,12 +227,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         if ( nonSystemApps.contains(app) ) {
             nonSystemApps.remove(app);
             if ( !nonSystemApps.isEmpty() ) {
-                scanApp(nonSystemApps.get(0),CommandFactory.signatureScan);
+                scanApp(nonSystemApps.get(0),TypeScan.SIGNATURE_SCAN);
             }
         } else {
             systemApps.remove(app);
             if ( !systemApps.isEmpty() ) {
-                scanApp(systemApps.get(0),CommandFactory.signatureScan);
+                scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
             }
         }
 
