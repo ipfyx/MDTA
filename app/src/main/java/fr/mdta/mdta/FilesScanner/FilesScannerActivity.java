@@ -51,7 +51,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         @Override
         public void OnTaskCompleted(Object object) {
-            endScanApp((ApplicationInfo) object);
+            endScanApp((ApplicationInfo) object, TypeScan.SIGNATURE_SCAN);
         }
     };
 
@@ -217,7 +217,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     //TODO : endScanApp(app);
     //TODO: empty listProcess, rm folder
-    protected void endScanApp(ApplicationInfo app) {
+    protected void endScanApp(ApplicationInfo app, TypeScan typeScan) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
@@ -226,13 +226,17 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.endScanApp(this, this, app);
         if ( nonSystemApps.contains(app) ) {
             nonSystemApps.remove(app);
-            if ( !nonSystemApps.isEmpty() ) {
+            if ( !nonSystemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN) ) {
                 scanApp(nonSystemApps.get(0),TypeScan.SIGNATURE_SCAN);
+            } else {
+                scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
             }
         } else {
             systemApps.remove(app);
-            if ( !systemApps.isEmpty() ) {
+            if ( !systemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
                 scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
+            } else {
+                scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
             }
         }
 
@@ -413,38 +417,25 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 my_uid;
 
-        CommandFactory.changeDirectoryContext(new Callback() {
-            @Override
-            public void OnErrorHappended() {
+        try {
 
-            }
+            DexBackedDexFile dexFile = DexFileFactory.loadDexFile(appDirectory+"/classes.dex", null);
+            Iterator iterator = dexFile.getMethods().iterator();
 
-            @Override
-            public void OnErrorHappended(String error) {
-
-            }
-
-            @Override
-            public void OnTaskCompleted(Object object) {
-                try {
-
-                    DexBackedDexFile dexFile = DexFileFactory.loadDexFile(appDirectory+"/classes.dex", null);
-                    Iterator iterator = dexFile.getMethods().iterator();
-
-                    while (iterator.hasNext()) {
-                        String a = iterator.next().toString();
-                        if ( a.contains("shell")) {
-                            System.out.println("Value: " + a + " ");
-                        }
-                    }
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+            while (iterator.hasNext()) {
+                String a = iterator.next().toString();
+                if ( a.contains("shell")) {
+                    System.out.println("Value: " + a + " ");
                 }
             }
-        }, this, myDirectory, getFileAppSELinuxContext());
+
+            endScanApp(app,TypeScan.DEX_SCAN);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
