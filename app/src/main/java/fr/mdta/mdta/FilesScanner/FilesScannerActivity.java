@@ -437,7 +437,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected ArrayList<File> getDexFiles(String appDirectory) {
         File classesDex = new File(appDirectory+"/classes.dex");
-        int count = 0;
+        int count = 1;
 
         ArrayList<File> listDexFile = new ArrayList<File>();
 
