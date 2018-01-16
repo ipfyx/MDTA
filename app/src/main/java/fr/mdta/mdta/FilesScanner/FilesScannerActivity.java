@@ -1,5 +1,6 @@
 package fr.mdta.mdta.FilesScanner;
 
+import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
@@ -116,7 +117,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
-                readFile();
+                scanDexFile(nonSystemApps.get(0));
             }
 
         });
@@ -400,8 +401,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     }
 
-    protected void readFile() {
-        final String directory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
+    protected void scanDexFile(ApplicationInfo app) {
+        final String appDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
+                app.uid;
+        final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 my_uid;
 
         CommandFactory.changeDirectoryContext(new Callback() {
@@ -419,11 +422,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void OnTaskCompleted(Object object) {
                 try {
 
-                    DexBackedDexFile dexFile = DexFileFactory.loadDexFile(directory+"/classes.dex", null);
+                    DexBackedDexFile dexFile = DexFileFactory.loadDexFile(appDirectory+"/classes.dex", null);
                     Iterator iterator = dexFile.getMethods().iterator();
 
                     while (iterator.hasNext()) {
-                        System.out.println("Value: " + iterator.next() + " ");
+                        String a = iterator.next().toString();
+                        if ( a.contains("shell")) {
+                            System.out.println("Value: " + a + " ");
+                        }
                     }
 
                 } catch (FileNotFoundException e) {
@@ -432,7 +438,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     e.printStackTrace();
                 }
             }
-        }, this, directory, getFileAppSELinuxContext());
+        }, this, myDirectory, getFileAppSELinuxContext());
     }
 
     @Override
