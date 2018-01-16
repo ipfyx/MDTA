@@ -118,8 +118,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
-                scanApp(systemApps.get(0),TypeScan.DEX_SCAN);
-                scanDexFile(nonSystemApps.get(0));
+                scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
             }
 
         });
@@ -416,6 +415,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 app.uid;
         final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 my_uid;
+
+        Log.d("directory",appDirectory+"/classes.dex");
 
         try {
 

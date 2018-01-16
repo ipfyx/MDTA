@@ -46,10 +46,12 @@ public final class CommandFactory {
                         + Integer.toString(app.uid),
                 "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
                         unzipApkToFolder + "_" + Integer.toString(app.uid),
-                "chcon -R  " + SELinuxContext + " " + pathToApkUnzipFolder + unzipApkToFolder +
+                "chcon -R " + SELinuxContext + " " + pathToApkUnzipFolder + unzipApkToFolder +
                         "_" + Integer.toString(app.uid)
 
         };
+
+        Log.d("cmd",listCommand[5]);
 
 //        Log.d("CommandFactory",listCommand[0]);
 //        Log.d("CommandFactory",listCommand[1]);
