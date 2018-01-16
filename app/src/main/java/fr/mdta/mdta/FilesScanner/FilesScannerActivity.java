@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -113,12 +114,22 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             }
         });
 
-        final Button openFile = (Button) findViewById(R.id.openfile);
-        openFile.setOnClickListener(new View.OnClickListener() {
+        final Button dexFileNonSystemApps = (Button) findViewById(R.id.dexScanNonSystemApps);
+        dexFileNonSystemApps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
                 scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
+            }
+
+        });
+
+        final Button dexFileSystemApps = (Button) findViewById(R.id.dexScanSystemApps);
+        dexFileSystemApps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getListSystemApps();
+                scanApp(systemApps.get(0),TypeScan.DEX_SCAN);
             }
 
         });
@@ -130,16 +141,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         CommandFactory.pathToApkUnzipFolder = getFilesDir().toString() + "/";
 
-    }
-
-    public static javax.security.cert.X509Certificate createCert(byte[] bytes) {
-        javax.security.cert.X509Certificate cert = null;
-        try {
-            cert = javax.security.cert.X509Certificate.getInstance(bytes);
-        } catch (javax.security.cert.CertificateException e) {
-            e.printStackTrace();
-        }
-        return cert;
     }
 
 
@@ -180,13 +181,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void scanApp(final ApplicationInfo app, final TypeScan typeScan) {
-/*
-        Log.d(app.packageName, app.sourceDir + " " + app.dataDir + " " + app.nativeLibraryDir + "" +
-                " " +
-                app.deviceProtectedDataDir + " " + app.publicSourceDir + " " + Integer.toString
-                (app.uid));
-*/
-        Log.d("scan",app.packageName);
+
+        //Log.d("scan",app.packageName);
 
         //unzipApk(app.uid, app);
 
@@ -221,7 +217,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         // could be a
         // risk to rm -rf /&
 
-        Log.d("ending",app.packageName);
+        //Log.d("ending",app.packageName);
         CommandFactory.endScanApp(this, this, app);
         if ( nonSystemApps.contains(app) ) {
             nonSystemApps.remove(app);
@@ -235,7 +231,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             if ( !systemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
                 scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
             } else if ( !systemApps.isEmpty() ) {
-                scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
+                scanApp(systemApps.get(0),TypeScan.DEX_SCAN);
             }
         }
 
@@ -340,7 +336,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             seLinux = Class.forName("android.os.SELinux");
             Method context = seLinux.getMethod("getContext");
             String result = (String) context.invoke(seLinux.newInstance());
-            Log.d("context",result);
             return result;
 
         } catch (ClassNotFoundException e) {
@@ -379,7 +374,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             seLinux = Class.forName("android.os.SELinux");
             Method context = seLinux.getMethod("getFileContext",new Class[] {String.class});
             String result = (String) context.invoke(seLinux.newInstance(),new Object[]{fileName});
-            Log.d("context",result);
 
             return result;
 
@@ -416,20 +410,24 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 my_uid;
 
-        Log.d("directory",appDirectory+"/classes.dex");
-
         try {
 
-            DexBackedDexFile dexFile = DexFileFactory.loadDexFile(appDirectory+"/classes.dex", null);
-            Iterator iterator = dexFile.getMethods().iterator();
+            File classesDex = new File(appDirectory+"/classes.dex");
 
-            while (iterator.hasNext()) {
-                String a = iterator.next().toString();
-                if ( a.contains("shell")) {
-                    System.out.println("Value: " + a + " ");
+            if ( classesDex.exists() ) {
+                DexBackedDexFile dexFile = DexFileFactory.loadDexFile(appDirectory+"/classes.dex", null);
+                Iterator iterator = dexFile.getMethods().iterator();
+
+                while (iterator.hasNext()) {
+                    String a = iterator.next().toString();
+                    if ( a.contains("shell")) {
+                        System.out.println("Value: " + a + " ");
+                    }
                 }
-            }
 
+            } else {
+                Log.d(app.packageName,"not classes.dex for "+Integer.toString(app.uid));
+            }
             endScanApp(app,TypeScan.DEX_SCAN);
 
         } catch (FileNotFoundException e) {

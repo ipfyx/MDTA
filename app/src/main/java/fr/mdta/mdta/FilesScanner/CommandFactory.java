@@ -48,16 +48,14 @@ public final class CommandFactory {
                         unzipApkToFolder + "_" + Integer.toString(app.uid),
                 "chcon -R " + SELinuxContext + " " + pathToApkUnzipFolder + unzipApkToFolder +
                         "_" + Integer.toString(app.uid)
+                /* "echo " + app.packageName + " " + Integer.toString(app.uid)+">> "+pathToApkUnzipFolder+"test",
+                "ls -lh " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
+                        .toString(app.uid)+">> "+pathToApkUnzipFolder+"test"
+                */
 
         };
 
-        Log.d("cmd",listCommand[5]);
-
-//        Log.d("CommandFactory",listCommand[0]);
-//        Log.d("CommandFactory",listCommand[1]);
-//        Log.d("CommandFactory",listCommand[2]);
-//        Log.d("CommandFactory",listCommand[3]);
-//        Log.d("CommandFactory",listCommand[4]);
+        //Log.d("CommandFactory",listCommand[6]);
 
         Command exec_command = new Command(callback, context, listCommand);
         exec_command.execute(listCommand);
