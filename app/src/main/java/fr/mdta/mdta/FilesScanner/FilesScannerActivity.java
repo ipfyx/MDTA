@@ -73,7 +73,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 getListNonSystemApps();
                 if (suAvailable) {
                     if ( !nonSystemApps.isEmpty() ) {
-                        scanApp(nonSystemApps.get(0),"signature");
+                        scanApp(nonSystemApps.get(0),CommandFactory.signatureScan);
                     }
                 } else {
                     //TODO
@@ -88,7 +88,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 getListSystemApps();
                 if (suAvailable) {
                     if ( !systemApps.isEmpty() ) {
-                        scanApp(systemApps.get(0),"signature");
+                        scanApp(systemApps.get(0),CommandFactory.signatureScan);
                     }
                 } else {
                     //TODO
@@ -117,7 +117,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
-                scanApp(systemApps.get(0),"dexfile");
+                scanApp(systemApps.get(0),CommandFactory.dexScan);
                 scanDexFile(nonSystemApps.get(0));
             }
 
@@ -203,7 +203,11 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             @Override
             public void OnTaskCompleted(Object object) {
-                verifyHashesManifest(app.uid, app, (String) object);
+                if ( typeScan.equals("signature") ) {
+                    verifyHashesManifest(app.uid, app, (String) object);
+                } else {
+                    scanDexFile(app);
+                }
             }
         }, this, app, my_uid, getAppSELinuxContext());
 
@@ -222,12 +226,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         if ( nonSystemApps.contains(app) ) {
             nonSystemApps.remove(app);
             if ( !nonSystemApps.isEmpty() ) {
-                scanApp(nonSystemApps.get(0),"signature");
+                scanApp(nonSystemApps.get(0),CommandFactory.signatureScan);
             }
         } else {
             systemApps.remove(app);
             if ( !systemApps.isEmpty() ) {
-                scanApp(systemApps.get(0),"signature");
+                scanApp(systemApps.get(0),CommandFactory.signatureScan);
             }
         }
 

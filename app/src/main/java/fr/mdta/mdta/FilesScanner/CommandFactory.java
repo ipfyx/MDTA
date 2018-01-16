@@ -28,6 +28,9 @@ public final class CommandFactory {
     static String pathToApkUnzipFolder = "/data/local";
     static String unzipApkToFolder = "unzipedApk";
 
+    static String signatureScan = "signature";
+    static String dexScan = "dexscan";
+
     public static void execCommand(String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, context, command);
         exec_command.execute(command);
