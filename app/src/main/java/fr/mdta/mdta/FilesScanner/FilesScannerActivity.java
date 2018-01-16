@@ -87,6 +87,9 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 "Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V".toLowerCase(),DangerousMethodCall.LOAD_CPP_LIBRARY
         );
         CommandFactory.mapDangerousMethodPattern.put(
+                "Ljava/lang/Class;->getClassLoader()Ljava/lang/ClassLoader",DangerousMethodCall.REFLECTION
+        );
+        CommandFactory.mapDangerousMethodPattern.put(
                 "shell".toLowerCase(),DangerousMethodCall.SHELL
         );
         CommandFactory.mapDangerousMethodPattern.put(
