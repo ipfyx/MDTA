@@ -2,7 +2,7 @@ package fr.mdta.mdta.API.APIModel.SentItem;
 
 import java.util.ArrayList;
 
-import fr.mdta.mdta.PermissionsScanner.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**
  * Created by baptiste on 07/11/17.
