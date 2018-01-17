@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">MDTA</string>
     <string name="title_activity_permissions">Permissions</string>
+    <string name="title_app_name">App Name: </string>
+    <string name="title_package_name">"Package Name: "</string>
+    <string name="title_version_name">"Version Name: "</string>
+    <string name="title_version_code">"Version Code: "</string>
+    <string name="title_last_update">"Last Update: "</string>
+    <string name="title_installing_date">"Installing Date: "</string>
+    <string name="title_permissions_number">"Required Permissions: "</string>
+    <string name="title_is_system_app">"Application System: "</string>
+
+    <string name="status_scan_running">Running...</string>
+    <string name="status_scan_pending">Pending...</string>
+    <string name="status_scan_over">Over</string>
 </resources>
