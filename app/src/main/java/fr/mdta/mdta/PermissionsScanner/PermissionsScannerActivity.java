@@ -14,6 +14,7 @@ import fr.mdta.mdta.API.APIModel.SentItem.PackagesList;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.BasicScanRequester;
 import fr.mdta.mdta.R;
+import fr.mdta.mdta.Tools.PackageInfoFactory;
 
 public class PermissionsScannerActivity extends AppCompatActivity implements Callback {
 
