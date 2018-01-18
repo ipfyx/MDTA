@@ -38,6 +38,7 @@ public class IntegrityScan extends Scan {
 
     private ArrayList<SimplifiedPackageInfo> listPackageInfo;
 
+    private ScanCallback endScanCallback = null;
 
     private Callback mycallback = new Callback() {
         @Override
@@ -56,9 +57,9 @@ public class IntegrityScan extends Scan {
         }
     };
 
-    /**
+     /**
      * @param simplifiedPackageInfos
-     */
+     **/
     public IntegrityScan(ArrayList<SimplifiedPackageInfo>
             simplifiedPackageInfos, Context context) {
         super(FILES_SCANNER_NAME, FILES_SCANNER_DESCRIPTION, simplifiedPackageInfos);
@@ -74,6 +75,8 @@ public class IntegrityScan extends Scan {
     @Override
     public void launchScan(ScanCallback callback) {
         listPackageInfo = getmSimplifiedPackageInfos();
+
+        this.endScanCallback = callback;
 
         if ( suAvailable ) {
             for ( int i = 0; i < listPackageInfo.size(); i++){
@@ -134,13 +137,20 @@ public class IntegrityScan extends Scan {
         fr.mdta.mdta.Tools.CommandFactory.endScanApp(appInfo,unzipApkToFolder);
 
         if ( listPackageInfo.contains(appInfo) ) {
+
+
+            if ( mResults.get(appInfo).ismStatus() != false ) {
+                endScanAppOK(appInfo);
+            }
+
             listPackageInfo.remove(appInfo);
+            updateState();
             if ( !listPackageInfo.isEmpty() ) {
                 scanApp(listPackageInfo.get(0));
+            } else {
+                endScanCallback.OnScanTerminated();
             }
         }
-
-        updateState();
 
     }
 
@@ -176,9 +186,10 @@ public class IntegrityScan extends Scan {
                 if (hash.equals(calculatedHash)) {
                     Log.d(filePath, hash + " / " + calculatedHash);
                 } else {
-                    cancelVerification(appInfo, filePath);
-                    Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " +
-                            filePath + " " + appInfo.getAppUid());
+
+                    endScanAppTempered(appInfo,filePath,hashMethod,calculatedHash,hash);
+
+                    //Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " + filePath + " " + appInfo.getAppUid());
                 }
             }
         }, commandToExecute);
@@ -279,6 +290,24 @@ public class IntegrityScan extends Scan {
             writer.flush();
             writer.close();
         }
+    }
+
+    protected void endScanAppOK(SimplifiedPackageInfo appInfo) {
+        SpecificResult result = new SpecificResult(true,
+                "This application was not tampered",
+                "This application was not tampered");
+        mResults.put(appInfo,result);
+    }
+
+    protected void endScanAppTempered(SimplifiedPackageInfo appInfo, String filePath,
+                                      String hashMethod, String calculatedHash,
+                                      String hash) {
+        SpecificResult result = new SpecificResult(false,
+                "InvalidHash",filePath + " " + hashMethod + " is not valid : " +
+                calculatedHash + " != " + hash);
+        mResults.put(appInfo,result);
+
+        cancelVerification(appInfo, filePath);
     }
 
 }
