@@ -25,7 +25,7 @@ import fr.mdta.mdta.Tools.CommandFactory;
  * Created by manwefm on 18/01/18.
  */
 
-public class FilesScan extends Scan {
+public class IntegrityScan extends Scan {
 
     //static values
     private final static String FILES_SCANNER_NAME = "Application Files Scanner";
@@ -60,7 +60,7 @@ public class FilesScan extends Scan {
     /**
      * @param simplifiedPackageInfos
      */
-    public FilesScan(ArrayList<SimplifiedPackageInfo>
+    public IntegrityScan(ArrayList<SimplifiedPackageInfo>
             simplifiedPackageInfos, Context context) {
         super(FILES_SCANNER_NAME, FILES_SCANNER_DESCRIPTION, simplifiedPackageInfos);
 
