@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Tools;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.List;
@@ -16,10 +15,9 @@ import fr.mdta.mdta.API.Callback.Callback;
 /**
  * https://stackoverflow.com/questions/11451768/call-asynctask-from-static-class
  */
-class Command extends AsyncTask<String, Void, String> {
+public class Command extends AsyncTask<String, Void, String> {
     private ProgressDialog dialog = null;
     private Callback callback;
-    private Context context;
     private boolean suAvailable = false;
     private List<String> suResult = null;
     private String[] command = null;
@@ -27,28 +25,21 @@ class Command extends AsyncTask<String, Void, String> {
     public Command() {
     }
 
-    public Command(Callback callback, Context context) {
+    public Command(Callback callback) {
         this.callback = callback;
-        this.context = context;
     }
 
-    public Command(Callback callback, Context context, String[] command) {
+    public Command(Callback callback, String[] command) {
         this.callback = callback;
-        this.context = context;
         this.command = command;
     }
 
-    public Command(Context context, String[] command) {
-        this.context = context;
+    public Command(String[] command) {
         this.command = command;
     }
 
     protected void setCallback(Callback callback) {
         this.callback = callback;
-    }
-
-    protected void setContext(Context context) {
-        this.context = context;
     }
 
     protected List<String> getSuResult() {
