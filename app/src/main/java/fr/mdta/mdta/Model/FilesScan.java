@@ -50,7 +50,7 @@ public class FilesScan extends Scan {
 
         @Override
         public void OnTaskCompleted(Object object) {
-            endScanApp((ApplicationInfo) object, TypeScan.SIGNATURE_SCAN);
+            endScanApp((ApplicationInfo) object);
         }
     };
 
@@ -67,7 +67,7 @@ public class FilesScan extends Scan {
         listPackageInfo = getmSimplifiedPackageInfos();
 
         for ( int i = 0; i < listPackageInfo.size(); i++){
-            scanApp(listPackageInfo.get(i),TypeScan.SIGNATURE_SCAN);
+            scanApp(listPackageInfo.get(i));
         }
 
 
@@ -79,7 +79,7 @@ public class FilesScan extends Scan {
 
     }
 
-    protected void scanApp(final SimplifiedPackageInfo appInfo, final TypeScan typeScan) {
+    protected void scanApp(final SimplifiedPackageInfo appInfo) {
 
         //Log.d("scan",app.packageName);
 
@@ -98,14 +98,14 @@ public class FilesScan extends Scan {
 
             @Override
             public void OnTaskCompleted(Object object) {
-                verifyHashesManifest(appInfo.getAppUid(), appInfo, (String) object);
+                verifyHashesManifest(appInfo);
             }
         }, appInfo, my_uid, getFileAppSELinuxContext());
 
         //TODO : Manage AsyncTask properly
     }
 
-    protected void endScanApp(ApplicationInfo appInfo, TypeScan typeScan) {
+    protected void endScanApp(ApplicationInfo appInfo) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
@@ -115,8 +115,8 @@ public class FilesScan extends Scan {
 
         if ( listPackageInfo.contains(appInfo) ) {
             listPackageInfo.remove(appInfo);
-            if ( !listPackageInfo.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
-                scanApp(listPackageInfo.get(0),TypeScan.SIGNATURE_SCAN);
+            if ( !listPackageInfo.isEmpty() ) {
+                scanApp(listPackageInfo.get(0));
             }
         }
 
@@ -164,7 +164,7 @@ public class FilesScan extends Scan {
         listProcess.add(command);
     }
 
-    protected void verifyHashesManifest(final int uid, SimplifiedPackageInfo appInfo, String unzipResult) {
+    protected void verifyHashesManifest(SimplifiedPackageInfo appInfo) {
         try {
 
             /**
