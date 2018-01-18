@@ -1,11 +1,8 @@
 package fr.mdta.mdta.Model;
 
-import android.util.Log;
-
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-import fr.mdta.mdta.API.APIModel.ReceivedItem.BasicScanResultItem;
 import fr.mdta.mdta.API.APIModel.SentItem.PackagesList;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.BasicScanRequester;
@@ -30,7 +27,7 @@ public class PermissionScan extends Scan {
     }
 
     @Override
-    public void launchScan(ScanCallback callback) {
+    public void launchScan(final ScanCallback callback) {
         //TODO implement the launchscan strategy
 
         PackagesList packagesList = new PackagesList(this.getmSimplifiedPackageInfos());
@@ -49,7 +46,11 @@ public class PermissionScan extends Scan {
 
                 @Override
                 public void OnTaskCompleted(Object object) {
-                    Log.d("result", ((BasicScanResultItem) object).toString());
+                    for (int i = 0; i < getmSimplifiedPackageInfos().size(); i++) {
+                        mResults.put(getmSimplifiedPackageInfos().get(i), new SpecificResult(true, "FAKE PermissionOK", "FAKE BNo danger"));
+
+                    }
+                    callback.OnScanTerminated();
                 }
             }, packagesList);
             request.execute();
