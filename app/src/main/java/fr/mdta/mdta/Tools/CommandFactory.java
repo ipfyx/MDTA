@@ -24,7 +24,6 @@ public final class CommandFactory {
             new HashMap<String, DangerousMethodCall>();
     public static int COUNT = 0;
     public static String pathToApkUnzipFolder = "/data/local";
-    public static String unzipApkToFolder = "unzipedApk";
 
     public static void execCommand(String[] command, Callback callback, Context context) {
         Command exec_command = new Command(callback, command);
@@ -32,19 +31,19 @@ public final class CommandFactory {
     }
 
     public static void unzipCommand(Callback callback, SimplifiedPackageInfo appInfo, int
-            my_uid, String SELinuxContext) {
+            my_uid, String SELinuxContext, String unzipDirectoryName) {
 
         String[] listCommand = new String[]{
                 "cd " + pathToApkUnzipFolder,
-                "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString
+                "rm -rRf " + pathToApkUnzipFolder + unzipDirectoryName + "_" + Integer.toString
                         (appInfo.getAppUid()),
-                "mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
+                "mkdir -p " + pathToApkUnzipFolder + unzipDirectoryName + "_" + Integer
                         .toString(appInfo.getAppUid()),
-                "unzip " + appInfo.getApkSourceDir() + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
+                "unzip " + appInfo.getApkSourceDir() + " -d " + pathToApkUnzipFolder + unzipDirectoryName + "_"
                         + Integer.toString(appInfo.getAppUid()),
                 "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
-                        unzipApkToFolder + "_" + Integer.toString(appInfo.getAppUid()),
-                "chcon -R " + SELinuxContext + " " + pathToApkUnzipFolder + unzipApkToFolder +
+                        unzipDirectoryName + "_" + Integer.toString(appInfo.getAppUid()),
+                "chcon -R " + SELinuxContext + " " + pathToApkUnzipFolder + unzipDirectoryName +
                         "_" + Integer.toString(appInfo.getAppUid())
                 /* "echo " + app.packageName + " " + Integer.toString(app.uid)+">> "+pathToApkUnzipFolder+"test",
                 "ls -lh " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
@@ -59,11 +58,11 @@ public final class CommandFactory {
         exec_command.execute(listCommand);
     }
 
-    public static void endScanApp(ApplicationInfo app) {
+    public static void endScanApp(ApplicationInfo app, String unzipDirectoryName) {
 
         String[] listCommand = new String[]{
                 "cd /data/local",
-                "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString(app
+                "rm -rRf " + pathToApkUnzipFolder + unzipDirectoryName + "_" + Integer.toString(app
                         .uid)
         };
 
