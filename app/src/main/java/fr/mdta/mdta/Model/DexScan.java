@@ -20,7 +20,12 @@ public class DexScan extends Scan {
     }
 
     @Override
-    public void launchScan(Callback callback) {
+    public void launchScan(ScanCallback callback) {
+
+    }
+
+    @Override
+    public void cancelScan(ScanCallback callback) {
 
     }
 

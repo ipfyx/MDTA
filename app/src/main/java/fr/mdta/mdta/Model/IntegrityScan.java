@@ -73,7 +73,7 @@ public class IntegrityScan extends Scan {
     }
 
     @Override
-    public void launchScan(Callback callback) {
+    public void launchScan(ScanCallback callback) {
         listPackageInfo = getmSimplifiedPackageInfos();
 
         if ( suAvailable ) {
@@ -83,6 +83,12 @@ public class IntegrityScan extends Scan {
         } else {
             //TODO
         }
+    }
+
+
+    @Override
+    public void cancelScan(ScanCallback callback) {
+
     }
 
     @Override

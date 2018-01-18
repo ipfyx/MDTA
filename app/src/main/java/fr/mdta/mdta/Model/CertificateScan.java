@@ -29,7 +29,7 @@ public class CertificateScan extends Scan {
     }
 
     @Override
-    public void launchScan(Callback callback) {
+    public void launchScan(ScanCallback callback) {
 
         ArrayList<SimplifiedPackageInfo> listPackageInfo = getmSimplifiedPackageInfos();
 
@@ -72,7 +72,13 @@ public class CertificateScan extends Scan {
             }
         }
 
-        callback.OnTaskCompleted("TODO");
+        callback.OnScanTerminated();
+    }
+
+
+    @Override
+    public void cancelScan(ScanCallback callback) {
+
     }
 
     @Override
