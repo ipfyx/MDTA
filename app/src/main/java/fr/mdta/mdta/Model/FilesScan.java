@@ -2,7 +2,6 @@ package fr.mdta.mdta.Model;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -75,12 +74,13 @@ public class FilesScan extends Scan {
     public void launchScan(Callback callback) {
         listPackageInfo = getmSimplifiedPackageInfos();
 
-        for ( int i = 0; i < listPackageInfo.size(); i++){
-            scanApp(listPackageInfo.get(i));
+        if ( suAvailable ) {
+            for ( int i = 0; i < listPackageInfo.size(); i++){
+                scanApp(listPackageInfo.get(i));
+            }
+        } else {
+            //TODO
         }
-
-
-
     }
 
     @Override
@@ -94,24 +94,26 @@ public class FilesScan extends Scan {
 
         //unzipApk(app.uid, app);
 
-        fr.mdta.mdta.Tools.CommandFactory.unzipCommand(new Callback() {
-            @Override
-            public void OnErrorHappended() {
+        if ( getFileAppSELinuxContext() != null ) {
+            fr.mdta.mdta.Tools.CommandFactory.unzipCommand(new Callback() {
+                @Override
+                public void OnErrorHappended() {
 
-            }
+                }
 
-            @Override
-            public void OnErrorHappended(String error) {
+                @Override
+                public void OnErrorHappended(String error) {
 
-            }
+                }
 
-            @Override
-            public void OnTaskCompleted(Object object) {
-                verifyHashesManifest(appInfo);
-            }
-        }, appInfo, my_uid, getFileAppSELinuxContext());
-
-        //TODO : Manage AsyncTask properly
+                @Override
+                public void OnTaskCompleted(Object object) {
+                    verifyHashesManifest(appInfo);
+                }
+            }, appInfo, my_uid, getFileAppSELinuxContext());
+        } else {
+            //TODO
+        }
     }
 
     protected void endScanApp(ApplicationInfo appInfo) {
@@ -128,6 +130,8 @@ public class FilesScan extends Scan {
                 scanApp(listPackageInfo.get(0));
             }
         }
+
+        updateState();
 
     }
 
@@ -154,7 +158,7 @@ public class FilesScan extends Scan {
             @Override
             public void OnTaskCompleted(Object object) {
                 fr.mdta.mdta.Tools.CommandFactory.COUNT -= 1;
-                fr.mdta.mdta.Tools.CommandFactory.removeCommand(commandToExecute);
+                fr.mdta.mdta.Tools.CommandFactory.removeCommandIntegrity(commandToExecute);
                 fr.mdta.mdta.Tools.CommandFactory.launchVerification(mycallback, appInfo);
 
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
@@ -203,7 +207,7 @@ public class FilesScan extends Scan {
                     addFileToListVerification(filePath, fileHash, appInfo, "sha256sum", listProcess);
                 }
             }
-            CommandFactory.listProcess = listProcess;
+            CommandFactory.listProcessIntegrity = listProcess;
             CommandFactory.launchVerification(mycallback, appInfo);
 
         } catch (IOException e) {
@@ -212,10 +216,10 @@ public class FilesScan extends Scan {
     }
 
     protected void cancelVerification(SimplifiedPackageInfo appInfo, String filepath) {
-        for (int i = 0; i < CommandFactory.listProcess.size(); i++) {
-            CommandFactory.listProcess.get(i).cancel(true);
+        for (int i = 0; i < CommandFactory.listProcessIntegrity.size(); i++) {
+            CommandFactory.listProcessIntegrity.get(i).cancel(true);
         }
-        CommandFactory.listProcess.clear();
+        CommandFactory.listProcessIntegrity.clear();
         mycallback.OnTaskCompleted(appInfo);
         Log.d("FileScan", filepath + " hash is wrong");
     }
