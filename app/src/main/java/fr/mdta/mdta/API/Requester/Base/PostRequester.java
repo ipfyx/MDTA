@@ -26,6 +26,22 @@ public abstract class PostRequester extends AsyncTask<String, String, String> {
     protected boolean isJSON;
     protected boolean isWithProgressDialog;
 
+    protected PostRequester(String url, Callback callback, boolean isJSON, String... strings) throws MalformedURLException {
+        this.mUrl = new URL(url + getUrlArgs(strings));
+        this.mCallback = callback;
+        this.isWithProgressDialog = false;
+        this.mPostData = getBody(strings);
+        this.isJSON = isJSON;
+    }
+
+    protected PostRequester(String url, Callback callback, boolean isJSON, Object object, String... strings) throws MalformedURLException {
+        this.mUrl = new URL(url + getUrlArgs(strings));
+        this.mCallback = callback;
+        this.isWithProgressDialog = false;
+        this.mPostData = getBodyFromObject(object);
+        this.isJSON = isJSON;
+    }
+
     protected PostRequester(String url, Context context, boolean withProgressDialog, Callback callback, boolean isJSON, String... strings) throws MalformedURLException {
         this.mContext = context;
         this.mUrl = new URL(url + getUrlArgs(strings));

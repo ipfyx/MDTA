@@ -1,7 +1,6 @@
 package fr.mdta.mdta.API.Requester;
 
 
-import android.content.Context;
 import android.util.Log;
 
 import java.net.MalformedURLException;
@@ -15,9 +14,9 @@ import fr.mdta.mdta.API.Requester.Base.PostRequester;
 public class BasicScanRequester extends PostRequester {
 
 
-    public BasicScanRequester(Context context, boolean withProgressDialog, Callback callback,
+    public BasicScanRequester(Callback callback,
                               PackagesList packagesList) throws MalformedURLException {
-        super(APItools.URL_API_BASIC_SCAN, context, withProgressDialog, callback, true, packagesList);
+        super(APItools.URL_API_BASIC_SCAN, callback, true, packagesList);
     }
 
     @Override
