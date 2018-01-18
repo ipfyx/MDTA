@@ -56,10 +56,7 @@ public class IntegrityScan extends Scan {
             endScanApp((SimplifiedPackageInfo) object);
         }
     };
-
-     /**
-     * @param simplifiedPackageInfos
-     **/
+    
     public IntegrityScan(ArrayList<SimplifiedPackageInfo>
             simplifiedPackageInfos, Context context) {
         super(FILES_SCANNER_NAME, FILES_SCANNER_DESCRIPTION, simplifiedPackageInfos);
@@ -100,7 +97,7 @@ public class IntegrityScan extends Scan {
 
     }
 
-    protected void scanApp(final SimplifiedPackageInfo appInfo) {
+    private void scanApp(final SimplifiedPackageInfo appInfo) {
 
         //Log.d("scan",app.packageName);
 
@@ -128,7 +125,7 @@ public class IntegrityScan extends Scan {
         }
     }
 
-    protected void endScanApp(SimplifiedPackageInfo appInfo) {
+    private void endScanApp(SimplifiedPackageInfo appInfo) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
@@ -139,7 +136,7 @@ public class IntegrityScan extends Scan {
         if ( listPackageInfo.contains(appInfo) ) {
 
 
-            if ( mResults.get(appInfo).ismStatus() != false ) {
+            if ( mResults.get(appInfo).ismStatus() ) {
                 endScanAppOK(appInfo);
             }
 
@@ -154,7 +151,7 @@ public class IntegrityScan extends Scan {
 
     }
 
-    protected void addFileToListVerification(final String filePath, final String hash, final
+    private void addFileToListVerification(final String filePath, final String hash, final
     SimplifiedPackageInfo appInfo, final String hashMethod, final ArrayList<Command> listProcess) {
 
         final String[] commandToExecute = new String[]{hashMethod + " -b " + fr.mdta.mdta
@@ -180,7 +177,7 @@ public class IntegrityScan extends Scan {
                 fr.mdta.mdta.Tools.CommandFactory.removeCommandIntegrity(commandToExecute);
                 fr.mdta.mdta.Tools.CommandFactory.launchVerification(mycallback, appInfo);
 
-                String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
+                String calculatedHash = ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
 
                 if (hash.equals(calculatedHash)) {
@@ -197,10 +194,10 @@ public class IntegrityScan extends Scan {
         listProcess.add(command);
     }
 
-    protected void verifyHashesManifest(SimplifiedPackageInfo appInfo) {
+    private void verifyHashesManifest(SimplifiedPackageInfo appInfo) {
         try {
 
-            /**
+            /*
              * https://stackoverflow.com/questions/3392189/reading-android-manifest-mf-file
              */
 
@@ -208,7 +205,7 @@ public class IntegrityScan extends Scan {
             Manifest mf = jar.getManifest();
             Map<String, Attributes> map = mf.getEntries();
 
-            ArrayList<Command> listProcess = new ArrayList<Command>();
+            ArrayList<Command> listProcess = new ArrayList<>();
 
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
@@ -235,7 +232,7 @@ public class IntegrityScan extends Scan {
         }
     }
 
-    protected void cancelVerification(SimplifiedPackageInfo appInfo, String filepath) {
+    private void cancelVerification(SimplifiedPackageInfo appInfo, String filepath) {
         for (int i = 0; i < CommandFactory.listProcessIntegrity.size(); i++) {
             CommandFactory.listProcessIntegrity.get(i).cancel(true);
         }
@@ -244,9 +241,9 @@ public class IntegrityScan extends Scan {
         Log.d("FileScan", filepath + " hash is wrong");
     }
 
-    protected String getFileAppSELinuxContext() {
+    private String getFileAppSELinuxContext() {
 
-        /**
+        /*
          * https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/os/SELinux.java
          */
 
@@ -287,19 +284,18 @@ public class IntegrityScan extends Scan {
             e.printStackTrace();
             return null;
         } finally {
-            writer.flush();
             writer.close();
         }
     }
 
-    protected void endScanAppOK(SimplifiedPackageInfo appInfo) {
+    private void endScanAppOK(SimplifiedPackageInfo appInfo) {
         SpecificResult result = new SpecificResult(true,
                 "This application was not tampered",
                 "This application was not tampered");
         mResults.put(appInfo,result);
     }
 
-    protected void endScanAppTempered(SimplifiedPackageInfo appInfo, String filePath,
+    private void endScanAppTempered(SimplifiedPackageInfo appInfo, String filePath,
                                       String hashMethod, String calculatedHash,
                                       String hash) {
         SpecificResult result = new SpecificResult(false,
