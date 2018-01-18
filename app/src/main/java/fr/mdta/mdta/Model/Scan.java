@@ -26,11 +26,11 @@ public abstract class Scan implements Serializable {
     /**
      * Link the specific result of a scan on a the specified simplified package info
      */
-    private HashMap<SimplifiedPackageInfo, SpecificResult> mResults;
+    protected HashMap<SimplifiedPackageInfo, SpecificResult> mResults;
     /**
      * Value used to make animation and to keep the state(generally out of 100) of a scan
      */
-    private int mState = 0;
+    protected int mState = 0;
 
     /**
      * @param scanName
