@@ -50,6 +50,10 @@ public class SimplifiedPackageInfo implements Serializable {
      * List of application permissions
      */
     private ArrayList<String> Permissions = new ArrayList<String>();
+    /**
+     * Application uid
+     */
+    private int AppUid;
 
     /**
      * Cosntructor of our simplified package info
@@ -177,5 +181,14 @@ public class SimplifiedPackageInfo implements Serializable {
      */
     public ArrayList<String> getPermissions() {
         return Permissions;
+    }
+
+    /**
+     * Getter
+     *
+     * @return
+     */
+    public int getAppUid() {
+        return AppUid;
     }
 }
