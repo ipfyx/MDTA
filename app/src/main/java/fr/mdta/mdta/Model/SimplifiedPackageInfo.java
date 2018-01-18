@@ -1,8 +1,9 @@
 package fr.mdta.mdta.Model;
 
-import android.content.pm.Signature;
+import android.util.Base64;
 
 import java.io.Serializable;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 
 /**
@@ -22,6 +23,10 @@ public class SimplifiedPackageInfo implements Serializable {
      */
     private String VersionName;
     /**
+     * Application source directory path
+     */
+    private String ApkSourceDir;
+    /**
      * Version code
      */
     private int VersionCode;
@@ -38,9 +43,9 @@ public class SimplifiedPackageInfo implements Serializable {
      */
     private long LastUpdateTime;
     /**
-     * List of application signatures
+     * Application developer certificate
      */
-    private ArrayList<android.content.pm.Signature> Signatures;
+    private X509Certificate AppDeveloperCertificate;
     /**
      * List of application permissions
      */
@@ -51,26 +56,28 @@ public class SimplifiedPackageInfo implements Serializable {
      *
      * @param appName
      * @param packageName
+     * @param apkSourceDir
      * @param isSystemApp
      * @param versionCode
      * @param versionName
      * @param firstInstallTime
      * @param lastUpdateTime
-     * @param signatures
+     * @param appDeveloperCertificate
      * @param permissions
      */
-    public SimplifiedPackageInfo(String appName, String packageName, boolean isSystemApp, int versionCode,
+    public SimplifiedPackageInfo(String appName, String packageName, String apkSourceDir, boolean isSystemApp, int versionCode,
                                  String versionName, long firstInstallTime,
-                                 long lastUpdateTime, ArrayList<android.content.pm.Signature> signatures,
+                                 long lastUpdateTime, X509Certificate appDeveloperCertificate,
                                  ArrayList<String> permissions) {
         this.AppName = appName;
         this.PackageName = packageName;
+        this.ApkSourceDir = apkSourceDir;
         this.IsSystemApp = isSystemApp;
         this.VersionCode = versionCode;
         this.VersionName = versionName;
         this.FirstInstallTime = firstInstallTime;
         this.LastUpdateTime = lastUpdateTime;
-        this.Signatures = signatures;
+        this.AppDeveloperCertificate = appDeveloperCertificate;
         this.Permissions = permissions;
     }
 
@@ -120,6 +127,15 @@ public class SimplifiedPackageInfo implements Serializable {
     }
 
     /**
+     * Standard getteer to access application source directory path
+     *
+     * @return
+     */
+    public String getApkSourceDir() {
+        return ApkSourceDir;
+    }
+
+    /**
      * Standard getter to access the date of the first installation
      *
      * @return
@@ -138,12 +154,20 @@ public class SimplifiedPackageInfo implements Serializable {
     }
 
     /**
-     * Standard getter to access the lis tof applciation signature
+     * Standard getter to access application developer certificate
+     * @return
+     */
+    public X509Certificate getAppDeveloperCertificate() {
+        return AppDeveloperCertificate;
+    }
+
+    /**
+     * Getter
      *
      * @return
      */
-    public ArrayList<Signature> getSignatures() {
-        return Signatures;
+    public String getAppDeveloperBase64Key() {
+        return Base64.encodeToString(this.getAppDeveloperCertificate().getPublicKey().getEncoded(), Base64.DEFAULT);
     }
 
     /**
