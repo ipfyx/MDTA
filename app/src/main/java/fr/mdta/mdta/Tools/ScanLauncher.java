@@ -14,6 +14,8 @@ public class ScanLauncher {
      * ScanLauncher Singleton for out access
      */
     private static ScanLauncher mScanLauncherInstance;
+    ScanLauncher mLauncherSerial = new ScanLauncher();
+    ScanLauncher mLauncherParralel = new ScanLauncher();
     /**
      * Control and forbid concurrent access on scanlauncher
      */
@@ -30,18 +32,20 @@ public class ScanLauncher {
      * List to give as parameter when the scan is terminated
      */
     private ArrayList<Scan> mResultScans = new ArrayList<>();
+    /**
+     * Type of running launcher
+     */
+    private ScanLauncher.TypeOfLauncher mTypeOfLauncher;
 
     /**
      * Singleton access method
+     *
      * @return
      * @throws ScanLauncherException
      */
-    public static ScanLauncher getInstance() throws ScanLauncherException {
+    public static ScanLauncher getInstance() {
         if (mScanLauncherInstance == null) {
             mScanLauncherInstance = new ScanLauncher();
-        }
-        if (mScanLauncherInstance.isAlreadyInUse) {
-            throw new ScanLauncherException();
         }
         return mScanLauncherInstance;
     }
@@ -49,26 +53,32 @@ public class ScanLauncher {
     /**
      * Init method before a scan, to avoid memory of wrong value in every logic controller attributes
      */
-    private void initForScan() {
+    private void initForScan(TypeOfLauncher typeOfLauncher) {
         mResultScans = new ArrayList<>();
         mSerialScans = new ArrayList<>();
         isAlreadyInUse = true;
         mParralelScanTerminatedCounter = 0;
+        mTypeOfLauncher = typeOfLauncher;
     }
 
     /**
      * Public access to launch serial scan
+     *
      * @param serialScansArrayList
      * @param callback
      */
-    public void launchScansSerial(ArrayList<Scan> serialScansArrayList, ScanLauncherCallback callback) {
-        initForScan();
+    public void launchScansSerial(ArrayList<Scan> serialScansArrayList, ScanLauncherCallback callback) throws ScanLauncherException {
+        if (mScanLauncherInstance.isAlreadyInUse) {
+            throw ScanLauncherException.getScanLauncherAlreadyInUseException();
+        }
+        initForScan(TypeOfLauncher.SERIAL);
         mSerialScans = serialScansArrayList;
         checkToContinueScansSerial(callback);
     }
 
     /**
      * Launch next scan for a serial scan
+     *
      * @param callback
      */
     private void checkToContinueScansSerial(final ScanLauncherCallback callback) {
@@ -88,11 +98,15 @@ public class ScanLauncher {
 
     /**
      * Public access to launch parralel scan
+     *
      * @param parallelScansArrayList
      * @param callback
      */
-    public void launchScansParallel(ArrayList<Scan> parallelScansArrayList, final ScanLauncherCallback callback) {
-        initForScan();
+    public void launchScansParallel(ArrayList<Scan> parallelScansArrayList, final ScanLauncherCallback callback) throws ScanLauncherException {
+        if (mScanLauncherInstance.isAlreadyInUse) {
+            throw ScanLauncherException.getScanLauncherAlreadyInUseException();
+        }
+        initForScan(TypeOfLauncher.PARALLEL);
         mResultScans = parallelScansArrayList;
         if (!mResultScans.isEmpty()) {
             for (int i = 0; i < mResultScans.size(); i++) {
@@ -115,16 +129,20 @@ public class ScanLauncher {
 
     /**
      * Public access to launch a parralel scan specifying that some scan has to be launch one after the other
+     *
      * @param serialScansArrayList
      * @param parallelScansArrayList
      * @param callback
      */
-    public void launchScansParallelAndForcedSerialScans(ArrayList<Scan> serialScansArrayList, ArrayList<Scan> parallelScansArrayList, final ScanLauncherCallback callback) {
-        initForScan();
-        ScanLauncher launcherSerial = new ScanLauncher();
-        ScanLauncher launcherParralel = new ScanLauncher();
+    public void launchScansParallelAndForcedSerialScans(ArrayList<Scan> serialScansArrayList, ArrayList<Scan> parallelScansArrayList, final ScanLauncherCallback callback) throws ScanLauncherException {
+        if (mScanLauncherInstance.isAlreadyInUse) {
+            throw ScanLauncherException.getScanLauncherAlreadyInUseException();
+        }
+        initForScan(TypeOfLauncher.MIX);
+        mLauncherSerial = new ScanLauncher();
+        mLauncherParralel = new ScanLauncher();
 
-        launcherSerial.launchScansSerial(serialScansArrayList, new ScanLauncherCallback() {
+        mLauncherSerial.launchScansSerial(serialScansArrayList, new ScanLauncherCallback() {
             @Override
             public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
                 //it is just like having two parallels scan
@@ -135,7 +153,7 @@ public class ScanLauncher {
                 }
             }
         });
-        launcherParralel.launchScansParallel(parallelScansArrayList, new ScanLauncherCallback() {
+        mLauncherParralel.launchScansParallel(parallelScansArrayList, new ScanLauncherCallback() {
             @Override
             public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
                 //it is just like having two parallels scan
@@ -147,6 +165,41 @@ public class ScanLauncher {
             }
         });
 
+    }
+
+    /**
+     * Calculate and give scanglobalstate according to the current process of scans managed by the launcher
+     * @return
+     */
+    public int getScansGlobalState() {
+        int globalStateValue = 0;
+        switch (mTypeOfLauncher) {
+            case SERIAL:
+                float finishedScan = mResultScans.size();
+                if (mSerialScans.size() > 0) {
+                    float waitingScan = mSerialScans.size();
+                    float runningScanState = mSerialScans.get(0).getmState();
+                    globalStateValue = (int) (100 * ((finishedScan / (finishedScan + waitingScan))) + runningScanState / 100);
+                } else {
+                    globalStateValue = 100;
+                }
+                break;
+            case PARALLEL:
+                for (int i = 0; i < mResultScans.size(); i++) {
+                    globalStateValue += mResultScans.get(i).getmState();
+                }
+                break;
+            case MIX:
+                globalStateValue = (mLauncherParralel.getScansGlobalState() + mLauncherSerial.getScansGlobalState()) / 2;
+                break;
+        }
+        return globalStateValue;
+    }
+
+    private enum TypeOfLauncher {
+        SERIAL,
+        PARALLEL,
+        MIX
     }
 
     /**
@@ -160,10 +213,20 @@ public class ScanLauncher {
      * ScanLauncherException class
      */
     public static class ScanLauncherException extends Exception {
-        private static final String EXCEPTION_TEXT = "Launcher is already in use";
+        private static final String EXCEPTION_TEXT_ALREADY_IN_USE = "Launcher is already in use";
+        private static final String EXCEPTION_TEXT_NOT_IN_USE = "Launcher is not in use";
 
-        public ScanLauncherException() {
-            super(EXCEPTION_TEXT);
+        private ScanLauncherException(String message) {
+            super(message);
         }
+
+        public static ScanLauncherException getScanLauncherAlreadyInUseException() {
+            return new ScanLauncherException(EXCEPTION_TEXT_ALREADY_IN_USE);
+        }
+
+        public static ScanLauncherException getScanLauncherNotInUseException() {
+            return new ScanLauncherException(EXCEPTION_TEXT_NOT_IN_USE);
+        }
+
     }
 }
