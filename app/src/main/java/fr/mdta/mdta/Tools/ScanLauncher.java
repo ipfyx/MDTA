@@ -14,8 +14,8 @@ public class ScanLauncher {
      * ScanLauncher Singleton for out access
      */
     private static ScanLauncher mScanLauncherInstance;
-    ScanLauncher mLauncherSerial = new ScanLauncher();
-    ScanLauncher mLauncherParralel = new ScanLauncher();
+    private ScanLauncher mLauncherSerial;
+    private ScanLauncher mLauncherParralel;
     /**
      * Control and forbid concurrent access on scanlauncher
      */
