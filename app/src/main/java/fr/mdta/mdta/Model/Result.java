@@ -3,6 +3,8 @@ package fr.mdta.mdta.Model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import fr.mdta.mdta.Scans.Scan;
+
 /**
  * This class represent the result of each scans and the global result according to the specified SimplifiedPackageInfo
  */

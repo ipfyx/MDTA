@@ -1,4 +1,4 @@
-package fr.mdta.mdta.Model;
+package fr.mdta.mdta.Scans;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import fr.mdta.mdta.API.APIModel.SentItem.PackagesList;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.BasicScanRequester;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**
  * This class represent the PermissionScanner Module.
