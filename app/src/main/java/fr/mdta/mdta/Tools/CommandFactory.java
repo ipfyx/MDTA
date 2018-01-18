@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import fr.mdta.mdta.API.Callback.Callback;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**
  * Created by manwefm on 04/12/17.
@@ -21,30 +22,30 @@ public final class CommandFactory {
             new HashMap<DangerousMethodCall, Integer>();
     public static HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
             new HashMap<String, DangerousMethodCall>();
-    static int COUNT = 0;
-    static String pathToApkUnzipFolder = "/data/local";
-    static String unzipApkToFolder = "unzipedApk";
+    public static int COUNT = 0;
+    public static String pathToApkUnzipFolder = "/data/local";
+    public static String unzipApkToFolder = "unzipedApk";
 
     public static void execCommand(String[] command, Callback callback, Context context) {
-        Command exec_command = new Command(callback, context, command);
+        Command exec_command = new Command(callback, command);
         exec_command.execute(command);
     }
 
-    public static void unzipCommand(Callback callback, Context context, ApplicationInfo app, int
+    public static void unzipCommand(Callback callback, SimplifiedPackageInfo appInfo, int
             my_uid, String SELinuxContext) {
 
         String[] listCommand = new String[]{
                 "cd " + pathToApkUnzipFolder,
                 "rm -rRf " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer.toString
-                        (app.uid),
+                        (appInfo.getAppUid()),
                 "mkdir -p " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
-                        .toString(app.uid),
-                "unzip " + app.sourceDir + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
-                        + Integer.toString(app.uid),
+                        .toString(appInfo.getAppUid()),
+                "unzip " + appInfo.getApkSourceDir() + " -d " + pathToApkUnzipFolder + unzipApkToFolder + "_"
+                        + Integer.toString(appInfo.getAppUid()),
                 "chown -R " + my_uid + ":" + my_uid + " " + pathToApkUnzipFolder +
-                        unzipApkToFolder + "_" + Integer.toString(app.uid),
+                        unzipApkToFolder + "_" + Integer.toString(appInfo.getAppUid()),
                 "chcon -R " + SELinuxContext + " " + pathToApkUnzipFolder + unzipApkToFolder +
-                        "_" + Integer.toString(app.uid)
+                        "_" + Integer.toString(appInfo.getAppUid())
                 /* "echo " + app.packageName + " " + Integer.toString(app.uid)+">> "+pathToApkUnzipFolder+"test",
                 "ls -lh " + pathToApkUnzipFolder + unzipApkToFolder + "_" + Integer
                         .toString(app.uid)+">> "+pathToApkUnzipFolder+"test"
@@ -54,11 +55,11 @@ public final class CommandFactory {
 
         //Log.d("CommandFactory",listCommand[6]);
 
-        Command exec_command = new Command(callback, context, listCommand);
+        Command exec_command = new Command(callback, listCommand);
         exec_command.execute(listCommand);
     }
 
-    public static void endScanApp(Callback callback, Context context, ApplicationInfo app) {
+    public static void endScanApp(ApplicationInfo app) {
 
         String[] listCommand = new String[]{
                 "cd /data/local",
@@ -66,13 +67,13 @@ public final class CommandFactory {
                         .uid)
         };
 
-        Command exec_command = new Command(callback, context, listCommand);
+        Command exec_command = new Command(listCommand);
         exec_command.execute(listCommand);
     }
 
-    public static void addCommandToExecute(final String[] command, Context context, Callback
+    public static void addCommandToExecute(final String[] command, Callback
             callback) {
-        Command exec_command = new Command(callback, context, command);
+        Command exec_command = new Command(callback, command);
         listProcess.add(exec_command);
     }
 
@@ -98,11 +99,11 @@ public final class CommandFactory {
         listProcess.add(command);
     }
 
-    public static void launchVerification(Callback callback, ApplicationInfo app) {
+    public static void launchVerification(Callback callback, SimplifiedPackageInfo appInfo) {
 
         COUNT = 0;
         if (listProcess.isEmpty()) {
-            callback.OnTaskCompleted(app);
+            callback.OnTaskCompleted(appInfo);
         } else {
             for (int i = 0; i < listProcess.size(); i++) {
                 if (COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING) {
@@ -120,14 +121,7 @@ public final class CommandFactory {
         String[] listCommand = new String[]{
                 "chcon -R " + SELinuxContext + " " + directoryPath
         };
-        Command exec_command = new Command(callback, context, listCommand);
+        Command exec_command = new Command(callback, listCommand);
         exec_command.execute(listCommand);
-    }
-
-    public enum DangerousMethodCall {
-        REFLECTION,
-        SHELL,
-        LOAD_CPP_LIBRARY,
-        SELINUX
     }
 }
