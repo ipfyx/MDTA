@@ -51,6 +51,7 @@ public class PermissionScan extends Scan {
                         mResults.put(getmSimplifiedPackageInfos().get(i), new SpecificResult(true, "FAKE PermissionOK", "FAKE BNo danger"));
 
                     }
+                    mState = 100;
                     callback.OnScanTerminated();
                 }
             }, packagesList);
