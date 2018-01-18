@@ -101,7 +101,7 @@ public class IntegrityScan extends Scan {
 
     @Override
     protected void updateState() {
-
+        mState += 1;
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
