@@ -1,4 +1,4 @@
-package fr.mdta.mdta.FilesScanner;
+package fr.mdta.mdta.Tools;
 
 /**
  * Created by manwefm on 16/01/18.
