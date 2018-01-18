@@ -14,7 +14,7 @@ import fr.mdta.mdta.API.Callback.Callback;
  * Created by manwefm on 18/01/18.
  */
 
-public class CertificatScan extends Scan {
+public class CertificateScan extends Scan {
 
     //static values
     private final static String CERTIFICATE_SCANNER_NAME = "Application Certificates Scanner";
@@ -24,7 +24,7 @@ public class CertificatScan extends Scan {
     /**
      * @param simplifiedPackageInfos
      */
-    public CertificatScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos) {
+    public CertificateScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos) {
         super(CERTIFICATE_SCANNER_NAME, CERTIFICATE_SCANNER_DESCRIPTION, simplifiedPackageInfos);
     }
 
