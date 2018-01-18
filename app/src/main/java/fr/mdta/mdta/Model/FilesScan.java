@@ -1,6 +1,8 @@
 package fr.mdta.mdta.Model;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -15,10 +17,10 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.Tools.Command;
 import fr.mdta.mdta.Tools.CommandFactory;
-import fr.mdta.mdta.Tools.TypeScan;
 
 /**
  * Created by manwefm on 18/01/18.
@@ -31,10 +33,10 @@ public class FilesScan extends Scan {
     private final static String FILES_SCANNER_DESCRIPTION = "This scan can verify the integrity" +
             "of each file contained in an apk";
 
-    boolean suAvailable = false;
+    private boolean suAvailable = false;
     private int my_uid = 0;
 
-    public ArrayList<SimplifiedPackageInfo> listPackageInfo;
+    private ArrayList<SimplifiedPackageInfo> listPackageInfo;
 
 
     private Callback mycallback = new Callback() {
@@ -58,8 +60,15 @@ public class FilesScan extends Scan {
      * @param simplifiedPackageInfos
      */
     public FilesScan(ArrayList<SimplifiedPackageInfo>
-            simplifiedPackageInfos) {
+            simplifiedPackageInfos, Context context) {
         super(FILES_SCANNER_NAME, FILES_SCANNER_DESCRIPTION, simplifiedPackageInfos);
+
+        suAvailable = Shell.SU.available();
+
+        my_uid = context.getApplicationInfo().uid;
+
+        fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
+
     }
 
     @Override
