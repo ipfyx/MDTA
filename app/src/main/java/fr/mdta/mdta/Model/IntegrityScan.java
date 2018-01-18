@@ -56,7 +56,7 @@ public class IntegrityScan extends Scan {
             endScanApp((SimplifiedPackageInfo) object);
         }
     };
-    
+
     public IntegrityScan(ArrayList<SimplifiedPackageInfo>
             simplifiedPackageInfos, Context context) {
         super(FILES_SCANNER_NAME, FILES_SCANNER_DESCRIPTION, simplifiedPackageInfos);
@@ -89,7 +89,14 @@ public class IntegrityScan extends Scan {
 
     @Override
     public void cancelScan(ScanCallback callback) {
+        for (int i = 0; i < CommandFactory.listProcessIntegrity.size(); i++) {
+            CommandFactory.listProcessIntegrity.get(i).cancel(true);
+        }
+        CommandFactory.listProcessIntegrity.clear();
 
+        fr.mdta.mdta.Tools.CommandFactory.brutallyEndScanApp(unzipApkToFolder);
+
+        callback.OnScanTerminated();
     }
 
     @Override

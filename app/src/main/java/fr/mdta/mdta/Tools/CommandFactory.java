@@ -122,4 +122,15 @@ public final class CommandFactory {
         Command exec_command = new Command(callback, listCommand);
         exec_command.execute(listCommand);
     }
+
+    public static void brutallyEndScanApp(String unzipDirectoryName) {
+
+        String[] listCommand = new String[]{
+                "cd /data/local",
+                "rm -rRf " + pathToApkUnzipFolder + unzipDirectoryName + "_*"
+        };
+
+        Command exec_command = new Command(listCommand);
+        exec_command.execute(listCommand);
+    }
 }
