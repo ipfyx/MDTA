@@ -13,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
@@ -27,6 +26,8 @@ public class ScanActivity extends AppCompatActivity {
     public final static String KEY_CUSTOM_SCAN_SCANLIST = "customscanscanlist";
     private final static String TIMER_FORMAT = "mm:ss";
     private static final int mProgressBarMaxValue = 100;
+    private final ArrayList<Scan> mScans = new ArrayList<>();
+    private final ArrayList<Result> mResults = new ArrayList<>();
     private Handler mHandler = new Handler();
     //Model
     private TypeOfScan mTypeOfScan;
@@ -34,8 +35,6 @@ public class ScanActivity extends AppCompatActivity {
     private Date mStartingTime;
     private ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = new ArrayList<>();
     private Handler mTimerHandler = new Handler();
-    private final ArrayList<Scan> mScans = new ArrayList<>();
-    private final ArrayList<Result> mResults = new ArrayList<>();
     //UI components
     private TextView mTimerTextView;
     private TextView mPercentTextView;
@@ -107,8 +106,14 @@ public class ScanActivity extends AppCompatActivity {
                  * FAKE VALUES to proof the UI interface
                  */
                 mScans.add(new Scan("permissionscanner", "descriptionperm", PackageInfoFactory.getInstalledPackages(this)) {
+
                     @Override
-                    public void launchScan(Callback callback) {
+                    public void launchScan(ScanCallback callback) {
+
+                    }
+
+                    @Override
+                    public void cancelScan(ScanCallback callback) {
 
                     }
 
@@ -118,8 +123,14 @@ public class ScanActivity extends AppCompatActivity {
                     }
                 });
                 mScans.add(new Scan("integrityscanner", "descriptionintegrity", PackageInfoFactory.getInstalledPackages(this)) {
+
                     @Override
-                    public void launchScan(Callback callback) {
+                    public void launchScan(ScanCallback callback) {
+
+                    }
+
+                    @Override
+                    public void cancelScan(ScanCallback callback) {
 
                     }
 
@@ -130,7 +141,12 @@ public class ScanActivity extends AppCompatActivity {
                 });
                 mScans.add(new Scan("signaturescanner", "descriptionsignature", PackageInfoFactory.getInstalledPackages(this)) {
                     @Override
-                    public void launchScan(Callback callback) {
+                    public void launchScan(ScanCallback callback) {
+
+                    }
+
+                    @Override
+                    public void cancelScan(ScanCallback callback) {
 
                     }
 
@@ -151,7 +167,12 @@ public class ScanActivity extends AppCompatActivity {
                  */
                 mScans.add(new Scan("permissionscanner", "descriptionperm", PackageInfoFactory.getInstalledPackages(this)) {
                     @Override
-                    public void launchScan(Callback callback) {
+                    public void launchScan(ScanCallback callback) {
+
+                    }
+
+                    @Override
+                    public void cancelScan(ScanCallback callback) {
 
                     }
 
@@ -162,7 +183,12 @@ public class ScanActivity extends AppCompatActivity {
                 });
                 mScans.add(new Scan("integrityscanner", "descriptionintegrity", PackageInfoFactory.getInstalledPackages(this)) {
                     @Override
-                    public void launchScan(Callback callback) {
+                    public void launchScan(ScanCallback callback) {
+
+                    }
+
+                    @Override
+                    public void cancelScan(ScanCallback callback) {
 
                     }
 
@@ -173,7 +199,12 @@ public class ScanActivity extends AppCompatActivity {
                 });
                 mScans.add(new Scan("signaturescanner", "descriptionsignature", PackageInfoFactory.getInstalledPackages(this)) {
                     @Override
-                    public void launchScan(Callback callback) {
+                    public void launchScan(ScanCallback callback) {
+
+                    }
+
+                    @Override
+                    public void cancelScan(ScanCallback callback) {
 
                     }
 

@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
@@ -93,8 +92,14 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
          * FAKE VALUES to proof the UI interface
          */
         mScans.add(new Scan("permissionscanner", "descriptionperm", PackageInfoFactory.getInstalledPackages(this)) {
+
             @Override
-            public void launchScan(Callback callback) {
+            public void launchScan(ScanCallback callback) {
+
+            }
+
+            @Override
+            public void cancelScan(ScanCallback callback) {
 
             }
 
@@ -104,8 +109,14 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
             }
         });
         mScans.add(new Scan("integrityscanner", "descriptionintegrity", PackageInfoFactory.getInstalledPackages(this)) {
+
             @Override
-            public void launchScan(Callback callback) {
+            public void launchScan(ScanCallback callback) {
+
+            }
+
+            @Override
+            public void cancelScan(ScanCallback callback) {
 
             }
 
@@ -115,8 +126,14 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
             }
         });
         mScans.add(new Scan("signaturescanner", "descriptionsignature", PackageInfoFactory.getInstalledPackages(this)) {
+
             @Override
-            public void launchScan(Callback callback) {
+            public void launchScan(ScanCallback callback) {
+
+            }
+
+            @Override
+            public void cancelScan(ScanCallback callback) {
 
             }
 
