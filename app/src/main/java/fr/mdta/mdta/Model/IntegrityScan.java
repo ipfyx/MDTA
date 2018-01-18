@@ -82,6 +82,8 @@ public class IntegrityScan extends Scan {
         } else {
             //TODO
         }
+
+        callback.OnScanTerminated();
     }
 
 
