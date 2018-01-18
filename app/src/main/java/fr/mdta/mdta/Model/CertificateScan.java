@@ -69,9 +69,10 @@ public class CertificateScan extends Scan {
                     mResults.put(listPackageInfo.get(i),result);
                 }
                 updateState();
-
             }
         }
+
+        callback.OnTaskCompleted("TODO");
     }
 
     @Override
