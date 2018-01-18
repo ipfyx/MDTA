@@ -4,13 +4,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import fr.mdta.mdta.API.Callback.Callback;
-
 /**
  * This class represent any scans, every scan should be extended from this class, that makes the common basics of a scan.
  */
 public abstract class Scan implements Serializable {
 
+    /**
+     * Link the specific result of a scan on a the specified simplified package info
+     */
+    protected HashMap<SimplifiedPackageInfo, SpecificResult> mResults;
+    /**
+     * Value used to make animation and to keep the state(generally out of 100) of a scan
+     */
+    protected int mState = 0;
     /**
      * Represents the scan name
      */
@@ -23,14 +29,6 @@ public abstract class Scan implements Serializable {
      * Represents the list of all the simplifiedpackageinfos which needs to be scan
      */
     private ArrayList<SimplifiedPackageInfo> mSimplifiedPackageInfos;
-    /**
-     * Link the specific result of a scan on a the specified simplified package info
-     */
-    protected HashMap<SimplifiedPackageInfo, SpecificResult> mResults;
-    /**
-     * Value used to make animation and to keep the state(generally out of 100) of a scan
-     */
-    protected int mState = 0;
 
     /**
      * @param scanName
@@ -63,7 +61,14 @@ public abstract class Scan implements Serializable {
      *
      * @param callback
      */
-    public abstract void launchScan(Callback callback);
+    public abstract void launchScan(ScanCallback callback);
+
+    /**
+     * Method to cancel a scan which should be implemented by the extender's class.
+     *
+     * @param callback
+     */
+    public abstract void cancelScan(ScanCallback callback);
 
     /**
      * Method to update scan state which should be implemented by the extender's class.
@@ -113,6 +118,14 @@ public abstract class Scan implements Serializable {
      */
     public int getmState() {
         return mState;
+    }
+
+    /**
+     * Callback interface
+     */
+    public interface ScanCallback extends Serializable {
+        void OnScanTerminated();
+
     }
 
     /**
