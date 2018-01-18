@@ -35,6 +35,8 @@ public class FilesScan extends Scan {
     private boolean suAvailable = false;
     private int my_uid = 0;
 
+    private String unzipApkToFolder = "unzipedApkIntegrity";
+
     private ArrayList<SimplifiedPackageInfo> listPackageInfo;
 
 
@@ -110,7 +112,7 @@ public class FilesScan extends Scan {
                 public void OnTaskCompleted(Object object) {
                     verifyHashesManifest(appInfo);
                 }
-            }, appInfo, my_uid, getFileAppSELinuxContext());
+            }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
         } else {
             //TODO
         }
@@ -122,7 +124,7 @@ public class FilesScan extends Scan {
         // risk to rm -rf /&
 
         //Log.d("ending",app.packageName);
-        fr.mdta.mdta.Tools.CommandFactory.endScanApp(appInfo);
+        fr.mdta.mdta.Tools.CommandFactory.endScanApp(appInfo,unzipApkToFolder);
 
         if ( listPackageInfo.contains(appInfo) ) {
             listPackageInfo.remove(appInfo);
@@ -141,7 +143,7 @@ public class FilesScan extends Scan {
         final String[] commandToExecute = new String[]{hashMethod + " -b " + fr.mdta.mdta
                 .Tools.CommandFactory
                 .pathToApkUnzipFolder +
-                fr.mdta.mdta.Tools.CommandFactory.unzipApkToFolder + "_" +
+                unzipApkToFolder + "_" +
                 Integer.toString(appInfo.getAppUid()) + "/" + filePath + "| xxd -r -p | base64"};
 
         Command command = new Command(new Callback() {
