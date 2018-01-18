@@ -1,6 +1,7 @@
 package fr.mdta.mdta.SignaturesScanner.Model;
 
 import android.util.Base64;
+import android.util.Log;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -18,14 +19,16 @@ public class PackageSignaturesInfo {
     private String mApkSourceDir;
     private X509Certificate mAppDeveloperCertificate;
     private ArrayList<ApkFileSignature> mApkFileSignatures;
+    private int mFlag;
 
     public PackageSignaturesInfo(String mAppName, String mPackageName, String mApkSourceDir,
-                                 X509Certificate mAppDeveloperCertificate, ArrayList<ApkFileSignature> mApkFileSignatures) {
+                                 X509Certificate mAppDeveloperCertificate, ArrayList<ApkFileSignature> mApkFileSignatures, int mFlag) {
         this.mAppName = mAppName;
         this.mPackageName = mPackageName;
         this.mApkSourceDir = mApkSourceDir;
         this.mAppDeveloperCertificate = mAppDeveloperCertificate;
         this.mApkFileSignatures = mApkFileSignatures;
+        this.mFlag = mFlag;
     }
 
     public String getmAppName() {
@@ -52,6 +55,7 @@ public class PackageSignaturesInfo {
         return mApkFileSignatures;
     }
 
+    public int getmFlag() { return mFlag; }
 
     public static class ApkFileSignature {
         private String mPath;
@@ -67,11 +71,17 @@ public class PackageSignaturesInfo {
          */
         public boolean verifySignature(String calculatedHash, X509Certificate packageCertificate) {
             try {
+
+                Log.d("calculatedHash",calculatedHash+"$");
+                //Signature verifier = Signature.getInstance(mHashingMethod);
                 Signature verifier = Signature.getInstance(packageCertificate.getSigAlgName());
-                verifier.initVerify(packageCertificate);
+                Log.d("algo",verifier.getAlgorithm());
+                Log.d("algoPackage",packageCertificate.getSigAlgName());
+
+                verifier.initVerify(packageCertificate.getPublicKey());
                 verifier.update(calculatedHash.getBytes());
 
-                if (verifier.verify(mHash.getBytes())) {
+                if (verifier.verify(calculatedHash.getBytes())) {
                     System.out.println("Signature is valid");
                     return true;
                 } else {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="fr.mdta.mdta.FilesScanner.FilesScannerActivity">
+
+    <TextView
+        android:id="@+id/sample_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello FilesScanner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/scanUserApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Scan User Applications"
+        tools:layout_editor_absoluteX="2dp"
+        tools:layout_editor_absoluteY="2dp" />
+
+    <Button
+        android:id="@+id/scanSystemApps"
+        android:layout_width="161dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="8dp"
+        android:text="Scan System Applications"
+        app:layout_constraintTop_toBottomOf="@+id/scanUserApp"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Cancel"
+        app:layout_constraintTop_toBottomOf="@+id/scanSystemApps"
+        tools:layout_editor_absoluteX="2dp" />
+
+    <Button
+        android:id="@+id/dexScanNonSystemApps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Scan Dex File User Applications"
+        app:layout_constraintTop_toBottomOf="@+id/cancel"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <Button
+        android:id="@+id/dexScanSystemApps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Scan Dex File System Applications"
+        app:layout_constraintTop_toBottomOf="@+id/dexScanNonSystemApps"
+        tools:layout_editor_absoluteX="2dp" />
+
+</android.support.constraint.ConstraintLayout>
