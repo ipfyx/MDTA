@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Tools;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
@@ -58,12 +57,12 @@ public final class CommandFactory {
         exec_command.execute(listCommand);
     }
 
-    public static void endScanApp(ApplicationInfo app, String unzipDirectoryName) {
+    public static void endScanApp(SimplifiedPackageInfo app, String unzipDirectoryName) {
 
         String[] listCommand = new String[]{
                 "cd /data/local",
                 "rm -rRf " + pathToApkUnzipFolder + unzipDirectoryName + "_" + Integer.toString(app
-                        .uid)
+                        .getAppUid())
         };
 
         Command exec_command = new Command(listCommand);

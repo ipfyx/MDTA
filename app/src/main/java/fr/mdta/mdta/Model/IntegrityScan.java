@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Model;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
@@ -53,7 +52,7 @@ public class IntegrityScan extends Scan {
 
         @Override
         public void OnTaskCompleted(Object object) {
-            endScanApp((ApplicationInfo) object);
+            endScanApp((SimplifiedPackageInfo) object);
         }
     };
 
@@ -124,7 +123,7 @@ public class IntegrityScan extends Scan {
         }
     }
 
-    protected void endScanApp(ApplicationInfo appInfo) {
+    protected void endScanApp(SimplifiedPackageInfo appInfo) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
