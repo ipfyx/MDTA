@@ -191,4 +191,33 @@ public class SimplifiedPackageInfo implements Serializable {
     public int getAppUid() {
         return AppUid;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SimplifiedPackageInfo that = (SimplifiedPackageInfo) o;
+
+        if (VersionCode != that.VersionCode) return false;
+        if (IsSystemApp != that.IsSystemApp) return false;
+        if (AppUid != that.AppUid) return false;
+        if (!AppName.equals(that.AppName)) return false;
+        if (!PackageName.equals(that.PackageName)) return false;
+        if (!VersionName.equals(that.VersionName)) return false;
+        return ApkSourceDir.equals(that.ApkSourceDir);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = AppName.hashCode();
+        result = 31 * result + PackageName.hashCode();
+        result = 31 * result + VersionName.hashCode();
+        result = 31 * result + ApkSourceDir.hashCode();
+        result = 31 * result + VersionCode;
+        result = 31 * result + (IsSystemApp ? 1 : 0);
+        result = 31 * result + AppUid;
+        return result;
+    }
 }
