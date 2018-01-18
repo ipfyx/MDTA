@@ -28,6 +28,7 @@ import java.util.jar.Manifest;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.R;
 import fr.mdta.mdta.Tools.Command;
 import fr.mdta.mdta.Tools.CommandFactory;
@@ -129,14 +130,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 //TODO clean up directory
-                if (suAvailable) {
-                    for (int i = 0; i < CommandFactory.listProcess.size(); i++) {
-                        CommandFactory.listProcess.get(i).cancel(true);
-                    }
-                    CommandFactory.listProcess.clear();
-                } else {
-                    //TODO
-                }
+//                if (suAvailable) {
+//                    for (int i = 0; i < CommandFactory.listProcess.size(); i++) {
+//                        CommandFactory.listProcess.get(i).cancel(true);
+//                    }
+//                    CommandFactory.listProcess.clear();
+//                } else {
+//                    //TODO
+//                }
             }
         });
 
@@ -212,26 +213,26 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         //unzipApk(app.uid, app);
 
-        CommandFactory.unzipCommand(new Callback() {
-            @Override
-            public void OnErrorHappended() {
-
-            }
-
-            @Override
-            public void OnErrorHappended(String error) {
-
-            }
-
-            @Override
-            public void OnTaskCompleted(Object object) {
-                if (typeScan.equals("signature")) {
-                    verifyHashesManifest(app.uid, app, (String) object);
-                } else {
-                    scanAppDexFile(app);
-                }
-            }
-        }, this, app, my_uid, getFileAppSELinuxContext());
+//        CommandFactory.unzipCommand(new Callback() {
+//            @Override
+//            public void OnErrorHappended() {
+//
+//            }
+//
+//            @Override
+//            public void OnErrorHappended(String error) {
+//
+//            }
+//
+//            @Override
+//            public void OnTaskCompleted(Object object) {
+//                if (typeScan.equals("signature")) {
+//                    verifyHashesManifest(app.uid, app, (String) object);
+//                } else {
+//                    scanAppDexFile(app);
+//                }
+//            }
+//        }, this, app, my_uid, getFileAppSELinuxContext());
 
         //TODO : Manage AsyncTask properly
     }
@@ -244,7 +245,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         // risk to rm -rf /&
 
         //Log.d("ending",app.packageName);
-        CommandFactory.endScanApp(this, this, app);
+        //CommandFactory.endScanApp(this, this, app);
         if (nonSystemApps.contains(app)) {
             nonSystemApps.remove(app);
             if (!nonSystemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
@@ -263,13 +264,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     }
 
-    protected void addFileToListVerification(final String filePath, final String hash, final
-    ApplicationInfo app, final String hashMethod, final ArrayList<Command> listProcess) {
+/*    protected void addFileToListVerification(final String filePath, final String hash, final
+    SimplifiedPackageInfo app, final String hashMethod, final ArrayList<Command> listProcess) {
 
-        final String[] commandToExecute = new String[]{hashMethod + " -b " + CommandFactory
+        *//*final String[] commandToExecute = new String[]{hashMethod + " -b " + CommandFactory
                 .pathToApkUnzipFolder +
                 CommandFactory.unzipApkToFolder + "_" +
                 Integer.toString(app.uid) + "/" + filePath + "| xxd -r -p | base64"};
+        *//*
+        final String[] commandToExecute = new String[]{""};
 
         Command command = new Command(new Callback() {
             @Override
@@ -285,7 +288,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void OnTaskCompleted(Object object) {
                 CommandFactory.COUNT -= 1;
-                CommandFactory.removeCommand(commandToExecute);
+                //CommandFactory.removeCommand(commandToExecute);
                 CommandFactory.launchVerification(mycallback, app);
 
                 String calculatedHash = (String) ((String) object).replaceAll("\\n", "")
@@ -294,16 +297,16 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 if (hash.equals(calculatedHash)) {
                     Log.d(filePath, hash + " / " + calculatedHash);
                 } else {
-                    cancelVerification(app, filePath);
+                    //cancelVerification(app, filePath);
                     Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " +
-                            filePath + " " + app.uid);
+                            filePath + " " + app.getAppUid();
                 }
             }
         }, this, commandToExecute);
 
         listProcess.add(command);
 
-    }
+    }*/
 
     protected void verifyHashesManifest(final int uid, ApplicationInfo app, String unzipResult) {
         try {
@@ -329,14 +332,14 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     if (fileHash == null) {
                         //MD5 or somethingElse ?
                     } else {
-                        addFileToListVerification(filePath, fileHash, app, "sha1sum", listProcess);
+                        //addFileToListVerification(filePath, fileHash, app, "sha1sum", listProcess);
                     }
                 } else {
-                    addFileToListVerification(filePath, fileHash, app, "sha256sum", listProcess);
+                    //addFileToListVerification(filePath, fileHash, app, "sha256sum", listProcess);
                 }
             }
             CommandFactory.listProcessIntegrity = listProcess;
-            CommandFactory.launchVerification(mycallback, app);
+            //CommandFactory.launchVerification(mycallback, app);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -438,12 +441,13 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SELINUX, 0);
         CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SHELL, 0);
 
-        final String appDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
-                app.uid;
+        //final String appDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
+                //app.uid;
         //final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
         //my_uid;
 
-        ArrayList<File> listDexFile = getDexFiles(appDirectory);
+        ArrayList<File> listDexFile = null;
+        //ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
         for (int i = 0; i < listDexFile.size(); i++) {
             scanDexFile(listDexFile.get(i));
