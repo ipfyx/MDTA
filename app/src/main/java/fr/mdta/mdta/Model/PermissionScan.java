@@ -30,7 +30,7 @@ public class PermissionScan extends Scan {
     }
 
     @Override
-    public void launchScan(Callback callback) {
+    public void launchScan(ScanCallback callback) {
         //TODO implement the launchscan strategy
 
         PackagesList packagesList = new PackagesList(this.getmSimplifiedPackageInfos());
@@ -56,6 +56,11 @@ public class PermissionScan extends Scan {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Override
+    public void cancelScan(ScanCallback callback) {
 
     }
 
