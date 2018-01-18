@@ -17,6 +17,7 @@ import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
+import fr.mdta.mdta.Tools.ScanLauncher;
 
 
 public class ScanActivity extends AppCompatActivity {
@@ -85,7 +86,6 @@ public class ScanActivity extends AppCompatActivity {
 
                                          public void run() {
                                              //TODO replace fake animation by an update with scanlist and state arguments
-                                             mCounter++;
                                              if (mCounter < mProgressBarMaxValue) {
                                                  mProgressBar.setProgress(mCounter);
                                                  int percent_num = (mCounter * 100 / mProgressBarMaxValue);
@@ -220,68 +220,22 @@ public class ScanActivity extends AppCompatActivity {
             case CUSTOMSCAN:
                 //Retrieve scanlist from serializable extra
                 mScans.addAll((ArrayList<Scan>) getIntent().getSerializableExtra(KEY_CUSTOM_SCAN_SCANLIST));
+                try {
+                    ScanLauncher.getInstance().launchScansSerial(mScans, new ScanLauncher.ScanLauncherCallback() {
+                        @Override
+                        public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
+                            updateCounter();
+                            fillResultList(arrayListScanWithResult);
+                        }
+                    });
+                } catch (ScanLauncher.ScanLauncherException e) {
+                    e.printStackTrace();
+                }
         }
 
 
-        /**
-         * FAKE VALUES to proof the UI interface
-         */
-        simplifiedPackageInfos = mScans.get(0).getmSimplifiedPackageInfos();
-        ArrayList<Result.ScanResult> scanResults0 = new ArrayList<>();
-        Result.ScanResult scanResult01 = new Result.ScanResult("integrityscan", "lescanquitueetquiprenddeuxplombes", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults0.add(scanResult01);
-        Result.ScanResult scanResult02 = new Result.ScanResult("dexfilescanner", "lescanquitueetquiprenduneplombes", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults0.add(scanResult02);
-        Result.ScanResult scanResult03 = new Result.ScanResult("permissionscan", "superrapide", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults0.add(scanResult03);
-        Result result0 = new Result(simplifiedPackageInfos.get(0), scanResults0);
-        mResults.add(result0);
-
-        ArrayList<Result.ScanResult> scanResults1 = new ArrayList<>();
-        Result.ScanResult scanResult11 = new Result.ScanResult("integrityscan", "lescanquitueetquiprenddeuxplombes", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults1.add(scanResult11);
-        Result.ScanResult scanResult12 = new Result.ScanResult("dexfilescanner", "lescanquitueetquiprenduneplombes", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults1.add(scanResult12);
-        Result.ScanResult scanResult13 = new Result.ScanResult("permissionscan", "superrapide", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults1.add(scanResult13);
-        Result result1 = new Result(simplifiedPackageInfos.get(1), scanResults1);
-        mResults.add(result1);
-
-        ArrayList<Result.ScanResult> scanResults2 = new ArrayList<>();
-        Result.ScanResult scanResult21 = new Result.ScanResult("integrityscan", "lescanquitueetquiprenddeuxplombes", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults2.add(scanResult21);
-        Result.ScanResult scanResult22 = new Result.ScanResult("dexfilescanner", "lescanquitueetquiprenduneplombes", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults2.add(scanResult22);
-        Result.ScanResult scanResult23 = new Result.ScanResult("permissionscan", "superrapide", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults2.add(scanResult23);
-        Result result2 = new Result(simplifiedPackageInfos.get(2), scanResults2);
-        mResults.add(result2);
-
-        ArrayList<Result.ScanResult> scanResults3 = new ArrayList<>();
-        Result.ScanResult scanResult31 = new Result.ScanResult("integrityscan", "lescanquitueetquiprenddeuxplombes", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults3.add(scanResult31);
-        Result.ScanResult scanResult32 = new Result.ScanResult("dexfilescanner", "lescanquitueetquiprenduneplombes", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults3.add(scanResult32);
-        Result.ScanResult scanResult33 = new Result.ScanResult("permissionscan", "superrapide", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults3.add(scanResult33);
-        Result result3 = new Result(simplifiedPackageInfos.get(3), scanResults3);
-        mResults.add(result3);
-
-        ArrayList<Result.ScanResult> scanResults4 = new ArrayList<>();
-        Result.ScanResult scanResult41 = new Result.ScanResult("integrityscan", "lescanquitueetquiprenddeuxplombes", new Scan.SpecificResult(true, "impeccable", "RAS"));
-        scanResults4.add(scanResult41);
-        Result.ScanResult scanResult42 = new Result.ScanResult("dexfilescanner", "lescanquitueetquiprenduneplombes", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults4.add(scanResult42);
-        Result.ScanResult scanResult43 = new Result.ScanResult("permissionscan", "superrapide", new Scan.SpecificResult(false, "impeccable", "RAS"));
-        scanResults4.add(scanResult43);
-        Result result4 = new Result(simplifiedPackageInfos.get(4), scanResults4);
-        mResults.add(result4);
-
-        /**
-         * END FAKE VALUES to proof the UI interface
-         */
-
         //Set button action
+        mResultButton.setClickable(false);
         mResultButton.setOnClickListener(new View.OnClickListener()
 
         {
@@ -298,11 +252,26 @@ public class ScanActivity extends AppCompatActivity {
         });
     }
 
+    private void fillResultList(ArrayList<Scan> scanArrayList) {
+        simplifiedPackageInfos = scanArrayList.get(0).getmSimplifiedPackageInfos();
+
+        for (int i = 0; i < simplifiedPackageInfos.size(); i++) {
+            ArrayList<Result.ScanResult> scanResults = new ArrayList<>();
+            for (int j = 0; j < scanArrayList.size(); j++) {
+                scanResults.add(scanArrayList.get(j).getScanResult(simplifiedPackageInfos.get(i)));
+            }
+            Result result = new Result(simplifiedPackageInfos.get(i), scanResults);
+            mResults.add(result);
+        }
+        mResultButton.setClickable(true);
+    }
+
     /**
      * Method to combine all the scans state counter to update
      */
     private void updateCounter() {
         //TODO by mixing scans
+        mCounter = 100;
     }
 
     /**
