@@ -1,13 +1,15 @@
 package fr.mdta.mdta.FilesScanner;
 
-import android.app.Application;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import org.jf.dexlib2.DexFileFactory;
+import org.jf.dexlib2.dexbacked.DexBackedDexFile;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +18,6 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,20 +26,20 @@ import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.jf.dexlib2.DexFileFactory;
-import org.jf.dexlib2.dexbacked.DexBackedDexFile;
-
 import eu.chainfire.libsuperuser.Shell;
-
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.R;
 
 public class FilesScannerActivity extends AppCompatActivity implements Callback {
 
+    boolean suAvailable = false;
     private List<ApplicationInfo> installedApplications = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> systemApps = new ArrayList<ApplicationInfo>();
     private List<ApplicationInfo> nonSystemApps = new ArrayList<ApplicationInfo>();
 
+    //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
+    // or not
+    private int my_uid = 0;
     private Callback mycallback = new Callback() {
         @Override
         public void OnErrorHappended() {
@@ -56,44 +57,37 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         }
     };
 
-    //TODO:need to agree on a syntax on variable containing path, should they all finish with a /
-    // or not
-
-    private int my_uid = 0;
-
-    boolean suAvailable = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files_scanner);
 
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Runtime.+getRuntime()Ljava/lang/Runtime".toLowerCase(),DangerousMethodCall.SHELL
+                "Ljava/lang/Runtime.+getRuntime()Ljava/lang/Runtime".toLowerCase(), DangerousMethodCall.SHELL
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class".toLowerCase(),DangerousMethodCall.REFLECTION
+                "Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class".toLowerCase(), DangerousMethodCall.REFLECTION
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->forName(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class".toLowerCase(),DangerousMethodCall.REFLECTION
+                "Ljava/lang/Class;->forName(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class".toLowerCase(), DangerousMethodCall.REFLECTION
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method".toLowerCase(),DangerousMethodCall.REFLECTION
+                "Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method".toLowerCase(), DangerousMethodCall.REFLECTION
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->getMethods()[Ljava/lang/reflect/Method".toLowerCase(),DangerousMethodCall.REFLECTION
+                "Ljava/lang/Class;->getMethods()[Ljava/lang/reflect/Method".toLowerCase(), DangerousMethodCall.REFLECTION
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V".toLowerCase(),DangerousMethodCall.LOAD_CPP_LIBRARY
+                "Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V".toLowerCase(), DangerousMethodCall.LOAD_CPP_LIBRARY
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->getClassLoader()Ljava/lang/ClassLoader",DangerousMethodCall.REFLECTION
+                "Ljava/lang/Class;->getClassLoader()Ljava/lang/ClassLoader", DangerousMethodCall.REFLECTION
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "shell".toLowerCase(),DangerousMethodCall.SHELL
+                "shell".toLowerCase(), DangerousMethodCall.SHELL
         );
         CommandFactory.mapDangerousMethodPattern.put(
-                "superuser".toLowerCase(),DangerousMethodCall.SHELL
+                "superuser".toLowerCase(), DangerousMethodCall.SHELL
         );
 
         Button buttonNonSystemApps = (Button) findViewById(R.id.scanUserApp);
@@ -102,8 +96,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void onClick(View v) {
                 getListNonSystemApps();
                 if (suAvailable) {
-                    if ( !nonSystemApps.isEmpty() ) {
-                        scanApp(nonSystemApps.get(0),TypeScan.SIGNATURE_SCAN);
+                    if (!nonSystemApps.isEmpty()) {
+                        scanApp(nonSystemApps.get(0), TypeScan.SIGNATURE_SCAN);
                     }
                 } else {
                     //TODO
@@ -117,8 +111,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void onClick(View v) {
                 getListSystemApps();
                 if (suAvailable) {
-                    if ( !systemApps.isEmpty() ) {
-                        scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
+                    if (!systemApps.isEmpty()) {
+                        scanApp(systemApps.get(0), TypeScan.SIGNATURE_SCAN);
                     }
                 } else {
                     //TODO
@@ -132,7 +126,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             public void onClick(View v) {
                 //TODO clean up directory
                 if (suAvailable) {
-                    for ( int i = 0; i < CommandFactory.listProcess.size(); i++) {
+                    for (int i = 0; i < CommandFactory.listProcess.size(); i++) {
                         CommandFactory.listProcess.get(i).cancel(true);
                     }
                     CommandFactory.listProcess.clear();
@@ -147,7 +141,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListNonSystemApps();
-                scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
+                scanApp(nonSystemApps.get(0), TypeScan.DEX_SCAN);
             }
 
         });
@@ -157,7 +151,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             @Override
             public void onClick(View v) {
                 getListSystemApps();
-                scanApp(systemApps.get(0),TypeScan.DEX_SCAN);
+                scanApp(systemApps.get(0), TypeScan.DEX_SCAN);
             }
 
         });
@@ -227,7 +221,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
             @Override
             public void OnTaskCompleted(Object object) {
-                if ( typeScan.equals("signature") ) {
+                if (typeScan.equals("signature")) {
                     verifyHashesManifest(app.uid, app, (String) object);
                 } else {
                     scanAppDexFile(app);
@@ -247,19 +241,19 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
         //Log.d("ending",app.packageName);
         CommandFactory.endScanApp(this, this, app);
-        if ( nonSystemApps.contains(app) ) {
+        if (nonSystemApps.contains(app)) {
             nonSystemApps.remove(app);
-            if ( !nonSystemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN) ) {
-                scanApp(nonSystemApps.get(0),TypeScan.SIGNATURE_SCAN);
-            } else if ( !nonSystemApps.isEmpty() ) {
-                scanApp(nonSystemApps.get(0),TypeScan.DEX_SCAN);
+            if (!nonSystemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
+                scanApp(nonSystemApps.get(0), TypeScan.SIGNATURE_SCAN);
+            } else if (!nonSystemApps.isEmpty()) {
+                scanApp(nonSystemApps.get(0), TypeScan.DEX_SCAN);
             }
         } else {
             systemApps.remove(app);
-            if ( !systemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
-                scanApp(systemApps.get(0),TypeScan.SIGNATURE_SCAN);
-            } else if ( !systemApps.isEmpty() ) {
-                scanApp(systemApps.get(0),TypeScan.DEX_SCAN);
+            if (!systemApps.isEmpty() && typeScan.equals(TypeScan.SIGNATURE_SCAN)) {
+                scanApp(systemApps.get(0), TypeScan.SIGNATURE_SCAN);
+            } else if (!systemApps.isEmpty()) {
+                scanApp(systemApps.get(0), TypeScan.DEX_SCAN);
             }
         }
 
@@ -296,7 +290,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                 if (hash.equals(calculatedHash)) {
                     Log.d(filePath, hash + " / " + calculatedHash);
                 } else {
-                    cancelVerification(app,filePath);
+                    cancelVerification(app, filePath);
                     Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " +
                             filePath + " " + app.uid);
                 }
@@ -346,12 +340,12 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void cancelVerification(ApplicationInfo app, String filepath) {
-        for ( int i = 0; i < CommandFactory.listProcess.size(); i++) {
+        for (int i = 0; i < CommandFactory.listProcess.size(); i++) {
             CommandFactory.listProcess.get(i).cancel(true);
         }
         CommandFactory.listProcess.clear();
         mycallback.OnTaskCompleted(app);
-        Log.d("FilesScannerActivity",filepath+" hash is wrong");
+        Log.d("FilesScannerActivity", filepath + " hash is wrong");
     }
 
     protected String getAppSELinuxContext() {
@@ -400,8 +394,8 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             writer.println(fileName);
 
             seLinux = Class.forName("android.os.SELinux");
-            Method context = seLinux.getMethod("getFileContext",new Class[] {String.class});
-            String result = (String) context.invoke(seLinux.newInstance(),new Object[]{fileName});
+            Method context = seLinux.getMethod("getFileContext", new Class[]{String.class});
+            String result = (String) context.invoke(seLinux.newInstance(), new Object[]{fileName});
 
             return result;
 
@@ -435,25 +429,25 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     protected void scanAppDexFile(ApplicationInfo app) {
 
         CommandFactory.mapDangerousMethodCall.clear();
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.LOAD_CPP_LIBRARY,0);
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.REFLECTION,0);
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SELINUX,0);
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SHELL,0);
+        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.LOAD_CPP_LIBRARY, 0);
+        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.REFLECTION, 0);
+        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SELINUX, 0);
+        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SHELL, 0);
 
         final String appDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 app.uid;
         //final String myDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
-                //my_uid;
+        //my_uid;
 
         ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
-        for ( int i = 0; i < listDexFile.size(); i++) {
+        for (int i = 0; i < listDexFile.size(); i++) {
             scanDexFile(listDexFile.get(i));
         }
 
-        Log.d("mapMethodCall",CommandFactory.mapDangerousMethodCall.toString());
+        Log.d("mapMethodCall", CommandFactory.mapDangerousMethodCall.toString());
 
-        endScanApp(app,TypeScan.DEX_SCAN);
+        endScanApp(app, TypeScan.DEX_SCAN);
 
     }
 
@@ -462,15 +456,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         try {
 
             DexBackedDexFile dexFile = DexFileFactory.loadDexFile(file, null);
-            Log.d("scanning",file.getPath());
+            Log.d("scanning", file.getPath());
             Iterator iterator = dexFile.getMethods().iterator();
             while (iterator.hasNext()) {
                 String a = iterator.next().toString();
-                for ( String pattern : CommandFactory.mapDangerousMethodPattern.keySet()) {
-                    if ( a.toLowerCase().contains(pattern) ) {
+                for (String pattern : CommandFactory.mapDangerousMethodPattern.keySet()) {
+                    if (a.toLowerCase().contains(pattern)) {
                         CommandFactory.mapDangerousMethodCall.put(
                                 CommandFactory.mapDangerousMethodPattern.get(pattern),
-                                CommandFactory.mapDangerousMethodCall.get(CommandFactory.mapDangerousMethodPattern.get(pattern))+1
+                                CommandFactory.mapDangerousMethodCall.get(CommandFactory.mapDangerousMethodPattern.get(pattern)) + 1
                         );
                     }
                 }
@@ -484,15 +478,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected ArrayList<File> getDexFiles(String appDirectory) {
-        File classesDex = new File(appDirectory+"/classes.dex");
+        File classesDex = new File(appDirectory + "/classes.dex");
         int count = 1;
 
         ArrayList<File> listDexFile = new ArrayList<File>();
 
-        while ( classesDex.exists() ) {
+        while (classesDex.exists()) {
             count += 1;
             listDexFile.add(classesDex);
-            classesDex = new File(appDirectory+"/classes"+count+".dex");
+            classesDex = new File(appDirectory + "/classes" + count + ".dex");
         }
         return listDexFile;
     }

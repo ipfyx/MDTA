@@ -1,18 +1,13 @@
 package fr.mdta.mdta.FilesScanner;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.telecom.Call;
-import android.util.Log;
-import android.widget.TextView;
 
 import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
-import fr.mdta.mdta.R;
 
 /**
  * Created by manwefm on 04/12/17.

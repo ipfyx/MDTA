@@ -55,12 +55,21 @@ public class PackageSignaturesInfo {
         return mApkFileSignatures;
     }
 
-    public int getmFlag() { return mFlag; }
+    public int getmFlag() {
+        return mFlag;
+    }
 
     public static class ApkFileSignature {
         private String mPath;
         private String mHashingMethod;
         private String mHash;
+
+        public ApkFileSignature(String mPath, String mHashingMethod, String mHash) {
+            this.mPath = mPath;
+            this.mHashingMethod = mHashingMethod.replace("-Digest", "");
+            this.mHash = mHash;
+
+        }
 
         /**
          * Method to verify if the signature is valid for a message
@@ -72,11 +81,11 @@ public class PackageSignaturesInfo {
         public boolean verifySignature(String calculatedHash, X509Certificate packageCertificate) {
             try {
 
-                Log.d("calculatedHash",calculatedHash+"$");
+                Log.d("calculatedHash", calculatedHash + "$");
                 //Signature verifier = Signature.getInstance(mHashingMethod);
                 Signature verifier = Signature.getInstance(packageCertificate.getSigAlgName());
-                Log.d("algo",verifier.getAlgorithm());
-                Log.d("algoPackage",packageCertificate.getSigAlgName());
+                Log.d("algo", verifier.getAlgorithm());
+                Log.d("algoPackage", packageCertificate.getSigAlgName());
 
                 verifier.initVerify(packageCertificate.getPublicKey());
                 verifier.update(calculatedHash.getBytes());
@@ -96,13 +105,6 @@ public class PackageSignaturesInfo {
                 e.printStackTrace();
             }
             return false;
-        }
-
-        public ApkFileSignature(String mPath, String mHashingMethod, String mHash) {
-            this.mPath = mPath;
-            this.mHashingMethod = mHashingMethod.replace("-Digest", "");
-            this.mHash = mHash;
-
         }
 
         public String getmPath() {
