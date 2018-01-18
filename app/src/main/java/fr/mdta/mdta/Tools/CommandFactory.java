@@ -16,8 +16,8 @@ import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 public final class CommandFactory {
 
-    static final int MAX_PROCESS = 5;
-    public static ArrayList<Command> listProcess = new ArrayList<Command>();
+    public static final int MAX_PROCESS_INTEGRITY = 5;
+    public static ArrayList<Command> listProcessIntegrity = new ArrayList<Command>();
     public static HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall =
             new HashMap<DangerousMethodCall, Integer>();
     public static HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
@@ -74,40 +74,40 @@ public final class CommandFactory {
     public static void addCommandToExecute(final String[] command, Callback
             callback) {
         Command exec_command = new Command(callback, command);
-        listProcess.add(exec_command);
+        listProcessIntegrity.add(exec_command);
     }
 
-    public static void removeCommand(String[] command) {
-        for (int i = 0; i < listProcess.size(); i++) {
-            if (listProcess.get(i).getCommand().equals(command)) {
-                listProcess.remove(i);
+    public static void removeCommandIntegrity(String[] command) {
+        for (int i = 0; i < listProcessIntegrity.size(); i++) {
+            if (listProcessIntegrity.get(i).getCommand().equals(command)) {
+                listProcessIntegrity.remove(i);
                 return;
             }
         }
     }
 
     public static void cancelCommand(String[] command) {
-        for (int i = 0; i < listProcess.size(); i++) {
-            if (listProcess.get(i).getCommand().equals(command)) {
-                listProcess.get(i).cancel(true);
+        for (int i = 0; i < listProcessIntegrity.size(); i++) {
+            if (listProcessIntegrity.get(i).getCommand().equals(command)) {
+                listProcessIntegrity.get(i).cancel(true);
                 return;
             }
         }
     }
 
     public static void addCommand(Command command) {
-        listProcess.add(command);
+        listProcessIntegrity.add(command);
     }
 
     public static void launchVerification(Callback callback, SimplifiedPackageInfo appInfo) {
 
         COUNT = 0;
-        if (listProcess.isEmpty()) {
+        if (listProcessIntegrity.isEmpty()) {
             callback.OnTaskCompleted(appInfo);
         } else {
-            for (int i = 0; i < listProcess.size(); i++) {
-                if (COUNT < MAX_PROCESS && listProcess.get(i).getStatus() == AsyncTask.Status.PENDING) {
-                    listProcess.get(i).execute(listProcess.get(i).getCommand());
+            for (int i = 0; i < listProcessIntegrity.size(); i++) {
+                if (COUNT < MAX_PROCESS_INTEGRITY && listProcessIntegrity.get(i).getStatus() == AsyncTask.Status.PENDING) {
+                    listProcessIntegrity.get(i).execute(listProcessIntegrity.get(i).getCommand());
                     COUNT += 1;
                 } else {
                     return;
