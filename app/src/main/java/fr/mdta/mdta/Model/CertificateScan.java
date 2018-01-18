@@ -33,9 +33,9 @@ public class CertificateScan extends Scan {
 
         ArrayList<SimplifiedPackageInfo> listPackageInfo = getmSimplifiedPackageInfos();
 
-        SpecificResult result = null;
-
         for ( int i = 0; i < listPackageInfo.size(); i++) {
+
+            SpecificResult result = null;
 
             try {
                 listPackageInfo.get(i).getAppDeveloperCertificate().verify(

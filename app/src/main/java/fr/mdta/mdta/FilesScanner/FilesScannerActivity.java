@@ -29,6 +29,10 @@ import java.util.jar.Manifest;
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.R;
+import fr.mdta.mdta.Tools.Command;
+import fr.mdta.mdta.Tools.CommandFactory;
+import fr.mdta.mdta.Tools.DangerousMethodCall;
+import fr.mdta.mdta.Tools.TypeScan;
 
 public class FilesScannerActivity extends AppCompatActivity implements Callback {
 
@@ -331,7 +335,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
                     addFileToListVerification(filePath, fileHash, app, "sha256sum", listProcess);
                 }
             }
-            CommandFactory.listProcess = listProcess;
+            CommandFactory.listProcessIntegrity = listProcess;
             CommandFactory.launchVerification(mycallback, app);
 
         } catch (IOException e) {
@@ -340,10 +344,10 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
     }
 
     protected void cancelVerification(ApplicationInfo app, String filepath) {
-        for (int i = 0; i < CommandFactory.listProcess.size(); i++) {
-            CommandFactory.listProcess.get(i).cancel(true);
+        for (int i = 0; i < CommandFactory.listProcessIntegrity.size(); i++) {
+            CommandFactory.listProcessIntegrity.get(i).cancel(true);
         }
-        CommandFactory.listProcess.clear();
+        CommandFactory.listProcessIntegrity.clear();
         mycallback.OnTaskCompleted(app);
         Log.d("FilesScannerActivity", filepath + " hash is wrong");
     }
