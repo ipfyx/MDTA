@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 
 import java.util.ArrayList;
 
+import fr.mdta.mdta.Model.CertificateScan;
 import fr.mdta.mdta.Model.PermissionScan;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
@@ -49,12 +50,10 @@ public class CustomScanActivity extends AppCompatActivity {
          * FAKE VALUES to proof the UI interface
          */
         mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
-        mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
-        mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
+        mScansApplications.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
 
         mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
-        mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
-        mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
+        mScansWholeSystem.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
         /**
          * END FAKE VALUES to proof the UI interface
          */
