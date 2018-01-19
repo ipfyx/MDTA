@@ -86,7 +86,9 @@ public class Command extends AsyncTask<String, Void, String> {
         } else {
             sb.append("Error");
         }
-        callback.OnTaskCompleted(sb.toString());
 
+        if ( callback != null ) {
+            callback.OnTaskCompleted(sb.toString());
+        }
     }
 }
