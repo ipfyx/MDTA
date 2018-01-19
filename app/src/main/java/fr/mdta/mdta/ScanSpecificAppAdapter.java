@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import fr.mdta.mdta.Scans.Scan;
+import fr.mdta.mdta.Tools.ScanLauncher;
 
 
 public class ScanSpecificAppAdapter extends RecyclerView.Adapter<ScanSpecificAppAdapter.ViewHolder> {
@@ -25,6 +26,13 @@ public class ScanSpecificAppAdapter extends RecyclerView.Adapter<ScanSpecificApp
      */
     private ArrayList<Scan> mData = new ArrayList<>();
 
+    private Handler mHandler = new Handler();
+
+    private ProgressBar[] mProgressBars;
+    private TextView[] mScanStatusTextViews;
+    private TextView[] mPercentTextViews;
+
+
     /**
      * Constructor of ScanSpecificAppAdapter
      *
@@ -33,7 +41,34 @@ public class ScanSpecificAppAdapter extends RecyclerView.Adapter<ScanSpecificApp
      */
     public ScanSpecificAppAdapter(Context context, ArrayList<Scan> items) {
         this.mContext = context;
-        this.mData = items;
+        this.mData.addAll(items);
+        this.mProgressBars = new ProgressBar[this.mData.size()];
+        this.mScanStatusTextViews = new TextView[this.mData.size()];
+        this.mPercentTextViews = new TextView[this.mData.size()];
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ArrayList<Integer> scanStates = ScanLauncher.getInstance().getIndividualScanState();
+                for (int i = 0; i < scanStates.size(); i++) {
+                    int value = scanStates.get(i);
+                    if (value == 0) {
+                        mScanStatusTextViews[i].setText(mContext.getResources().getText(R.string.status_scan_pending));
+                        mPercentTextViews[i].setText("0%");
+                    } else if (value < 100) {
+                        mScanStatusTextViews[i].setText(mContext.getResources().getText(R.string.status_scan_running));
+                        mProgressBars[i].setProgress(value);
+                        mPercentTextViews[i].setText(value + "%");
+                    } else {
+                        mPercentTextViews[i].setText("100% ");
+                        mProgressBars[i].setProgress(100);
+                        mScanStatusTextViews[i].setText(mContext.getResources().getText(R.string.status_scan_over));
+                    }
+                }
+                mHandler.postDelayed(this, 1000);
+
+            }
+        }, 1000);
     }
 
 
@@ -50,6 +85,10 @@ public class ScanSpecificAppAdapter extends RecyclerView.Adapter<ScanSpecificApp
 
         final Scan scan = mData.get(position);
 
+        mProgressBars[position] = holder.mProgressBar;
+        mPercentTextViews[position] = holder.mPercentTextView;
+        mScanStatusTextViews[position] = holder.mScanStatusTextView;
+
         //Fill UI with scan value
         holder.mScanNameTextView.setText(scan.getmScanName());
         holder.mScanDescriptionTextView.setText(scan.getmScanDescription());
@@ -58,24 +97,7 @@ public class ScanSpecificAppAdapter extends RecyclerView.Adapter<ScanSpecificApp
         final int max = 100;
         holder.mProgressBar.setVisibility(View.VISIBLE);
         holder.mProgressBar.setMax(max);
-        holder.mHandler.postDelayed(new Runnable() {
 
-            public void run() {
-                if (scan.getmState() == 0) {
-                    holder.mScanStatusTextView.setText(mContext.getResources().getText(R.string.status_scan_pending));
-                    holder.mPercentTextView.setText("0%");
-                } else if (scan.getmState() < max) {
-                    holder.mScanStatusTextView.setText(mContext.getResources().getText(R.string.status_scan_running));
-                    holder.mProgressBar.setProgress(scan.getmState());
-                    int percent_num = (holder.mCounter * 100 / max);
-                    holder.mPercentTextView.setText(percent_num + "%");
-                    holder.mHandler.postDelayed(this, 5);
-                } else {
-                    holder.mPercentTextView.setText("100% ");
-                    holder.mScanStatusTextView.setText(mContext.getResources().getText(R.string.status_scan_over));
-                }
-            }
-        }, 5);
 
     }
 
@@ -98,7 +120,6 @@ public class ScanSpecificAppAdapter extends RecyclerView.Adapter<ScanSpecificApp
         private TextView mScanDescriptionTextView;
         private TextView mScanStatusTextView;
         private int mCounter;
-        private Handler mHandler = new Handler();
 
         public ViewHolder(View itemView) {
             super(itemView);
