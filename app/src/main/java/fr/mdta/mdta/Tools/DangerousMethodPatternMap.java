@@ -6,21 +6,21 @@ import java.util.HashMap;
  * Created by manwefm on 19/01/18.
  */
 
-public class DangerousMethodCallMap {
+public class DangerousMethodPatternMap {
 
-    private HashMap<String, DangerousMethodCall> mapDangerousMethodPattern = null;
+    private static HashMap<String, DangerousMethodCall> mapDangerousMethodPattern = null;
 
-    private static DangerousMethodCallMap INSTANCE = null;
+    private static DangerousMethodPatternMap INSTANCE = null;
 
-    public static DangerousMethodCallMap getInstance() {
+    public static HashMap<String, DangerousMethodCall> getMapDangerousMethodPattern() {
 
         if ( INSTANCE == null ) {
-            INSTANCE = new DangerousMethodCallMap();
+            INSTANCE = new DangerousMethodPatternMap();
         }
-        return INSTANCE;
+        return mapDangerousMethodPattern;
     }
 
-    private DangerousMethodCallMap() {
+    private DangerousMethodPatternMap() {
 
         mapDangerousMethodPattern = new HashMap<String, DangerousMethodCall>();
 

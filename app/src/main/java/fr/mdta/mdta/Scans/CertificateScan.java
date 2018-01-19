@@ -73,7 +73,7 @@ public class CertificateScan extends Scan {
             } finally {
                 if ( result == null ) {
                     result = new SpecificResult(true,"Valid certificate",
-                            "The certificat valid");
+                            "The certificate is valid");
                     mResults.put(listPackageInfo.get(i),result);
                 }
                 updateState();
