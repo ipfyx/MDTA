@@ -30,7 +30,8 @@ public class PackageInfoFactory {
         ArrayList<SimplifiedPackageInfo> packageInfoArrayList = new ArrayList<SimplifiedPackageInfo>();
 
 
-        List<PackageInfo> installedPackages = context.getPackageManager().getInstalledPackages(context.getPackageManager().GET_PERMISSIONS);
+        List<PackageInfo> installedPackages = context.getPackageManager().getInstalledPackages(context.getPackageManager().GET_PERMISSIONS
+                + context.getPackageManager().GET_SIGNATURES);
 
         //TODO: Deal with too much application sent to db HTTP error 413
         for (int i = 0; i < installedPackages.size(); i++) {
@@ -42,7 +43,6 @@ public class PackageInfoFactory {
             String packageName = packageInfo.packageName;
             int versionCode = packageInfo.versionCode;
             String versionName = packageInfo.versionName;
-            int icon = packageInfo.applicationInfo.icon;
             long firstInstallTime = packageInfo.firstInstallTime;
             long lastUpdateTime = packageInfo.lastUpdateTime;
 
@@ -105,7 +105,6 @@ public class PackageInfoFactory {
                 String packageName = packageInfo.packageName;
                 int versionCode = packageInfo.versionCode;
                 String versionName = packageInfo.versionName;
-                int icon = packageInfo.applicationInfo.icon;
                 long firstInstallTime = packageInfo.firstInstallTime;
                 long lastUpdateTime = packageInfo.lastUpdateTime;
 

@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import fr.mdta.mdta.Model.Result;
-import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
 
 

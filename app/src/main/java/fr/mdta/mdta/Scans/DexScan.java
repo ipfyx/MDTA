@@ -1,8 +1,8 @@
-package fr.mdta.mdta.Model;
+package fr.mdta.mdta.Scans;
 
 import java.util.ArrayList;
 
-import fr.mdta.mdta.API.Callback.Callback;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**
  * Created by manwefm on 18/01/18.

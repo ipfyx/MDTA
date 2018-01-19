@@ -1,4 +1,4 @@
-package fr.mdta.mdta.Model;
+package fr.mdta.mdta.Scans;
 
 import android.util.Log;
 
@@ -9,8 +9,7 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 
-import fr.mdta.mdta.API.APIModel.SentItem.PackagesList;
-import fr.mdta.mdta.API.Callback.Callback;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**
  * Created by manwefm on 18/01/18.

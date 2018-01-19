@@ -1,4 +1,4 @@
-package fr.mdta.mdta.Model;
+package fr.mdta.mdta.Scans;
 
 import android.content.Context;
 import android.util.Log;
@@ -17,6 +17,7 @@ import java.util.jar.Manifest;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
+import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Tools.Command;
 import fr.mdta.mdta.Tools.CommandFactory;
 

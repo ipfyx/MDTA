@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import fr.mdta.mdta.Model.Result;
-import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.CertificateScan;
+import fr.mdta.mdta.Scans.PermissionScan;
+import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
 import fr.mdta.mdta.Tools.ScanLauncher;
 
@@ -34,7 +36,6 @@ public class ScanActivity extends AppCompatActivity {
     private TypeOfScan mTypeOfScan;
     private int mCounter;
     private Date mStartingTime;
-    private ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = new ArrayList<>();
     private Handler mTimerHandler = new Handler();
     //UI components
     private TextView mTimerTextView;
@@ -85,6 +86,8 @@ public class ScanActivity extends AppCompatActivity {
                                      Runnable() {
 
                                          public void run() {
+
+                                             mCounter = ScanLauncher.getInstance().getScansGlobalState();
                                              //TODO replace fake animation by an update with scanlist and state arguments
                                              if (mCounter < mProgressBarMaxValue) {
                                                  mProgressBar.setProgress(mCounter);
@@ -93,6 +96,7 @@ public class ScanActivity extends AppCompatActivity {
                                                  mHandler.postDelayed(this, 20);
                                              } else {
                                                  mPercentTextView.setText("100% ");
+                                                 mProgressBar.setProgress(mProgressBarMaxValue);
                                              }
                                          }
                                      }, 20);
@@ -100,139 +104,30 @@ public class ScanActivity extends AppCompatActivity {
         //Scan preparation according to type of scan
         switch (mTypeOfScan) {
             case WHOLESYSTEMSCAN:
-                simplifiedPackageInfos = PackageInfoFactory.getInstalledPackages(this);
-                //TODO replace fake scan by the legitimate one
-                /**
-                 * FAKE VALUES to proof the UI interface
-                 */
-                mScans.add(new Scan("permissionscanner", "descriptionperm", PackageInfoFactory.getInstalledPackages(this)) {
-
-                    @Override
-                    public void launchScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void cancelScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void updateState() {
-
-                    }
-                });
-                mScans.add(new Scan("integrityscanner", "descriptionintegrity", PackageInfoFactory.getInstalledPackages(this)) {
-
-                    @Override
-                    public void launchScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void cancelScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void updateState() {
-
-                    }
-                });
-                mScans.add(new Scan("signaturescanner", "descriptionsignature", PackageInfoFactory.getInstalledPackages(this)) {
-                    @Override
-                    public void launchScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void cancelScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void updateState() {
-
-                    }
-                });
-                /**
-                 * END FAKE VALUES to proof the UI interface
-                 */
+                //TODO add other scans
+                mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
+                mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
                 break;
             case APPLICATIONSSCAN:
-                simplifiedPackageInfos = PackageInfoFactory.getInstalledPackages(this, false);
-                //TODO replace fake scan by the legitimate one
-                /**
-                 * FAKE VALUES to proof the UI interface
-                 */
-                mScans.add(new Scan("permissionscanner", "descriptionperm", PackageInfoFactory.getInstalledPackages(this)) {
-                    @Override
-                    public void launchScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void cancelScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void updateState() {
-
-                    }
-                });
-                mScans.add(new Scan("integrityscanner", "descriptionintegrity", PackageInfoFactory.getInstalledPackages(this)) {
-                    @Override
-                    public void launchScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void cancelScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void updateState() {
-
-                    }
-                });
-                mScans.add(new Scan("signaturescanner", "descriptionsignature", PackageInfoFactory.getInstalledPackages(this)) {
-                    @Override
-                    public void launchScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void cancelScan(ScanCallback callback) {
-
-                    }
-
-                    @Override
-                    public void updateState() {
-
-                    }
-                });
-                /**
-                 * END FAKE VALUES to proof the UI interface
-                 */
+                //TODO add other scans
+                mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
+                mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 break;
             case CUSTOMSCAN:
                 //Retrieve scanlist from serializable extra
                 mScans.addAll((ArrayList<Scan>) getIntent().getSerializableExtra(KEY_CUSTOM_SCAN_SCANLIST));
-                try {
-                    ScanLauncher.getInstance().launchScansSerial(mScans, new ScanLauncher.ScanLauncherCallback() {
-                        @Override
-                        public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
-                            updateCounter();
-                            fillResultList(arrayListScanWithResult);
-                        }
-                    });
-                } catch (ScanLauncher.ScanLauncherException e) {
-                    e.printStackTrace();
-                }
         }
 
+        try {
+            ScanLauncher.getInstance().launchScansParallel(mScans, new ScanLauncher.ScanLauncherCallback() {
+                @Override
+                public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
+                    fillResultList(arrayListScanWithResult);
+                }
+            });
+        } catch (ScanLauncher.ScanLauncherException e) {
+            e.printStackTrace();
+        }
 
         //Set button action
         mResultButton.setClickable(false);
@@ -253,7 +148,7 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void fillResultList(ArrayList<Scan> scanArrayList) {
-        simplifiedPackageInfos = scanArrayList.get(0).getmSimplifiedPackageInfos();
+        ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = scanArrayList.get(0).getmSimplifiedPackageInfos();
 
         for (int i = 0; i < simplifiedPackageInfos.size(); i++) {
             ArrayList<Result.ScanResult> scanResults = new ArrayList<>();
@@ -264,14 +159,6 @@ public class ScanActivity extends AppCompatActivity {
             mResults.add(result);
         }
         mResultButton.setClickable(true);
-    }
-
-    /**
-     * Method to combine all the scans state counter to update
-     */
-    private void updateCounter() {
-        //TODO by mixing scans
-        mCounter = 100;
     }
 
     /**

@@ -11,9 +11,9 @@ import android.widget.CheckBox;
 
 import java.util.ArrayList;
 
-import fr.mdta.mdta.Model.CertificateScan;
-import fr.mdta.mdta.Model.PermissionScan;
-import fr.mdta.mdta.Model.Scan;
+import fr.mdta.mdta.Scans.CertificateScan;
+import fr.mdta.mdta.Scans.PermissionScan;
+import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
 
 
