@@ -19,6 +19,8 @@ import java.util.Date;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Scans.CertificateScan;
+import fr.mdta.mdta.Scans.DexScan;
+import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
 import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.ScanLauncher;
@@ -94,6 +96,8 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         simplifiedPackageInfos.add(mSimplifiedPackageInfo);
         mScans.add(new PermissionScan(simplifiedPackageInfos));
         mScans.add(new CertificateScan(simplifiedPackageInfos));
+        mScans.add(new IntegrityScan(simplifiedPackageInfos,this));
+        mScans.add(new DexScan(simplifiedPackageInfos,this));
         try {
             ScanLauncher.getInstance().launchScansSerial(mScans, new ScanLauncher.ScanLauncherCallback() {
                 @Override
