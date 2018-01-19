@@ -48,23 +48,6 @@ public class DexScan extends Scan {
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
             DangerousMethodPatternMap.getMapDangerousMethodPattern();
 
-    private Callback mycallback = new Callback() {
-        @Override
-        public void OnErrorHappended() {
-
-        }
-
-        @Override
-        public void OnErrorHappended(String error) {
-
-        }
-
-        @Override
-        public void OnTaskCompleted(Object object) {
-            endScanApp((SimplifiedPackageInfo) object);
-        }
-    };
-
     public DexScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos, Context context) {
         super(DEX_SCANNER_NAME, DEX_SCANNER_DESCRIPTION, simplifiedPackageInfos);
 
@@ -120,7 +103,8 @@ public class DexScan extends Scan {
                 }
             }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
         } else {
-            resultScanFail(appInfo,"Could not get MDTA SELinux file context");
+            resultScanFail(appInfo,"Could not get MDTA SELinux file context",
+                    "getFileAppSELinuxContext() return null");
         }
     }
 
@@ -133,6 +117,10 @@ public class DexScan extends Scan {
         fr.mdta.mdta.Tools.CommandFactory.endScanApp(appInfo,unzipApkToFolder);
 
         if ( listPackageInfo.contains(appInfo) ) {
+
+            if ( mResults.get(appInfo) == null ) {
+                resultScanOK(appInfo);
+            }
 
             listPackageInfo.remove(appInfo);
             updateState();
@@ -190,7 +178,7 @@ public class DexScan extends Scan {
         ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
         for (int i = 0; i < listDexFile.size(); i++) {
-            scanDexFile(listDexFile.get(i));
+            scanDexFile(listDexFile.get(i),appInfo);
         }
 
         Log.d("mapMethodCall", mapDangerousMethodCall.toString());
@@ -199,7 +187,7 @@ public class DexScan extends Scan {
 
     }
 
-    private void scanDexFile(File file) {
+    private void scanDexFile(File file, SimplifiedPackageInfo appInfo) {
 
         try {
 
@@ -221,6 +209,7 @@ public class DexScan extends Scan {
 
         } catch (IOException e) {
             e.printStackTrace();
+            resultScanFail(appInfo,file.getAbsolutePath()+" : Fail to read this dex file",e.getMessage());
         }
     }
 
@@ -240,15 +229,15 @@ public class DexScan extends Scan {
 
     private void resultScanOK(SimplifiedPackageInfo appInfo) {
         SpecificResult result = new SpecificResult(true,
-                "This application was not tampered",
-                "This application was not tampered");
+                mapDangerousMethodCall.toString(),
+                mapDangerousMethodCall.toString());
         mResults.put(appInfo,result);
     }
 
-    private void resultScanFail(SimplifiedPackageInfo appInfo, String reason) {
+    private void resultScanFail(SimplifiedPackageInfo appInfo, String reason, String detail) {
         SpecificResult result = new SpecificResult(true,
                 reason,
-                reason);
+                detail);
         mResults.put(appInfo, result);
     }
 }
