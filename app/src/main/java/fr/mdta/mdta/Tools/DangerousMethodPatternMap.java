@@ -22,9 +22,9 @@ public class DangerousMethodPatternMap {
 
     private DangerousMethodPatternMap() {
 
-        mapDangerousMethodPattern = new HashMap<String, DangerousMethodCall>();
+        mapDangerousMethodPattern = new HashMap<>();
 
-        this.mapDangerousMethodPattern.put(
+        mapDangerousMethodPattern.put(
                 "Ljava/lang/Runtime.+getRuntime()Ljava/lang/Runtime".toLowerCase(), DangerousMethodCall.SHELL
         );
         mapDangerousMethodPattern.put(

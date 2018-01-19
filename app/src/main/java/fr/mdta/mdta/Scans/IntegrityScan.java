@@ -262,34 +262,19 @@ public class IntegrityScan extends Scan {
             writer.println(fileName);
 
             seLinux = Class.forName("android.os.SELinux");
-            Method context = seLinux.getMethod("getFileContext", new Class[]{String.class});
-            String result = (String) context.invoke(seLinux.newInstance(), new Object[]{fileName});
+            Method context = seLinux.getMethod("getFileContext", String.class);
 
-            return result;
+            return (String) context.invoke(seLinux.newInstance(), fileName);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException
+                | IllegalAccessException | InvocationTargetException | FileNotFoundException
+                | UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
         } finally {
-            writer.close();
+            if (writer != null) {
+                writer.close();
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import fr.mdta.mdta.API.Callback.Callback;
@@ -15,18 +16,11 @@ import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 public final class CommandFactory {
 
-    public static final int MAX_PROCESS_INTEGRITY = 5;
-    public static ArrayList<Command> listProcessIntegrity = new ArrayList<Command>();
-
-    public static ArrayList<Command> listProcessDex = new ArrayList<Command>();
+    private static final int MAX_PROCESS_INTEGRITY = 5;
+    public static ArrayList<Command> listProcessIntegrity = new ArrayList<>();
 
     public static int COUNT = 0;
     public static String pathToApkUnzipFolder = "/data/local";
-
-    public static void execCommand(String[] command, Callback callback, Context context) {
-        Command exec_command = new Command(callback, command);
-        exec_command.execute(command);
-    }
 
     public static void unzipCommand(Callback callback, SimplifiedPackageInfo appInfo, int
             my_uid, String SELinuxContext, String unzipDirectoryName) {
@@ -68,32 +62,13 @@ public final class CommandFactory {
         exec_command.execute(listCommand);
     }
 
-    public static void addCommandToExecute(final String[] command, Callback
-            callback) {
-        Command exec_command = new Command(callback, command);
-        listProcessIntegrity.add(exec_command);
-    }
-
     public static void removeCommandIntegrity(String[] command) {
         for (int i = 0; i < listProcessIntegrity.size(); i++) {
-            if (listProcessIntegrity.get(i).getCommand().equals(command)) {
+            if (Arrays.equals(listProcessIntegrity.get(i).getCommand(), command)) {
                 listProcessIntegrity.remove(i);
                 return;
             }
         }
-    }
-
-    public static void cancelCommand(String[] command) {
-        for (int i = 0; i < listProcessIntegrity.size(); i++) {
-            if (listProcessIntegrity.get(i).getCommand().equals(command)) {
-                listProcessIntegrity.get(i).cancel(true);
-                return;
-            }
-        }
-    }
-
-    public static void addCommand(Command command) {
-        listProcessIntegrity.add(command);
     }
 
     public static void launchVerification(Callback callback, SimplifiedPackageInfo appInfo) {

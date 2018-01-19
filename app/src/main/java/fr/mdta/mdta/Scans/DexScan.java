@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.util.Log;
 
 import org.jf.dexlib2.DexFileFactory;
@@ -16,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
@@ -24,7 +22,6 @@ import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Tools.CommandFactory;
 import fr.mdta.mdta.Tools.DangerousMethodCall;
 import fr.mdta.mdta.Tools.DangerousMethodPatternMap;
-import fr.mdta.mdta.Tools.TypeScan;
 
 /**
  * Created by manwefm on 18/01/18.
@@ -46,7 +43,7 @@ public class DexScan extends Scan {
 
     private ScanCallback endScanCallback = null;
 
-    private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<DangerousMethodCall, Integer>();
+    private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<>();
 
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
             DangerousMethodPatternMap.getMapDangerousMethodPattern();
@@ -148,15 +145,6 @@ public class DexScan extends Scan {
 
     }
 
-    private void cancelVerification(SimplifiedPackageInfo appInfo, String filepath) {
-        for (int i = 0; i < CommandFactory.listProcessDex.size(); i++) {
-            CommandFactory.listProcessDex.get(i).cancel(true);
-        }
-        CommandFactory.listProcessDex.clear();
-        mycallback.OnTaskCompleted(appInfo);
-        Log.d("FileScan", filepath + " hash is wrong");
-    }
-
     private String getFileAppSELinuxContext() {
 
         /*
@@ -165,7 +153,7 @@ public class DexScan extends Scan {
 
         final String fileName = CommandFactory.pathToApkUnzipFolder + "SELinuxTest.txt";
 
-        Class seLinux = null;
+        Class seLinux;
         PrintWriter writer = null;
         try {
 
@@ -173,38 +161,23 @@ public class DexScan extends Scan {
             writer.println(fileName);
 
             seLinux = Class.forName("android.os.SELinux");
-            Method context = seLinux.getMethod("getFileContext", new Class[]{String.class});
-            String result = (String) context.invoke(seLinux.newInstance(), new Object[]{fileName});
+            Method context = seLinux.getMethod("getFileContext", String.class);
 
-            return result;
+            return (String) context.invoke(seLinux.newInstance(), fileName);
 
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (UnsupportedEncodingException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException | FileNotFoundException
+                | UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
         } finally {
-            writer.close();
+            if (writer != null) {
+                writer.close();
+            }
         }
     }
 
-    protected void scanAppDexFile(SimplifiedPackageInfo appInfo) {
+    private void scanAppDexFile(SimplifiedPackageInfo appInfo) {
 
         mapDangerousMethodCall.put(DangerousMethodCall.LOAD_CPP_LIBRARY, 0);
         mapDangerousMethodCall.put(DangerousMethodCall.REFLECTION, 0);
@@ -226,37 +199,36 @@ public class DexScan extends Scan {
 
     }
 
-    protected void scanDexFile(File file) {
+    private void scanDexFile(File file) {
 
         try {
 
+            //TODO give non null opcode
             DexBackedDexFile dexFile = DexFileFactory.loadDexFile(file, null);
             Log.d("scanning", file.getPath());
-            Iterator iterator = dexFile.getMethods().iterator();
-            while (iterator.hasNext()) {
-                String a = iterator.next().toString();
+            for (Object o : dexFile.getMethods()) {
+                String a = o.toString();
                 for (String pattern : mapDangerousMethodPattern.keySet()) {
                     if (a.toLowerCase().contains(pattern)) {
                         mapDangerousMethodCall.put(
                                 mapDangerousMethodPattern.get(pattern),
-                                mapDangerousMethodCall.get(mapDangerousMethodPattern.get(pattern)) + 1
+                                mapDangerousMethodCall.get(mapDangerousMethodPattern.get(pattern)
+                                ) + 1
                         );
                     }
                 }
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    protected ArrayList<File> getDexFiles(String appDirectory) {
+    private ArrayList<File> getDexFiles(String appDirectory) {
         File classesDex = new File(appDirectory + "/classes.dex");
         int count = 1;
 
-        ArrayList<File> listDexFile = new ArrayList<File>();
+        ArrayList<File> listDexFile = new ArrayList<>();
 
         while (classesDex.exists()) {
             count += 1;

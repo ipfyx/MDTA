@@ -16,9 +16,7 @@ import fr.mdta.mdta.API.Callback.Callback;
  * https://stackoverflow.com/questions/11451768/call-asynctask-from-static-class
  */
 public class Command extends AsyncTask<String, Void, String> {
-    private ProgressDialog dialog = null;
     private Callback callback;
-    private boolean suAvailable = false;
     private List<String> suResult = null;
     private String[] command = null;
 
@@ -67,7 +65,7 @@ public class Command extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
         // Let's do some SU stuff
-        suAvailable = Shell.SU.available();
+        boolean suAvailable = Shell.SU.available();
         if (suAvailable) {
             suResult = Shell.SU.run(params);
         }
