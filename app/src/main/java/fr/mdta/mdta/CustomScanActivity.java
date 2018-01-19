@@ -46,17 +46,13 @@ public class CustomScanActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
         //TODO replace fake scan by the legitimate one
-        /**
-         * FAKE VALUES to proof the UI interface
-         */
+
         mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
         mScansApplications.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
 
         mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
         mScansWholeSystem.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
-        /**
-         * END FAKE VALUES to proof the UI interface
-         */
+
 
         //CustomScan Interraction
         mWholeSystemCheckbox.setOnClickListener(new OnCheckboxClickedListener());

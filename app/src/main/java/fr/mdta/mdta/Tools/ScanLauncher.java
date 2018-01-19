@@ -14,6 +14,10 @@ public class ScanLauncher {
      * ScanLauncher Singleton for out access
      */
     private static ScanLauncher mScanLauncherInstance;
+    /**
+     * List to give as parameter when the scan is terminated
+     */
+    public ArrayList<Scan> mResultScans = new ArrayList<>();
     private ScanLauncher mLauncherSerial;
     private ScanLauncher mLauncherParralel;
     /**
@@ -28,10 +32,6 @@ public class ScanLauncher {
      * Used to know how many parralel scans are terminated, parralel scan is over when this value is equal to mResultScans
      */
     private int mParralelScanTerminatedCounter;
-    /**
-     * List to give as parameter when the scan is terminated
-     */
-    private ArrayList<Scan> mResultScans = new ArrayList<>();
     /**
      * Type of running launcher
      */
@@ -169,6 +169,7 @@ public class ScanLauncher {
 
     /**
      * Calculate and give scanglobalstate according to the current process of scans managed by the launcher
+     *
      * @return
      */
     public int getScansGlobalState() {
@@ -194,6 +195,33 @@ public class ScanLauncher {
                 break;
         }
         return globalStateValue;
+    }
+
+    /**
+     * Retrieve scan states
+     *
+     * @return
+     */
+    public ArrayList<Integer> getIndividualScanState() {
+        ArrayList<Integer> scansState = new ArrayList<>();
+        switch (mTypeOfLauncher) {
+            case SERIAL:
+                for (int i = 0; i < mResultScans.size(); i++) {
+                    scansState.add(mResultScans.get(i).getmState());
+                }
+                for (int i = 0; i < mSerialScans.size(); i++) {
+                    scansState.add(mSerialScans.get(i).getmState());
+                }
+                break;
+            case PARALLEL:
+                for (int i = 0; i < mResultScans.size(); i++) {
+                    scansState.add(mResultScans.get(i).getmState());
+                }
+                break;
+            case MIX:
+                break;
+        }
+        return scansState;
     }
 
     private enum TypeOfLauncher {
