@@ -18,8 +18,10 @@ import java.util.Date;
 
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.CertificateScan;
+import fr.mdta.mdta.Scans.PermissionScan;
 import fr.mdta.mdta.Scans.Scan;
-import fr.mdta.mdta.Tools.PackageInfoFactory;
+import fr.mdta.mdta.Tools.ScanLauncher;
 
 
 public class ScanSpecificAppActivity extends AppCompatActivity {
@@ -31,7 +33,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
     //Model
     private SimplifiedPackageInfo mSimplifiedPackageInfo;
     private ArrayList<Scan> mScans = new ArrayList<>();
-
+    private Result result;
 
     //UI components
     private ImageView mIconImageView;
@@ -87,64 +89,25 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        //TODO replace fake scan by the legitimate one
-        /**
-         * FAKE VALUES to proof the UI interface
-         */
-        mScans.add(new Scan("permissionscanner", "descriptionperm", PackageInfoFactory.getInstalledPackages(this)) {
-
-            @Override
-            public void launchScan(ScanCallback callback) {
-
-            }
-
-            @Override
-            public void cancelScan(ScanCallback callback) {
-
-            }
-
-            @Override
-            public void updateState() {
-
-            }
-        });
-        mScans.add(new Scan("integrityscanner", "descriptionintegrity", PackageInfoFactory.getInstalledPackages(this)) {
-
-            @Override
-            public void launchScan(ScanCallback callback) {
-
-            }
-
-            @Override
-            public void cancelScan(ScanCallback callback) {
-
-            }
-
-            @Override
-            public void updateState() {
-
-            }
-        });
-        mScans.add(new Scan("signaturescanner", "descriptionsignature", PackageInfoFactory.getInstalledPackages(this)) {
-
-            @Override
-            public void launchScan(ScanCallback callback) {
-
-            }
-
-            @Override
-            public void cancelScan(ScanCallback callback) {
-
-            }
-
-            @Override
-            public void updateState() {
-
-            }
-        });
-        /**
-         * END FAKE VALUES to proof the UI interface
-         */
+        //TODO add other scans
+        ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = new ArrayList<>();
+        simplifiedPackageInfos.add(mSimplifiedPackageInfo);
+        mScans.add(new PermissionScan(simplifiedPackageInfos));
+        mScans.add(new CertificateScan(simplifiedPackageInfos));
+        try {
+            ScanLauncher.getInstance().launchScansSerial(mScans, new ScanLauncher.ScanLauncherCallback() {
+                @Override
+                public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
+                    ArrayList<Result.ScanResult> scanResults = new ArrayList<Result.ScanResult>();
+                    for (int i = 0; i < arrayListScanWithResult.size(); i++) {
+                        scanResults.add(arrayListScanWithResult.get(i).getScanResult(mSimplifiedPackageInfo));
+                    }
+                    result = new Result(mSimplifiedPackageInfo, scanResults);
+                }
+            });
+        } catch (ScanLauncher.ScanLauncherException e) {
+            e.printStackTrace();
+        }
 
         //Fill adapter with values
         mAdapter = new ScanSpecificAppAdapter(this, mScans);
@@ -157,14 +120,6 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        ArrayList<Result.ScanResult> scanResults = new ArrayList<Result.ScanResult>();
-                        for (int i = 0; i < mScans.size(); i++) {
-                            // TODO uncomment for real app and remove next fake lien
-                            // scanResults.add(mScans.get(i).getScanResult(mSimplifiedPackageInfo));
-                            scanResults.add(new Result.ScanResult(mScans.get(i).getmScanName(), mScans.get(i).getmScanDescription(), new Scan.SpecificResult(false, "result" + i, "resultsdetails" + i + "blablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablablabla")));
-                        }
-                        Result result = new Result(mSimplifiedPackageInfo, scanResults);
                         Intent myIntent = new Intent(ScanSpecificAppActivity.this, ResultSpecificAppActivity.class);
                         myIntent.putExtra(ResultSpecificAppActivity.KEY_RESULT, result);
                         startActivity(myIntent);
