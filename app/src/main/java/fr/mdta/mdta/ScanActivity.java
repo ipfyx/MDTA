@@ -1,6 +1,7 @@
 package fr.mdta.mdta;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,8 @@ import java.util.Date;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Scans.CertificateScan;
+import fr.mdta.mdta.Scans.DexScan;
+import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
 import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
@@ -107,11 +110,15 @@ public class ScanActivity extends AppCompatActivity {
                 //TODO add other scans
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
+                mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this),this));
+                mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this),this));
                 break;
             case APPLICATIONSSCAN:
                 //TODO add other scans
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
+                mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this,false),this));
+                mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this,false),this));
                 break;
             case CUSTOMSCAN:
                 //Retrieve scanlist from serializable extra
