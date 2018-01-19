@@ -91,7 +91,7 @@ public class CertificateScan extends Scan {
 
     @Override
     protected void updateState() {
-        int number_of_app_scanned = listPackageInfo.size();
-        mState += (Integer) 1/number_of_app_scanned;
+        float number_of_app_scanned = listPackageInfo.size();
+        mState += (int) (100*number_of_app_scanned);
     }
 }
