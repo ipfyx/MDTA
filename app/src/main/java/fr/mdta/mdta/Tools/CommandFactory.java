@@ -17,10 +17,9 @@ public final class CommandFactory {
 
     public static final int MAX_PROCESS_INTEGRITY = 5;
     public static ArrayList<Command> listProcessIntegrity = new ArrayList<Command>();
-    public static HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall =
-            new HashMap<DangerousMethodCall, Integer>();
-    public static HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
-            new HashMap<String, DangerousMethodCall>();
+
+    public static ArrayList<Command> listProcessDex = new ArrayList<Command>();
+
     public static int COUNT = 0;
     public static String pathToApkUnzipFolder = "/data/local";
 
