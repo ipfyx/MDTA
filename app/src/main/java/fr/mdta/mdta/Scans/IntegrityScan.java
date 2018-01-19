@@ -126,7 +126,8 @@ public class IntegrityScan extends Scan {
                 }
             }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
         } else {
-            resultScanFail(appInfo,"Could not get MDTA SELinux file context");
+            resultScanFail(appInfo,"Could not get MDTA SELinux file context",
+                    "getFileAppSELinuxContext() return null");
         }
     }
 
@@ -141,7 +142,7 @@ public class IntegrityScan extends Scan {
         if ( listPackageInfo.contains(appInfo) ) {
 
 
-            if ( mResults.get(appInfo).ismStatus() ) {
+            if ( mResults.get(appInfo) != null ) {
                 resultScanAppOK(appInfo);
             }
 
@@ -221,7 +222,8 @@ public class IntegrityScan extends Scan {
                 if (fileHash == null) {
                     fileHash = entry.getValue().getValue("SHA1-Digest");
                     if (fileHash == null) {
-                        resultScanFail(appInfo,"Unknown Hash Method");
+                        resultScanFail(appInfo,"Unknown Hash Method","This app is not " +
+                                "using sha1 digest or sha256 digest for file "+filePath+", fileHash = " + fileHash);
                     } else {
                         addFileToListVerification(filePath, fileHash, appInfo, "sha1sum", listProcess);
                     }
@@ -296,10 +298,10 @@ public class IntegrityScan extends Scan {
         cancelVerification(appInfo, filePath);
     }
 
-    private void resultScanFail(SimplifiedPackageInfo appInfo, String reason) {
+    private void resultScanFail(SimplifiedPackageInfo appInfo, String reason, String detail) {
         SpecificResult result = new SpecificResult(true,
                 reason,
-                reason);
+                detail);
         mResults.put(appInfo,result);
     }
 
