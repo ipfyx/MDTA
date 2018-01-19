@@ -101,7 +101,9 @@ public class IntegrityScan extends Scan {
 
     @Override
     protected void updateState() {
-        mState += 1;
+        int number_of_app_scanned = listPackageInfo.size();
+        Float state = 1/number_of_app_scanned;
+        mState += (Integer) 1/number_of_app_scanned;
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {

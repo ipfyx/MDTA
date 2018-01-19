@@ -1,5 +1,7 @@
 package fr.mdta.mdta.Model;
 
+import android.util.Log;
+
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -21,6 +23,8 @@ public class CertificateScan extends Scan {
     private final static String CERTIFICATE_SCANNER_DESCRIPTION = "This scan consists on verifying " +
             "each application's certificate and warn user if one was tempered";
 
+    private ArrayList<SimplifiedPackageInfo> listPackageInfo;
+
     /**
      * @param simplifiedPackageInfos
      */
@@ -31,13 +35,16 @@ public class CertificateScan extends Scan {
     @Override
     public void launchScan(ScanCallback callback) {
 
-        ArrayList<SimplifiedPackageInfo> listPackageInfo = getmSimplifiedPackageInfos();
+        listPackageInfo = getmSimplifiedPackageInfos();
 
         for ( int i = 0; i < listPackageInfo.size(); i++) {
 
             SpecificResult result = null;
 
+            System.out.println(listPackageInfo.get(i).getAppName());
+
             try {
+
                 listPackageInfo.get(i).getAppDeveloperCertificate().verify(
                         listPackageInfo.get(i).getAppDeveloperCertificate().getPublicKey()
                 );
@@ -62,6 +69,8 @@ public class CertificateScan extends Scan {
                 result = new SpecificResult(false,"SignatureError",
                         e.getMessage());
                 mResults.put(listPackageInfo.get(i),result);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
             } finally {
                 if ( result == null ) {
                     result = new SpecificResult(true,"Valid certificate",
@@ -83,6 +92,7 @@ public class CertificateScan extends Scan {
 
     @Override
     protected void updateState() {
-        mState+=1;
+        int number_of_app_scanned = listPackageInfo.size();
+        mState += (Integer) 1/number_of_app_scanned;
     }
 }
