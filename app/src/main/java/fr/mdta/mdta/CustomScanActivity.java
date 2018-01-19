@@ -12,6 +12,8 @@ import android.widget.CheckBox;
 import java.util.ArrayList;
 
 import fr.mdta.mdta.Scans.CertificateScan;
+import fr.mdta.mdta.Scans.DexScan;
+import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
 import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
@@ -49,9 +51,13 @@ public class CustomScanActivity extends AppCompatActivity {
 
         mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
         mScansApplications.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
+        mScansApplications.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this, false),this));
+        mScansApplications.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false),this));
 
         mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
         mScansWholeSystem.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
+        mScansWholeSystem.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this),this));
+        mScansWholeSystem.add(new DexScan(PackageInfoFactory.getInstalledPackages(this),this));
 
 
         //CustomScan Interraction
