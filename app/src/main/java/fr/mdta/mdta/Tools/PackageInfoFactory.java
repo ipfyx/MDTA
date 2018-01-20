@@ -45,6 +45,7 @@ public class PackageInfoFactory {
             String versionName = packageInfo.versionName;
             long firstInstallTime = packageInfo.firstInstallTime;
             long lastUpdateTime = packageInfo.lastUpdateTime;
+            int uid = packageInfo.applicationInfo.uid;
 
             String apkSourceDir = packageInfo.applicationInfo.sourceDir;
             X509Certificate appDeveloperCertificate = null;
@@ -71,7 +72,7 @@ public class PackageInfoFactory {
                 }
 
             SimplifiedPackageInfo simplifiedPackageInfo = new SimplifiedPackageInfo(appName, packageName, apkSourceDir, isSystemApp,
-                    versionCode, versionName, firstInstallTime, lastUpdateTime, appDeveloperCertificate, permissions);
+                    versionCode, versionName, firstInstallTime, lastUpdateTime, appDeveloperCertificate, permissions, uid);
 
 
             packageInfoArrayList.add(simplifiedPackageInfo);
@@ -107,6 +108,7 @@ public class PackageInfoFactory {
                 String versionName = packageInfo.versionName;
                 long firstInstallTime = packageInfo.firstInstallTime;
                 long lastUpdateTime = packageInfo.lastUpdateTime;
+                int uid = packageInfo.applicationInfo.uid;
 
                 String apkSourceDir = packageInfo.applicationInfo.sourceDir;
                 X509Certificate appDeveloperCertificate = null;
@@ -134,7 +136,7 @@ public class PackageInfoFactory {
 
 
                 SimplifiedPackageInfo simplifiedPackageInfo = new SimplifiedPackageInfo(appName, packageName, apkSourceDir, isSystemApp,
-                        versionCode, versionName, firstInstallTime, lastUpdateTime, appDeveloperCertificate, permissions);
+                        versionCode, versionName, firstInstallTime, lastUpdateTime, appDeveloperCertificate, permissions, uid);
 
 
                 packageInfoArrayList.add(simplifiedPackageInfo);
