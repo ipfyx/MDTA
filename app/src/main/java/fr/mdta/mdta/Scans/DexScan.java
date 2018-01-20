@@ -54,6 +54,7 @@ public class DexScan extends Scan {
         suAvailable = Shell.SU.available();
 
         my_uid = context.getApplicationInfo().uid;
+        Log.d("uid",Integer.toString(my_uid));
 
         fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
 
@@ -70,7 +71,6 @@ public class DexScan extends Scan {
         } else {
             endScanCallback.OnScanTerminated();
         }
-
     }
 
     @Override
@@ -80,7 +80,8 @@ public class DexScan extends Scan {
 
     @Override
     protected void updateState() {
-
+        float number_of_app_scanned = listPackageInfo.size();
+        mState += (int) (100/number_of_app_scanned);
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
@@ -129,6 +130,8 @@ public class DexScan extends Scan {
             } else {
                 endScanCallback.OnScanTerminated();
             }
+        } else if ( listPackageInfo.isEmpty() ) {
+            endScanCallback.OnScanTerminated();
         }
 
     }
