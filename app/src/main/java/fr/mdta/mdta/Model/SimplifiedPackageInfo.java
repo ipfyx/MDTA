@@ -68,11 +68,12 @@ public class SimplifiedPackageInfo implements Serializable {
      * @param lastUpdateTime
      * @param appDeveloperCertificate
      * @param permissions
+     * @param uid
      */
     public SimplifiedPackageInfo(String appName, String packageName, String apkSourceDir, boolean isSystemApp, int versionCode,
                                  String versionName, long firstInstallTime,
                                  long lastUpdateTime, X509Certificate appDeveloperCertificate,
-                                 ArrayList<String> permissions) {
+                                 ArrayList<String> permissions, int uid) {
         this.AppName = appName;
         this.PackageName = packageName;
         this.ApkSourceDir = apkSourceDir;
@@ -83,6 +84,7 @@ public class SimplifiedPackageInfo implements Serializable {
         this.LastUpdateTime = lastUpdateTime;
         this.AppDeveloperCertificate = appDeveloperCertificate;
         this.Permissions = permissions;
+        this.AppUid = uid;
     }
 
     /**
