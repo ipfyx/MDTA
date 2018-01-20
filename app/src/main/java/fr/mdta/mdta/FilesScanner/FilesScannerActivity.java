@@ -67,33 +67,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_files_scanner);
 
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Runtime.+getRuntime()Ljava/lang/Runtime".toLowerCase(), DangerousMethodCall.SHELL
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class".toLowerCase(), DangerousMethodCall.REFLECTION
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->forName(Ljava/lang/String;ZLjava/lang/ClassLoader;)Ljava/lang/Class".toLowerCase(), DangerousMethodCall.REFLECTION
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->getMethod(Ljava/lang/String;[Ljava/lang/Class;)Ljava/lang/reflect/Method".toLowerCase(), DangerousMethodCall.REFLECTION
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->getMethods()[Ljava/lang/reflect/Method".toLowerCase(), DangerousMethodCall.REFLECTION
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V".toLowerCase(), DangerousMethodCall.LOAD_CPP_LIBRARY
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "Ljava/lang/Class;->getClassLoader()Ljava/lang/ClassLoader", DangerousMethodCall.REFLECTION
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "shell".toLowerCase(), DangerousMethodCall.SHELL
-        );
-        CommandFactory.mapDangerousMethodPattern.put(
-                "superuser".toLowerCase(), DangerousMethodCall.SHELL
-        );
 
         Button buttonNonSystemApps = (Button) findViewById(R.id.scanUserApp);
         buttonNonSystemApps.setOnClickListener(new View.OnClickListener() {
@@ -435,11 +408,6 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
 
     protected void scanAppDexFile(ApplicationInfo app) {
 
-        CommandFactory.mapDangerousMethodCall.clear();
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.LOAD_CPP_LIBRARY, 0);
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.REFLECTION, 0);
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SELINUX, 0);
-        CommandFactory.mapDangerousMethodCall.put(DangerousMethodCall.SHELL, 0);
 
         //final String appDirectory = CommandFactory.pathToApkUnzipFolder + CommandFactory.unzipApkToFolder + "_" +
                 //app.uid;
@@ -450,15 +418,15 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
         //ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
         for (int i = 0; i < listDexFile.size(); i++) {
-            scanDexFile(listDexFile.get(i));
+            //scanDexFile(listDexFile.get(i));
         }
 
-        Log.d("mapMethodCall", CommandFactory.mapDangerousMethodCall.toString());
+        //Log.d("mapMethodCall", CommandFactory.mapDangerousMethodCall.toString());
 
         endScanApp(app, TypeScan.DEX_SCAN);
 
     }
-
+/*
     protected void scanDexFile(File file) {
 
         try {
@@ -484,7 +452,7 @@ public class FilesScannerActivity extends AppCompatActivity implements Callback 
             e.printStackTrace();
         }
     }
-
+*/
     protected ArrayList<File> getDexFiles(String appDirectory) {
         File classesDex = new File(appDirectory + "/classes.dex");
         int count = 1;
