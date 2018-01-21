@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
@@ -122,6 +123,7 @@ public class IntegrityScan extends Scan {
 
                 @Override
                 public void OnTaskCompleted(Object object) {
+                    openCERTSF(appInfo);
                     verifyHashesManifest(appInfo);
                 }
             }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
@@ -209,6 +211,8 @@ public class IntegrityScan extends Scan {
 
             JarFile jar = new JarFile(appInfo.getApkSourceDir());
             Manifest mf = jar.getManifest();
+            ZipEntry a = jar.getEntry("META-INF/CERT.SF");
+            Log.d("a",a.toString());
             Map<String, Attributes> map = mf.getEntries();
 
             ArrayList<Command> listProcess = new ArrayList<>();
@@ -278,6 +282,22 @@ public class IntegrityScan extends Scan {
                 writer.close();
             }
         }
+    }
+
+    private void openCERTSF(SimplifiedPackageInfo appInfo) {
+        JarFile jar = null;
+        String path = fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder +
+                unzipApkToFolder + "_" + Integer.toString(appInfo.getAppUid()) +
+                "/META-INF/CERT.SF";
+        try {
+            jar = new JarFile(path);
+            Manifest mf = jar.getManifest();
+            Map<String, Attributes> map = mf.getEntries();
+            Log.d("map",map.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void resultScanAppOK(SimplifiedPackageInfo appInfo) {
