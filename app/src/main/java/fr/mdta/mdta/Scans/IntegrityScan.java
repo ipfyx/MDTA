@@ -42,6 +42,8 @@ public class IntegrityScan extends Scan {
 
     private ScanCallback endScanCallback = null;
 
+    private int listPackageInfoCounter = 0;
+
     private Callback mycallback = new Callback() {
         @Override
         public void OnErrorHappended() {
@@ -77,8 +79,9 @@ public class IntegrityScan extends Scan {
 
         this.endScanCallback = callback;
 
-        if ( suAvailable && !listPackageInfo.isEmpty() ) {
-            scanApp(listPackageInfo.get(0));
+        if ( suAvailable && listPackageInfoCounter < listPackageInfo.size() ) {
+            scanApp(listPackageInfo.get(listPackageInfoCounter));
+            listPackageInfoCounter+=1;
         } else {
             endScanCallback.OnScanTerminated();
         }
@@ -100,7 +103,8 @@ public class IntegrityScan extends Scan {
     @Override
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
-        mState += (int) (100/number_of_app_scanned);
+        //mState += (int) (100/number_of_app_scanned);
+        mState+=100;
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
@@ -133,25 +137,25 @@ public class IntegrityScan extends Scan {
         }
     }
 
-    private void endScanApp(SimplifiedPackageInfo appInfo) {
+    private void endScanApp(SimplifiedPackageInfo simplifiedPackageInfo) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
         // could be a
         // risk to rm -rf /&
 
         //Log.d("ending",app.packageName);
-        fr.mdta.mdta.Tools.CommandFactory.endScanApp(appInfo,unzipApkToFolder);
+        fr.mdta.mdta.Tools.CommandFactory.endScanApp(simplifiedPackageInfo,unzipApkToFolder);
 
-        if ( listPackageInfo.contains(appInfo) ) {
+        if ( listPackageInfo.contains(simplifiedPackageInfo) ) {
 
-
-            if ( mResults.get(appInfo) != null ) {
-                resultScanAppOK(appInfo);
+            if ( mResults.get(simplifiedPackageInfo) == null ) {
+                this.resultScanAppOK(simplifiedPackageInfo);
             }
 
-            listPackageInfo.remove(appInfo);
+            //listPackageInfo.remove(simplifiedPackageInfo);
             updateState();
-            if ( !listPackageInfo.isEmpty() ) {
-                scanApp(listPackageInfo.get(0));
+            if ( listPackageInfoCounter < listPackageInfo.size() ) {
+                scanApp(listPackageInfo.get(listPackageInfoCounter));
+                listPackageInfoCounter+=1;
             } else {
                 endScanCallback.OnScanTerminated();
             }
