@@ -43,6 +43,8 @@ public class DexScan extends Scan {
 
     private ScanCallback endScanCallback = null;
 
+    private int listPackageInfoCounter = 0;
+
     private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<>();
 
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
@@ -66,8 +68,9 @@ public class DexScan extends Scan {
 
         this.endScanCallback = callback;
 
-        if ( suAvailable && !listPackageInfo.isEmpty() ) {
-            scanApp(listPackageInfo.get(0));
+        if ( suAvailable && listPackageInfoCounter < listPackageInfo.size() ) {
+            scanApp(listPackageInfo.get(listPackageInfoCounter));
+            listPackageInfoCounter+=1;
         } else {
             endScanCallback.OnScanTerminated();
         }
@@ -114,7 +117,6 @@ public class DexScan extends Scan {
         // could be a
         // risk to rm -rf /&
 
-        //Log.d("ending",app.packageName);
         fr.mdta.mdta.Tools.CommandFactory.endScanApp(appInfo,unzipApkToFolder);
 
         if ( listPackageInfo.contains(appInfo) ) {
@@ -123,10 +125,10 @@ public class DexScan extends Scan {
                 resultScanOK(appInfo);
             }
 
-            listPackageInfo.remove(appInfo);
             updateState();
-            if ( !listPackageInfo.isEmpty() ) {
-                scanApp(listPackageInfo.get(0));
+            if ( listPackageInfoCounter < listPackageInfo.size() ) {
+                scanApp(listPackageInfo.get(listPackageInfoCounter));
+                listPackageInfoCounter+=1;
             } else {
                 endScanCallback.OnScanTerminated();
             }
