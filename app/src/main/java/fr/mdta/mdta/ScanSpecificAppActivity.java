@@ -58,7 +58,8 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         setContentView(R.layout.activity_scanspecificapp);
 
         //Retrieve serializable extra
-        mSimplifiedPackageInfo = (SimplifiedPackageInfo) getIntent().getSerializableExtra(CURRENT_SIMPLIFIED_APP_PACKAGE_INFO);
+        mSimplifiedPackageInfo = (SimplifiedPackageInfo) getIntent().getSerializableExtra
+                (CURRENT_SIMPLIFIED_APP_PACKAGE_INFO);
 
         //Retrieve UI components
         mIconImageView = (ImageView) findViewById(R.id.icon);
@@ -77,16 +78,25 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
 
         SimpleDateFormat df = new SimpleDateFormat(APPLICATION_DATE_FORMAT);
         try {
-            Drawable icon = getPackageManager().getApplicationIcon(mSimplifiedPackageInfo.getPackageName());
+            Drawable icon = getPackageManager().getApplicationIcon(mSimplifiedPackageInfo
+                    .getPackageName());
             mIconImageView.setImageDrawable(icon);
             mAppNameTextView.setText(mSimplifiedPackageInfo.getAppName());
             mPackageNameTextView.setText(mSimplifiedPackageInfo.getPackageName());
-            mVersionNameTextView.setText(getResources().getString(R.string.title_version_name) + mSimplifiedPackageInfo.getVersionName());
-            mVersioncodeTextView.setText(getResources().getString(R.string.title_version_code) + Integer.toString(mSimplifiedPackageInfo.getVersionCode()));
-            mFirstInstallTimeTextView.setText(getResources().getString(R.string.title_installing_date) + df.format(new Date(mSimplifiedPackageInfo.getFirstInstallTime())));
-            mLastUpdateTimeTextView.setText(getResources().getString(R.string.title_last_update) + df.format(new Date(mSimplifiedPackageInfo.getLastUpdateTime())));
-            mPermissionsNumberTextView.setText(getResources().getString(R.string.title_permissions_number) + Integer.toString(mSimplifiedPackageInfo.getPermissions().size()));
-            mIsApplicationSystemTextView.setText(getResources().getString(R.string.title_is_system_app) + Boolean.toString(mSimplifiedPackageInfo.isSystemApp()));
+            mVersionNameTextView.setText(getResources().getString(R.string.title_version_name) +
+                    mSimplifiedPackageInfo.getVersionName());
+            mVersioncodeTextView.setText(getResources().getString(R.string.title_version_code) +
+                    Integer.toString(mSimplifiedPackageInfo.getVersionCode()));
+            mFirstInstallTimeTextView.setText(getResources().getString(R.string
+                    .title_installing_date) + df.format(new Date(mSimplifiedPackageInfo
+                    .getFirstInstallTime())));
+            mLastUpdateTimeTextView.setText(getResources().getString(R.string.title_last_update)
+                    + df.format(new Date(mSimplifiedPackageInfo.getLastUpdateTime())));
+            mPermissionsNumberTextView.setText(getResources().getString(R.string
+                    .title_permissions_number) + Integer.toString(mSimplifiedPackageInfo
+                    .getPermissions().size()));
+            mIsApplicationSystemTextView.setText(getResources().getString(R.string
+                    .title_is_system_app) + Boolean.toString(mSimplifiedPackageInfo.isSystemApp()));
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -96,15 +106,17 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         simplifiedPackageInfos.add(mSimplifiedPackageInfo);
         mScans.add(new PermissionScan(simplifiedPackageInfos));
         mScans.add(new CertificateScan(simplifiedPackageInfos));
-        mScans.add(new IntegrityScan(simplifiedPackageInfos,this));
-        mScans.add(new DexScan(simplifiedPackageInfos,this));
+        mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
+        mScans.add(new DexScan(simplifiedPackageInfos, this));
         try {
-            ScanLauncher.getInstance().launchScansSerial(mScans, new ScanLauncher.ScanLauncherCallback() {
+            ScanLauncher.getInstance().launchScansParallel(mScans, new ScanLauncher
+                    .ScanLauncherCallback() {
                 @Override
                 public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
                     ArrayList<Result.ScanResult> scanResults = new ArrayList<Result.ScanResult>();
                     for (int i = 0; i < arrayListScanWithResult.size(); i++) {
-                        scanResults.add(arrayListScanWithResult.get(i).getScanResult(mSimplifiedPackageInfo));
+                        scanResults.add(arrayListScanWithResult.get(i).getScanResult
+                                (mSimplifiedPackageInfo));
                     }
                     result = new Result(mSimplifiedPackageInfo, scanResults);
                 }
@@ -115,7 +127,8 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
 
         //Fill adapter with values
         mAdapter = new ScanSpecificAppAdapter(this, mScans);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager
+                .VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
 
         //Access result interraction
@@ -124,7 +137,8 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent myIntent = new Intent(ScanSpecificAppActivity.this, ResultSpecificAppActivity.class);
+                        Intent myIntent = new Intent(ScanSpecificAppActivity.this,
+                                ResultSpecificAppActivity.class);
                         myIntent.putExtra(ResultSpecificAppActivity.KEY_RESULT, result);
                         startActivity(myIntent);
                         finish();
