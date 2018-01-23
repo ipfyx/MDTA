@@ -168,12 +168,21 @@ public class SimplifiedPackageInfo implements Serializable {
     }
 
     /**
-     * Getter
+     * Standard getter to access app developper base64
      *
      * @return
      */
     public String getAppDeveloperBase64Key() {
         return Base64.encodeToString(this.getAppDeveloperCertificate().getPublicKey().getEncoded(), Base64.DEFAULT);
+    }
+
+    /**
+     * Standard getter to access app developper base64
+     *
+     * @return
+     */
+    public String getDevelopperKeyAlgorithmMethod() {
+        return this.getAppDeveloperCertificate().getPublicKey().getAlgorithm();
     }
 
     /**

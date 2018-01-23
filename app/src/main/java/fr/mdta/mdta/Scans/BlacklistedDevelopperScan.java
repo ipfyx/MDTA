@@ -37,7 +37,7 @@ public class BlacklistedDevelopperScan extends Scan {
             ArrayList<DeveloperSignatureList.DeveloperSignatureListElement> developerSignatures = new ArrayList<>();
             while (!simplifiedPackageInfos.isEmpty() && developerSignatures.size() < MAX_SENT_ITEM) {
                 SimplifiedPackageInfo simplifiedPackageInfo = simplifiedPackageInfos.remove(0);
-                DeveloperSignatureList.DeveloperSignatureListElement developerSignature = new DeveloperSignatureList.DeveloperSignatureListElement(simplifiedPackageInfo.getPackageName(), simplifiedPackageInfo.getAppDeveloperCertificate().getPublicKey().getAlgorithm(), simplifiedPackageInfo.getAppDeveloperBase64Key());
+                DeveloperSignatureList.DeveloperSignatureListElement developerSignature = new DeveloperSignatureList.DeveloperSignatureListElement(simplifiedPackageInfo.getPackageName(), simplifiedPackageInfo.getDevelopperKeyAlgorithmMethod(), simplifiedPackageInfo.getAppDeveloperBase64Key());
                 developerSignatures.add(developerSignature);
                 float updatedState = mState + 50 / globalSize;
                 setmState(updatedState);
