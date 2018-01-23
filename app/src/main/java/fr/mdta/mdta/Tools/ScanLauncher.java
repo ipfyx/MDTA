@@ -207,15 +207,15 @@ public class ScanLauncher {
         switch (mTypeOfLauncher) {
             case SERIAL:
                 for (int i = 0; i < mResultScans.size(); i++) {
-                    scansState.add(mResultScans.get(i).getmState());
+                    scansState.add((int) mResultScans.get(i).getmState());
                 }
                 for (int i = 0; i < mSerialScans.size(); i++) {
-                    scansState.add(mSerialScans.get(i).getmState());
+                    scansState.add((int) mSerialScans.get(i).getmState());
                 }
                 break;
             case PARALLEL:
                 for (int i = 0; i < mResultScans.size(); i++) {
-                    scansState.add(mResultScans.get(i).getmState());
+                    scansState.add((int) mResultScans.get(i).getmState());
                 }
                 break;
             case MIX:

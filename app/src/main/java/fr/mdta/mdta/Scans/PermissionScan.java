@@ -67,7 +67,6 @@ public class PermissionScan extends Scan {
 
     }
 
-    @Override
     protected void updateState() {
         //TODO Give a strategy to evaluate the state of a scan
     }

@@ -1,7 +1,5 @@
 package fr.mdta.mdta.Scans;
 
-import android.util.Log;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -39,8 +37,6 @@ public class CertificateScan extends Scan {
         for ( int i = 0; i < listPackageInfo.size(); i++) {
 
             SpecificResult result = null;
-
-            System.out.println(listPackageInfo.get(i).getAppName());
 
             try {
 
@@ -89,7 +85,6 @@ public class CertificateScan extends Scan {
 
     }
 
-    @Override
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
         mState += (int) (100*number_of_app_scanned);

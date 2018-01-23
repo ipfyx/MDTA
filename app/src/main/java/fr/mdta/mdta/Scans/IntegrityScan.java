@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
@@ -107,14 +106,12 @@ public class IntegrityScan extends Scan {
         callback.OnScanTerminated();
     }
 
-    @Override
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
         float a = (100/number_of_app_scanned);
         int b = (int) a;
         mState += b;
-        Log.d("update","a = "+Float.toString(a)+" b = "+ Integer.toString(b)+
-        " mState = "+Integer.toString(mState));
+
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {

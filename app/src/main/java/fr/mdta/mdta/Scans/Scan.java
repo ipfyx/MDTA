@@ -19,7 +19,7 @@ public abstract class Scan implements Serializable {
     /**
      * Value used to make animation and to keep the state(generally out of 100) of a scan
      */
-    protected int mState = 0;
+    protected float mState = 0;
     /**
      * Represents the scan name
      */
@@ -74,11 +74,6 @@ public abstract class Scan implements Serializable {
     public abstract void cancelScan(ScanCallback callback);
 
     /**
-     * Method to update scan state which should be implemented by the extender's class.
-     */
-    protected abstract void updateState();
-
-    /**
      * Standard getter to access scan name
      *
      * @return
@@ -106,6 +101,20 @@ public abstract class Scan implements Serializable {
     }
 
     /**
+     * Access the simplified package info according to its name, return null if does not exist
+     *
+     * @return
+     */
+    public SimplifiedPackageInfo getmSimplifiedPackageInfo(String simplifiedPackageInfoName) {
+        for (int i = 0; i < this.mSimplifiedPackageInfos.size(); i++) {
+            if (mSimplifiedPackageInfos.get(i).getPackageName().equals(simplifiedPackageInfoName)) {
+                return mSimplifiedPackageInfos.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
      * Standard getter to access the map of result for the current scan
      *
      * @return
@@ -119,8 +128,12 @@ public abstract class Scan implements Serializable {
      *
      * @return
      */
-    public int getmState() {
+    public float getmState() {
         return mState;
+    }
+
+    public void setmState(float mState) {
+        this.mState = mState;
     }
 
     /**

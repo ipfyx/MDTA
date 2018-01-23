@@ -33,22 +33,15 @@ public class DexScan extends Scan {
     private final static String DEX_SCANNER_NAME = "Application Dex Scanner";
     private final static String DEX_SCANNER_DESCRIPTION = "This scan looks for dangerous" +
             "methods in the code of an application";
-
-    private boolean suAvailable = false;
-    private int my_uid = 0;
-
-    private String unzipApkToFolder = "unzipedApkDex";
-
-    private ArrayList<SimplifiedPackageInfo> listPackageInfo;
-
-    private ScanCallback endScanCallback = null;
-
-    private int listPackageInfoCounter = 0;
-
-    private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<>();
-
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
             DangerousMethodPatternMap.getMapDangerousMethodPattern();
+    private boolean suAvailable = false;
+    private int my_uid = 0;
+    private String unzipApkToFolder = "unzipedApkDex";
+    private ArrayList<SimplifiedPackageInfo> listPackageInfo;
+    private ScanCallback endScanCallback = null;
+    private int listPackageInfoCounter = 0;
+    private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<>();
 
     public DexScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos, Context context) {
         super(DEX_SCANNER_NAME, DEX_SCANNER_DESCRIPTION, simplifiedPackageInfos);
@@ -81,7 +74,6 @@ public class DexScan extends Scan {
 
     }
 
-    @Override
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
         mState += (int) (100/number_of_app_scanned);
