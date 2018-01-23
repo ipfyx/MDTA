@@ -80,7 +80,7 @@ public class ScanActivity extends AppCompatActivity {
 
                                          public void run() {
 
-                                             mCounter = ScanLauncher.getInstance().getScansGlobalState();
+                                             mCounter = (int) ScanLauncher.getInstance().getScansGlobalState();
                                              //TODO replace fake animation by an update with scanlist and state arguments
                                              long dif = (new Date()).getTime() - mStartingTime.getTime();
                                              Date difDate = new Date(dif);
@@ -101,6 +101,7 @@ public class ScanActivity extends AppCompatActivity {
         switch (mTypeOfScan) {
             case WHOLESYSTEMSCAN:
                 //TODO add other scans
+                mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this)));
                 if (Shell.SU.available()) {

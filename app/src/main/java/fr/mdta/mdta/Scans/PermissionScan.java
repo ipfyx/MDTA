@@ -3,6 +3,7 @@ package fr.mdta.mdta.Scans;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
+import fr.mdta.mdta.API.APIModel.ReceivedItem.BasicScanResultItem;
 import fr.mdta.mdta.API.APIModel.SentItem.PackagesList;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.BasicScanRequester;
@@ -18,6 +19,9 @@ public class PermissionScan extends Scan {
     private final static String PERMISSION_SCANNER_DESCRIPTION = "This scan consists on parsing all the permissions " +
             "of an application and to give a feedback according to our personal data and each risk rate of every permission.";
 
+    private final static int MAX_SENT_ITEM = 50;
+    private int endedRequest = 0;
+
     /**
      * Constructor of a permission scan
      *
@@ -29,36 +33,58 @@ public class PermissionScan extends Scan {
 
     @Override
     public void launchScan(final ScanCallback callback) {
-        //TODO implement the launchscan strategy
 
-        PackagesList packagesList = new PackagesList(this.getmSimplifiedPackageInfos());
+        ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = new ArrayList<>();
+        simplifiedPackageInfos.addAll(getmSimplifiedPackageInfos());
 
-        try {
-            BasicScanRequester request = new BasicScanRequester(new Callback() {
-                @Override
-                public void OnErrorHappended() {
-
-                }
-
-                @Override
-                public void OnErrorHappended(String error) {
-
-                }
-
-                @Override
-                public void OnTaskCompleted(Object object) {
-                    for (int i = 0; i < getmSimplifiedPackageInfos().size(); i++) {
-                        mResults.put(getmSimplifiedPackageInfos().get(i), new SpecificResult(true, "FAKE PermissionOK", "FAKE BNo danger"));
+        final float globalSize = simplifiedPackageInfos.size();
+        final int requiredRequest = (int) Math.ceil((float) simplifiedPackageInfos.size() / MAX_SENT_ITEM);
+        while (!simplifiedPackageInfos.isEmpty()) {
+            ArrayList<SimplifiedPackageInfo> listToSend = new ArrayList<>();
+            while (!simplifiedPackageInfos.isEmpty() && listToSend.size() < MAX_SENT_ITEM) {
+                listToSend.add(simplifiedPackageInfos.remove(0));
+                float updatedState = mState + 50 / globalSize;
+                setmState(updatedState);
+            }
+            PackagesList packagesList = new PackagesList(listToSend);
+            try {
+                BasicScanRequester request = new BasicScanRequester(new Callback() {
+                    @Override
+                    public void OnErrorHappended() {
 
                     }
-                    mState = 100;
-                    callback.OnScanTerminated();
-                }
-            }, packagesList);
-            request.execute();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+
+                    @Override
+                    public void OnErrorHappended(String error) {
+
+                    }
+
+
+                    @Override
+                    public void OnTaskCompleted(Object object) {
+                        ArrayList<BasicScanResultItem.PackageResult> items = (ArrayList<BasicScanResultItem.PackageResult>) object;
+
+                        for (int i = 0; i < items.size(); i++) {
+
+                            SpecificResult result;
+                            result = new SpecificResult(false, "Application a lot permissive", items.get(i).toString());
+                            mResults.put(getmSimplifiedPackageInfo(items.get(i).getPackageName()), result);
+
+                            float updatedState = mState + 50 / globalSize;
+                            setmState(updatedState);
+                        }
+                        endedRequest += 1;
+                        if (endedRequest == requiredRequest) {
+                            callback.OnScanTerminated();
+                        }
+                    }
+                }, packagesList);
+                request.execute();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         }
+
 
     }
 

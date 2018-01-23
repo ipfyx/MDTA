@@ -101,7 +101,7 @@ public abstract class Scan implements Serializable {
     }
 
     /**
-     * Access the simplified package info according to its name, return null if does not exist
+     * Access the simplified package info according to its package name, return null if does not exist
      *
      * @return
      */
