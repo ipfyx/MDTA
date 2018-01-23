@@ -59,7 +59,13 @@ public class BlacklistedDevelopperScan extends Scan {
                     public void OnTaskCompleted(Object object) {
                         ArrayList<DeveloperSignatureScanResultItem.PackageDeveloperSignatureScanResult> items = (ArrayList<DeveloperSignatureScanResultItem.PackageDeveloperSignatureScanResult>) object;
                         for (int i = 0; i < items.size(); i++) {
-                            mResults.put(getmSimplifiedPackageInfo(items.get(i).getPackageName()), new SpecificResult(!items.get(i).isBlacklisted(), items.get(i).getPackageName(), "FAKE BNo danger"));
+                            SpecificResult result = null;
+                            if (items.get(i).isBlacklisted()) {
+                                result = new SpecificResult(false, "Suspicious developper", "This developper is known as malicious application developper.");
+                            } else {
+                                result = new SpecificResult(true, "Unknown developper", "This developper has never been known as a malicious developper.");
+                            }
+                            mResults.put(getmSimplifiedPackageInfo(items.get(i).getPackageName()), result);
                             float updatedState = mState + 50 / globalSize;
                             setmState(updatedState);
                         }
