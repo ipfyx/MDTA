@@ -3,7 +3,10 @@ package fr.mdta.mdta.Scans;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +46,10 @@ public class IntegrityScan extends Scan {
     private ScanCallback endScanCallback = null;
 
     private int listPackageInfoCounter = 0;
+
+
+    private String sha256DigestManifest = "SHA-256-Digest-Manifest";
+    private String sha1DigestManifest = "SHA1-Digest-Manifest";
 
     private Callback mycallback = new Callback() {
         @Override
@@ -103,8 +110,11 @@ public class IntegrityScan extends Scan {
     @Override
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
-        //mState += (int) (100/number_of_app_scanned);
-        mState+=100;
+        float a = (100/number_of_app_scanned);
+        int b = (int) a;
+        mState += b;
+        Log.d("update","a = "+Float.toString(a)+" b = "+ Integer.toString(b)+
+        " mState = "+Integer.toString(mState));
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
@@ -127,7 +137,6 @@ public class IntegrityScan extends Scan {
 
                 @Override
                 public void OnTaskCompleted(Object object) {
-                    openCERTSF(appInfo);
                     verifyHashesManifest(appInfo);
                 }
             }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
@@ -143,7 +152,7 @@ public class IntegrityScan extends Scan {
         // risk to rm -rf /&
 
         //Log.d("ending",app.packageName);
-        fr.mdta.mdta.Tools.CommandFactory.endScanApp(simplifiedPackageInfo,unzipApkToFolder);
+        CommandFactory.endScanApp(simplifiedPackageInfo,unzipApkToFolder);
 
         if ( listPackageInfo.contains(simplifiedPackageInfo) ) {
 
@@ -191,9 +200,10 @@ public class IntegrityScan extends Scan {
 
                 String calculatedHash = ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
+                Log.d(filePath, hash + " / " + calculatedHash);
 
                 if (hash.equals(calculatedHash)) {
-                    Log.d(filePath, hash + " / " + calculatedHash);
+
                 } else {
 
                     resultScanAppTempered(appInfo,filePath,hashMethod,calculatedHash,hash);
@@ -215,11 +225,12 @@ public class IntegrityScan extends Scan {
 
             JarFile jar = new JarFile(appInfo.getApkSourceDir());
             Manifest mf = jar.getManifest();
-            ZipEntry a = jar.getEntry("META-INF/CERT.SF");
-            Log.d("a",a.toString());
+
             Map<String, Attributes> map = mf.getEntries();
 
             ArrayList<Command> listProcess = new ArrayList<>();
+
+            openCERTSF(appInfo, listProcess);
 
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
@@ -239,6 +250,7 @@ public class IntegrityScan extends Scan {
                     addFileToListVerification(filePath, fileHash, appInfo, "sha256sum", listProcess);
                 }
             }
+            CommandFactory.listProcessIntegrity.clear();
             CommandFactory.listProcessIntegrity = listProcess;
             CommandFactory.launchVerification(mycallback, appInfo);
 
@@ -288,16 +300,39 @@ public class IntegrityScan extends Scan {
         }
     }
 
-    private void openCERTSF(SimplifiedPackageInfo appInfo) {
-        JarFile jar = null;
-        String path = fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder +
+    private void openCERTSF(SimplifiedPackageInfo appInfo, ArrayList<Command> listProcess) {
+
+        String certPath = fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder +
                 unzipApkToFolder + "_" + Integer.toString(appInfo.getAppUid()) +
                 "/META-INF/CERT.SF";
+
+        //the full path is generated in addFileToListVerification
+        String manifestPath = "META-INF/MANIFEST.MF";
+        Log.d("manifestPath",manifestPath);
+        String[] hashEntryManifest;
+        String hashManifest = "";
         try {
-            jar = new JarFile(path);
-            Manifest mf = jar.getManifest();
-            Map<String, Attributes> map = mf.getEntries();
-            Log.d("map",map.toString());
+            File certFile = new File(certPath);
+            BufferedReader reader = new BufferedReader(new FileReader(certFile));
+            String currentLine;
+            while((currentLine = reader.readLine()) != null) {
+                // trim newline when comparing with lineToRemove
+                //String trimmedLine = currentLine.trim();
+                if(currentLine.contains(sha256DigestManifest)){
+                    hashEntryManifest = currentLine.split(":");
+                    hashManifest = hashEntryManifest[1].trim();
+                    addFileToListVerification(manifestPath, hashManifest, appInfo, "sha256sum", listProcess);
+                    break;
+                } else if (currentLine.contains(sha1DigestManifest)) {
+                    hashEntryManifest = currentLine.split(":");
+                    hashManifest = hashEntryManifest[1].trim();
+                    addFileToListVerification(manifestPath, hashManifest, appInfo, "sha1sum", listProcess);
+                    break;
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

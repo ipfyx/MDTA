@@ -235,7 +235,7 @@ public class DexScan extends Scan {
     private void resultScanOK(SimplifiedPackageInfo appInfo) {
         SpecificResult result = new SpecificResult(true,
                 mapDangerousMethodCall.toString(),
-                mapDangerousMethodCall.toString());
+                "null");
         mResults.put(appInfo,result);
     }
 
