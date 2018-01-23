@@ -172,22 +172,22 @@ public class ScanLauncher {
      *
      * @return
      */
-    public int getScansGlobalState() {
-        int globalStateValue = 0;
+    public float getScansGlobalState() {
+        float globalStateValue = 0;
         switch (mTypeOfLauncher) {
             case SERIAL:
                 float finishedScan = mResultScans.size();
                 if (mSerialScans.size() > 0) {
                     float waitingScan = mSerialScans.size();
                     float runningScanState = mSerialScans.get(0).getmState();
-                    globalStateValue = (int) (100 * ((finishedScan / (finishedScan + waitingScan))) + runningScanState / 100);
+                    globalStateValue = (100 * ((finishedScan / (finishedScan + waitingScan))) + runningScanState / 100);
                 } else {
                     globalStateValue = 100;
                 }
                 break;
             case PARALLEL:
                 for (int i = 0; i < mResultScans.size(); i++) {
-                    globalStateValue += mResultScans.get(i).getmState();
+                    globalStateValue += mResultScans.get(i).getmState() / mResultScans.size();
                 }
                 break;
             case MIX:
