@@ -37,11 +37,10 @@ public class BasicScanRequester extends PostRequester {
             mCallback.OnErrorHappended();
             return;
         }
-        Log.d("result", response);
         BasicScanResultItem itemResponse = APItools.convertJSONToObject(response, BasicScanResultItem.class);
+        Log.d("result", response);
 
-
-        mCallback.OnTaskCompleted(itemResponse);
+        mCallback.OnTaskCompleted(itemResponse.getResult());
     }
 
 }

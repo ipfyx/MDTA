@@ -11,8 +11,12 @@ public class BasicScanResultItem {
     private String error;
     private ArrayList<PackageResult> result;
 
-    private class PackageResult {
-        private String AppName;
+    public ArrayList<PackageResult> getResult() {
+        return result;
+    }
+
+    public class PackageResult {
+        private String PackageName;
 
         private int PermissionsNumber;
         private int DeprecatedPermissionsNumber;
@@ -22,10 +26,42 @@ public class BasicScanResultItem {
         private int BatteryImpactPermissionsNumber;
         private int LocationImpactPermissionsNumber;
 
+        public String getPackageName() {
+            return PackageName;
+        }
+
+        public int getPermissionsNumber() {
+            return PermissionsNumber;
+        }
+
+        public int getDeprecatedPermissionsNumber() {
+            return DeprecatedPermissionsNumber;
+        }
+
+        public int getFinancialImpactPermissionsNumber() {
+            return FinancialImpactPermissionsNumber;
+        }
+
+        public int getPrivacyImpactPermissionsNumber() {
+            return PrivacyImpactPermissionsNumber;
+        }
+
+        public int getSystemImpactPermissionsNumber() {
+            return SystemImpactPermissionsNumber;
+        }
+
+        public int getBatteryImpactPermissionsNumber() {
+            return BatteryImpactPermissionsNumber;
+        }
+
+        public int getLocationImpactPermissionsNumber() {
+            return LocationImpactPermissionsNumber;
+        }
+
         @Override
         public String toString() {
             return "PackageResult{" +
-                    "AppName='" + AppName + '\'' +
+                    "PackageName='" + PackageName + '\'' +
                     ", PermissionsNumber=" + PermissionsNumber +
                     ", DeprecatedPermissionsNumber=" + DeprecatedPermissionsNumber +
                     ", FinancialImpactPermissionsNumber=" + FinancialImpactPermissionsNumber +
@@ -37,19 +73,4 @@ public class BasicScanResultItem {
         }
     }
 
-    @Override
-    public String toString() {
-        String stringResult = "BasicScanResultItem{" +
-                "status=" + status +
-                ", error='" + error + '\'' +
-                ", result=";
-
-        for (int i = 0; i < result.size(); i++) {
-            stringResult += result.get(i).toString() + '\n';
-        }
-
-        stringResult += '}';
-        return stringResult;
-
-    }
 }
