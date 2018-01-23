@@ -9,13 +9,22 @@ public class DeveloperSignatureScanResultItem {
     private String error;
     private ArrayList<PackageDeveloperSignatureScanResult> result;
 
+    public ArrayList<PackageDeveloperSignatureScanResult> getResult() {
+        return result;
+    }
 
-    private class PackageDeveloperSignatureScanResult {
+    public class PackageDeveloperSignatureScanResult {
         private String PackageName;
 
         private boolean IsBlacklisted;
 
+        public String getPackageName() {
+            return PackageName;
+        }
 
+        public boolean isBlacklisted() {
+            return IsBlacklisted;
+        }
     }
 
 }

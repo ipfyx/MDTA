@@ -215,7 +215,6 @@ public class SimplifiedPackageInfo implements Serializable {
     public int hashCode() {
         int result = AppName.hashCode();
         result = 31 * result + PackageName.hashCode();
-        result = 31 * result + VersionName.hashCode();
         result = 31 * result + ApkSourceDir.hashCode();
         result = 31 * result + VersionCode;
         result = 31 * result + (IsSystemApp ? 1 : 0);
