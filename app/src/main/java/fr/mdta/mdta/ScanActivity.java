@@ -1,7 +1,6 @@
 package fr.mdta.mdta;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -10,17 +9,21 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
 import fr.mdta.mdta.Scans.Scan;
+import fr.mdta.mdta.Tools.CacheStorage;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
 import fr.mdta.mdta.Tools.ScanLauncher;
 
@@ -62,25 +65,12 @@ public class ScanActivity extends AppCompatActivity {
         mProgressBar = (ProgressBar) findViewById(R.id.scanProgressBar);
 
 
-        //Scan Timer Animation
+        //Progressbar and Scan Timer animation
         mStartingTime = new Date();
         final SimpleDateFormat df = new SimpleDateFormat(TIMER_FORMAT);
         long dif = (new Date()).getTime() - mStartingTime.getTime();
         Date difDate = new Date(dif);
         mTimerTextView.setText(df.format(difDate));
-        mTimerHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                long dif = (new Date()).getTime() - mStartingTime.getTime();
-                Date difDate = new Date(dif);
-                mTimerTextView.setText(df.format(difDate));
-                if (mCounter < mProgressBarMaxValue) {
-                    mTimerHandler.postDelayed(this, 1000);
-                }
-            }
-        }, 1000);
-
-        //Progressbar animation
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressBar.setMax(mProgressBarMaxValue);
         mCounter = 0;
@@ -92,37 +82,52 @@ public class ScanActivity extends AppCompatActivity {
 
                                              mCounter = ScanLauncher.getInstance().getScansGlobalState();
                                              //TODO replace fake animation by an update with scanlist and state arguments
+                                             long dif = (new Date()).getTime() - mStartingTime.getTime();
+                                             Date difDate = new Date(dif);
+                                             mTimerTextView.setText(df.format(difDate));
                                              if (mCounter < mProgressBarMaxValue) {
                                                  mProgressBar.setProgress(mCounter);
                                                  int percent_num = (mCounter * 100 / mProgressBarMaxValue);
                                                  mPercentTextView.setText(percent_num + "%");
-                                                 mHandler.postDelayed(this, 500);
+                                                 mHandler.postDelayed(this, 50);
                                              } else {
                                                  mPercentTextView.setText("100% ");
                                                  mProgressBar.setProgress(mProgressBarMaxValue);
                                              }
                                          }
-                                     }, 500);
+                                     }, 50);
 
         //Scan preparation according to type of scan
         switch (mTypeOfScan) {
             case WHOLESYSTEMSCAN:
                 //TODO add other scans
-                mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
-                mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this),this));
-                mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this),this));
+                mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this)));
+                if (Shell.SU.available()) {
+                    mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this), this));
+                    mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this), this));
+                }
                 break;
             case APPLICATIONSSCAN:
                 //TODO add other scans
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
-                mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this,false),this));
-                mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this,false),this));
+                mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this, false)));
+                if (Shell.SU.available()) {
+                    mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false), this));
+                    mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this, false), this));
+                }
                 break;
             case CUSTOMSCAN:
-                //Retrieve scanlist from serializable extra
-                mScans.addAll((ArrayList<Scan>) getIntent().getSerializableExtra(KEY_CUSTOM_SCAN_SCANLIST));
+                //Retrieve scanlist from cache
+                try {
+                    mScans.addAll((ArrayList<Scan>) CacheStorage.readObject(getApplicationContext(), KEY_CUSTOM_SCAN_SCANLIST));
+                    CacheStorage.clearCache(getApplicationContext());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
         }
 
         try {
@@ -145,7 +150,6 @@ public class ScanActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (mResults.size() > 0) {
                     Intent myIntent = new Intent(ScanActivity.this, ResultActivity.class);
-                    myIntent.putExtra(ResultActivity.KEY_RESULT_LIST, mResults);
                     startActivity(myIntent);
                     finish();
                 }
@@ -155,16 +159,26 @@ public class ScanActivity extends AppCompatActivity {
     }
 
     private void fillResultList(ArrayList<Scan> scanArrayList) {
+
         ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = scanArrayList.get(0).getmSimplifiedPackageInfos();
 
         for (int i = 0; i < simplifiedPackageInfos.size(); i++) {
             ArrayList<Result.ScanResult> scanResults = new ArrayList<>();
             for (int j = 0; j < scanArrayList.size(); j++) {
-                scanResults.add(scanArrayList.get(j).getScanResult(simplifiedPackageInfos.get(i)));
+
+                scanResults.add(scanArrayList.get(j).getScanResult(scanArrayList.get(j).getmSimplifiedPackageInfos().get(i)));
             }
             Result result = new Result(simplifiedPackageInfos.get(i), scanResults);
             mResults.add(result);
         }
+        //Write results to cache
+        try {
+            CacheStorage.clearCache(getApplicationContext());
+            CacheStorage.writeObject(getApplicationContext(), ResultActivity.KEY_RESULT_LIST, mResults);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         mResultButton.setClickable(true);
     }
 

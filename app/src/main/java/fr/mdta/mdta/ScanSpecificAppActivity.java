@@ -16,8 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
@@ -106,8 +108,11 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         simplifiedPackageInfos.add(mSimplifiedPackageInfo);
         mScans.add(new PermissionScan(simplifiedPackageInfos));
         mScans.add(new CertificateScan(simplifiedPackageInfos));
-        mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
-        mScans.add(new DexScan(simplifiedPackageInfos, this));
+        mScans.add(new BlacklistedDevelopperScan(simplifiedPackageInfos));
+        if (Shell.SU.available()) {
+            mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
+            mScans.add(new DexScan(simplifiedPackageInfos, this));
+        }
         try {
             ScanLauncher.getInstance().launchScansParallel(mScans, new ScanLauncher
                     .ScanLauncherCallback() {
@@ -131,7 +136,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                 .VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
 
-        //Access result interraction
+        //Access result interaction
         mResultButton.setClickable(true);
         mResultButton.setOnClickListener(
                 new View.OnClickListener() {

@@ -9,13 +9,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import eu.chainfire.libsuperuser.Shell;
+import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
 import fr.mdta.mdta.Scans.Scan;
+import fr.mdta.mdta.Tools.CacheStorage;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
 
 
@@ -51,13 +55,19 @@ public class CustomScanActivity extends AppCompatActivity {
 
         mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
         mScansApplications.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
-        mScansApplications.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this, false),this));
-        mScansApplications.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false),this));
+        mScansApplications.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this, false)));
+        if (Shell.SU.available()) {
+            mScansApplications.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this, false), this));
+            mScansApplications.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false), this));
+        }
 
         mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
         mScansWholeSystem.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
-        mScansWholeSystem.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this),this));
-        mScansWholeSystem.add(new DexScan(PackageInfoFactory.getInstalledPackages(this),this));
+        mScansWholeSystem.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this)));
+        if (Shell.SU.available()) {
+            mScansWholeSystem.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this), this));
+            mScansWholeSystem.add(new DexScan(PackageInfoFactory.getInstalledPackages(this), this));
+        }
 
 
         //CustomScan Interraction
@@ -70,7 +80,13 @@ public class CustomScanActivity extends AppCompatActivity {
                 if (mScans.size() > 0) {
                     Intent myIntent = new Intent(CustomScanActivity.this, ScanActivity.class);
                     myIntent.putExtra(ScanActivity.KEY_TYPE_OF_SCAN, ScanActivity.TypeOfScan.CUSTOMSCAN);
-                    myIntent.putExtra(ScanActivity.KEY_CUSTOM_SCAN_SCANLIST, mScans);
+                    //write scans to cache
+                    try {
+                        CacheStorage.clearCache(getApplicationContext());
+                        CacheStorage.writeObject(getApplicationContext(), ScanActivity.KEY_CUSTOM_SCAN_SCANLIST, mScans);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     startActivity(myIntent);
                     finish();
                 }

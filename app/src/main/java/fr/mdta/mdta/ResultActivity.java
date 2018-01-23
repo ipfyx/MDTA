@@ -22,10 +22,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Tools.CacheStorage;
 
 
 public class ResultActivity extends AppCompatActivity implements ActionBar.TabListener {
@@ -50,8 +52,16 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        //Set the different list to isolate waarned app and safe app
-        mResults = (ArrayList<Result>) getIntent().getSerializableExtra(KEY_RESULT_LIST);
+        //Retrieve results from cache
+        try {
+            mResults = (ArrayList<Result>) CacheStorage.readObject(getApplicationContext(), KEY_RESULT_LIST);
+            CacheStorage.clearCache(getApplicationContext());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        //Set the different list to isolate warned app and safe app
         for (int i = 0; i < mResults.size(); i++) {
             if (mResults.get(i).getmGlobalResult()) {
                 mSafeResult.add(mResults.get(i));
@@ -107,63 +117,6 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
 
     }
 
-
-    /**
-     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
-     * sequence.
-     */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-
-        /**
-         * Tab title
-         */
-        private String mTitle;
-        /**
-         * Elements to display in the tab
-         */
-        public ArrayList<Result> mList;
-
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-
-            switch (position) {
-                case 0:
-                    mList = mWarnedResult;
-                    break;
-                case 1:
-                    mList = mSafeResult;
-                    break;
-
-            }
-
-            return new ScreenSlidePageFragment(mList);
-
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    mTitle = "Warned Applications";
-                    break;
-                case 1:
-                    mTitle = "Safe Applications";
-                    break;
-
-            }
-            return mTitle;
-        }
-    }
-
     public static class ScreenSlidePageFragment extends Fragment {
 
         /**
@@ -195,7 +148,6 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
 
 
     }
-
 
     public static class CustomAdapter extends RecyclerView.Adapter<ResultActivity.CustomAdapter.ViewHolder> {
         /**
@@ -242,7 +194,6 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
                 }
 
             } catch (NameNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             //Show result when an application is selected
@@ -289,6 +240,62 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
             }
         }
 
+    }
+
+    /**
+     * A simple pager adapter that represents 5 ScreenSlidePageFragment objects, in
+     * sequence.
+     */
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+
+        /**
+         * Elements to display in the tab
+         */
+        public ArrayList<Result> mList;
+        /**
+         * Tab title
+         */
+        private String mTitle;
+
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+
+            switch (position) {
+                case 0:
+                    mList = mWarnedResult;
+                    break;
+                case 1:
+                    mList = mSafeResult;
+                    break;
+
+            }
+
+            return new ScreenSlidePageFragment(mList);
+
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    mTitle = "Warned Applications";
+                    break;
+                case 1:
+                    mTitle = "Safe Applications";
+                    break;
+
+            }
+            return mTitle;
+        }
     }
 
 
