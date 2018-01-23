@@ -96,13 +96,13 @@ public class ScanActivity extends AppCompatActivity {
                                                  mProgressBar.setProgress(mCounter);
                                                  int percent_num = (mCounter * 100 / mProgressBarMaxValue);
                                                  mPercentTextView.setText(percent_num + "%");
-                                                 mHandler.postDelayed(this, 20);
+                                                 mHandler.postDelayed(this, 500);
                                              } else {
                                                  mPercentTextView.setText("100% ");
                                                  mProgressBar.setProgress(mProgressBarMaxValue);
                                              }
                                          }
-                                     }, 20);
+                                     }, 500);
 
         //Scan preparation according to type of scan
         switch (mTypeOfScan) {
