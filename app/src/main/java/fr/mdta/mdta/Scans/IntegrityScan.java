@@ -1,6 +1,7 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -291,41 +292,63 @@ public class IntegrityScan extends Scan {
         }
     }
 
-    private void openCERTSF(SimplifiedPackageInfo appInfo, ArrayList<Command> listProcess) {
+    private void openCERTSF(final SimplifiedPackageInfo appInfo, final ArrayList<Command> listProcess) {
 
-        String certPath = fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder +
+        final String pathMETAINF = fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder +
                 unzipApkToFolder + "_" + Integer.toString(appInfo.getAppUid()) +
-                "/META-INF/CERT.SF";
+                "/META-INF/";
 
-        //the full path is generated in addFileToListVerification
-        String manifestPath = "META-INF/MANIFEST.MF";
-        String[] hashEntryManifest;
-        String hashManifest = "";
-        try {
-            File certFile = new File(certPath);
-            BufferedReader reader = new BufferedReader(new FileReader(certFile));
-            String currentLine;
-            while((currentLine = reader.readLine()) != null) {
-                // trim newline when comparing with lineToRemove
-                //String trimmedLine = currentLine.trim();
-                if(currentLine.contains(sha256DigestManifest)){
-                    hashEntryManifest = currentLine.split(":");
-                    hashManifest = hashEntryManifest[1].trim();
-                    addFileToListVerification(manifestPath, hashManifest, appInfo, "sha256sum", listProcess);
-                    break;
-                } else if (currentLine.contains(sha1DigestManifest)) {
-                    hashEntryManifest = currentLine.split(":");
-                    hashManifest = hashEntryManifest[1].trim();
-                    addFileToListVerification(manifestPath, hashManifest, appInfo, "sha1sum", listProcess);
-                    break;
-                }
+        CommandFactory.getCertNames(pathMETAINF, new Callback() {
+            @Override
+            public void OnErrorHappended() {
+
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            @Override
+            public void OnErrorHappended(String error) {
+
+            }
+
+            @Override
+            public void OnTaskCompleted(Object object) {
+                String nameCERT = ((String) object).replaceAll("\\n", "")
+                        .replaceAll("\\r", "");
+                String certPath = pathMETAINF+nameCERT+".SF";
+
+                Log.d("certPath",certPath);
+
+                //the full path is generated in addFileToListVerification
+                String manifestPath = "META-INF/MANIFEST.MF";
+                String[] hashEntryManifest;
+                String hashManifest = "";
+                try {
+                    File certFile = new File(certPath);
+                    BufferedReader reader = new BufferedReader(new FileReader(certFile));
+                    String currentLine;
+                    while((currentLine = reader.readLine()) != null) {
+                        // trim newline when comparing with lineToRemove
+                        //String trimmedLine = currentLine.trim();
+                        if(currentLine.contains(sha256DigestManifest)){
+                            hashEntryManifest = currentLine.split(":");
+                            hashManifest = hashEntryManifest[1].trim();
+                            addFileToListVerification(manifestPath, hashManifest, appInfo, "sha256sum", listProcess);
+                            break;
+                        } else if (currentLine.contains(sha1DigestManifest)) {
+                            hashEntryManifest = currentLine.split(":");
+                            hashManifest = hashEntryManifest[1].trim();
+                            addFileToListVerification(manifestPath, hashManifest, appInfo, "sha1sum", listProcess);
+                            break;
+                        }
+                    }
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
     }
 
