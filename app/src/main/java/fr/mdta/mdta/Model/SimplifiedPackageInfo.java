@@ -177,6 +177,24 @@ public class SimplifiedPackageInfo implements Serializable {
     }
 
     /**
+     * Standard getter to access application certificate signature
+     *
+     * @return
+     */
+    public String getApplicationCertificateSignature() {
+        return Base64.encodeToString(this.getAppDeveloperCertificate().getSignature(), Base64.DEFAULT);
+    }
+
+    /**
+     * Standard getter to access application certificate signature algorithm
+     *
+     * @return
+     */
+    public String getApplicationCertificateSignatureAlgorithm() {
+        return this.getAppDeveloperCertificate().getSigAlgName();
+    }
+
+    /**
      * Standard getter to access app developper base64
      *
      * @return
