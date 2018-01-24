@@ -34,6 +34,13 @@ public class DexScan extends Scan {
     private final static String DEX_SCANNER_NAME = "Application Dex Scanner";
     private final static String DEX_SCANNER_DESCRIPTION = "This scan looks for dangerous" +
             "methods in the code of an application";
+
+    private final int MAX_NUMBER_SHELL_CALL = 20;
+    private final int MAX_NUMBER_LOAD_CPP = 4;
+    private final int MAX_NUMBER_SELINUX_CALL = 0;
+    private final int MAX_NUMBER_REFLECTION = 30;
+
+
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
             DangerousMethodPatternMap.getMapDangerousMethodPattern();
     private boolean suAvailable = false;
@@ -222,10 +229,22 @@ public class DexScan extends Scan {
     }
 
     private void resultScanOK(SimplifiedPackageInfo appInfo) {
-        SpecificResult result = new SpecificResult(true,
-                "Dangerous Method Call",
-                mapDangerousMethodCall.toString());
-        mResults.put(appInfo,result);
+
+        if (mapDangerousMethodCall.get(DangerousMethodCall.SHELL) > MAX_NUMBER_SHELL_CALL ||
+                mapDangerousMethodCall.get(DangerousMethodCall.REFLECTION) > MAX_NUMBER_REFLECTION ||
+                mapDangerousMethodCall.get(DangerousMethodCall.LOAD_CPP_LIBRARY) > MAX_NUMBER_LOAD_CPP ||
+                mapDangerousMethodCall.get(DangerousMethodCall.SELINUX) > MAX_NUMBER_SELINUX_CALL) {
+            SpecificResult result = new SpecificResult(false,
+                    "This application is dangerous",
+                    mapDangerousMethodCall.toString());
+            mResults.put(appInfo,result);
+        } else {
+            SpecificResult result = new SpecificResult(true,
+                    "Dangerous Method Call",
+                    mapDangerousMethodCall.toString());
+            mResults.put(appInfo,result);
+        }
+
     }
 
     private void resultScanFail(SimplifiedPackageInfo appInfo, String reason, String detail) {
