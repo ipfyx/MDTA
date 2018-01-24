@@ -108,7 +108,7 @@ public final class CommandFactory {
     public static void getCertNames(String pathToMETAINF,Callback callback) {
 
         String[] listCommand = new String[]{
-                "ls " + pathToMETAINF+"| grep SF | cut -d \".\" -f1"
+                "ls " + pathToMETAINF+"| grep \\\\.SF | cut -d \".\" -f1"
         };
 
         Log.d("command",listCommand[0]);
