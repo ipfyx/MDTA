@@ -199,11 +199,13 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                 {
                     @Override
                     public void onClick(View v) {
-                        Intent myIntent = new Intent(ScanSpecificAppActivity.this,
-                                ResultSpecificAppActivity.class);
-                        myIntent.putExtra(ResultSpecificAppActivity.KEY_RESULT, result);
-                        startActivity(myIntent);
-                        finish();
+                        if (result != null) {
+                            Intent myIntent = new Intent(ScanSpecificAppActivity.this,
+                                    ResultSpecificAppActivity.class);
+                            myIntent.putExtra(ResultSpecificAppActivity.KEY_RESULT, result);
+                            startActivity(myIntent);
+                            finish();
+                        }
                     }
                 }
         );
