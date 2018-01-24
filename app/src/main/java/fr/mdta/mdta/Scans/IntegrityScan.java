@@ -192,7 +192,7 @@ public class IntegrityScan extends Scan {
             public void OnTaskCompleted(Object object) {
                 fr.mdta.mdta.Tools.CommandFactory.COUNT -= 1;
                 fr.mdta.mdta.Tools.CommandFactory.removeCommandIntegrity(commandToExecute);
-                fr.mdta.mdta.Tools.CommandFactory.launchVerification(mycallback, appInfo);
+                //fr.mdta.mdta.Tools.CommandFactory.launchVerification(mycallback, appInfo);
 
                 String calculatedHash = ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
