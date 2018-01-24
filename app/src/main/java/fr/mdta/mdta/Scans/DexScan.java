@@ -1,6 +1,7 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.dexbacked.DexBackedDexFile;
@@ -222,8 +223,8 @@ public class DexScan extends Scan {
 
     private void resultScanOK(SimplifiedPackageInfo appInfo) {
         SpecificResult result = new SpecificResult(true,
-                mapDangerousMethodCall.toString(),
-                "null");
+                "Dangerous Method Call",
+                mapDangerousMethodCall.toString());
         mResults.put(appInfo,result);
     }
 
