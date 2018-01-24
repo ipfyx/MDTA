@@ -104,4 +104,16 @@ public final class CommandFactory {
         Command exec_command = new Command(listCommand);
         exec_command.execute(listCommand);
     }
+
+    public static void getCertNames(String pathToMETAINF,Callback callback) {
+
+        String[] listCommand = new String[]{
+                "ls " + pathToMETAINF+"| grep SF | cut -d \".\" -f1"
+        };
+
+        Log.d("command",listCommand[0]);
+
+        Command exec_command = new Command(callback, listCommand);
+        exec_command.execute(listCommand);
+    }
 }
