@@ -18,6 +18,7 @@ import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.BlacklistedCertificateScan;
 import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
@@ -85,7 +86,7 @@ public class ScanActivity extends AppCompatActivity {
                                              long dif = (new Date()).getTime() - mStartingTime.getTime();
                                              Date difDate = new Date(dif);
                                              mTimerTextView.setText(df.format(difDate));
-                                             if (mCounter < mProgressBarMaxValue) {
+                                             if (mCounter < mProgressBarMaxValue && !mPercentTextView.getText().equals("100% ")) {
                                                  mProgressBar.setProgress(mCounter);
                                                  int percent_num = (mCounter * 100 / mProgressBarMaxValue);
                                                  mPercentTextView.setText(percent_num + "%");
@@ -104,6 +105,7 @@ public class ScanActivity extends AppCompatActivity {
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this)));
+                mScans.add(new BlacklistedCertificateScan(PackageInfoFactory.getInstalledPackages(this)));
                 if (Shell.SU.available()) {
                     mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this), this));
                     mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this), this));
@@ -114,6 +116,7 @@ public class ScanActivity extends AppCompatActivity {
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this, false)));
+                mScans.add(new BlacklistedCertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 if (Shell.SU.available()) {
                     mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false), this));
                     mScans.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this, false), this));
@@ -181,6 +184,8 @@ public class ScanActivity extends AppCompatActivity {
         }
 
         mResultButton.setClickable(true);
+        mPercentTextView.setText("100% ");
+        mProgressBar.setProgress(mProgressBarMaxValue);
     }
 
     /**

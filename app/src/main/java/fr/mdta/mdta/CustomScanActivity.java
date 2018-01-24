@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.Model.Scan;
+import fr.mdta.mdta.Scans.BlacklistedCertificateScan;
 import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
@@ -56,6 +57,7 @@ public class CustomScanActivity extends AppCompatActivity {
         mScansApplications.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
         mScansApplications.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
         mScansApplications.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this, false)));
+        mScansApplications.add(new BlacklistedCertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
         if (Shell.SU.available()) {
             mScansApplications.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this, false), this));
             mScansApplications.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false), this));
@@ -64,6 +66,7 @@ public class CustomScanActivity extends AppCompatActivity {
         mScansWholeSystem.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
         mScansWholeSystem.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
         mScansWholeSystem.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this)));
+        mScansWholeSystem.add(new BlacklistedCertificateScan(PackageInfoFactory.getInstalledPackages(this)));
         if (Shell.SU.available()) {
             mScansWholeSystem.add(new IntegrityScan(PackageInfoFactory.getInstalledPackages(this), this));
             mScansWholeSystem.add(new DexScan(PackageInfoFactory.getInstalledPackages(this), this));

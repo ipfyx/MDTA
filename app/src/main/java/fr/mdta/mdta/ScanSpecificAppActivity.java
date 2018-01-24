@@ -20,6 +20,7 @@ import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
+import fr.mdta.mdta.Scans.BlacklistedCertificateScan;
 import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
@@ -109,6 +110,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         mScans.add(new PermissionScan(simplifiedPackageInfos));
         mScans.add(new CertificateScan(simplifiedPackageInfos));
         mScans.add(new BlacklistedDevelopperScan(simplifiedPackageInfos));
+        mScans.add(new BlacklistedCertificateScan(simplifiedPackageInfos));
         if (Shell.SU.available()) {
             mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
             mScans.add(new DexScan(simplifiedPackageInfos, this));
