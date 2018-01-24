@@ -20,11 +20,14 @@ public class APItools {
     //API URLs
     private final static String URL_API_BASE = APIconf.URL_API_SERVER;
     public final static String URL_API_BASIC_SCAN = URL_API_BASE + "/permissions/basicscan";
-    public final static String URL_API_BLACKLIST = URL_API_BASE + "/signatures/blacklist";
+    public final static String URL_API_BLACKLIST_DEVELOPER = URL_API_BASE + "/signatures/blacklistdeveloper";
     public final static String URL_API_DEVELOPER_SIGNATURE_SCAN = URL_API_BASE + "/signatures/developersignaturescan";
+    public final static String URL_API_BLACKLIST_CERTIFICATE = URL_API_BASE + "/signatures/blacklistcertificate";
+    public final static String URL_API_CERTIFICATE_SIGNATURE_SCAN = URL_API_BASE + "/signatures/certificatesignaturescan";
 
     /**
      * Convert every Object into JSON string
+     *
      * @param object
      * @return JSONString corresponding to object
      */
@@ -35,14 +38,16 @@ public class APItools {
 
     /**
      * Convert every JSON String into Object
+     *
      * @param jsonString JSON to convert
-     * @param convertIn Target Class
+     * @param convertIn  Target Class
      * @return Instance of the target class object
      */
     public static <T> T convertJSONToObject(String jsonString, Class<T> convertIn) {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
             DateFormat df = new SimpleDateFormat(formatAPI);
+
             @Override
             public Date deserialize(final JsonElement json, final Type typeOfT, final JsonDeserializationContext context)
                     throws JsonParseException {

@@ -5,17 +5,17 @@ import android.util.Log;
 
 import java.net.MalformedURLException;
 
-import fr.mdta.mdta.API.APIModel.SentItem.DeveloperSignature;
+import fr.mdta.mdta.API.APIModel.SentItem.CertificateSignature;
 import fr.mdta.mdta.API.APItools;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.Base.PostRequester;
 
-public class BlacklistDeveloperSignatureRequester extends PostRequester {
+public class BlacklistCertificateSignatureRequester extends PostRequester {
 
 
-    public BlacklistDeveloperSignatureRequester(Callback callback,
-                                                DeveloperSignature developerSignature) throws MalformedURLException {
-        super(APItools.URL_API_BLACKLIST_DEVELOPER, callback, true, developerSignature);
+    public BlacklistCertificateSignatureRequester(Callback callback,
+                                                  CertificateSignature certificateSignature) throws MalformedURLException {
+        super(APItools.URL_API_BLACKLIST_CERTIFICATE, callback, true, certificateSignature);
     }
 
     @Override
