@@ -19,9 +19,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignaturesScanner.SignaturesScannerActivity"
-            android:screenOrientation="portrait"></activity>
-        <activity
             android:name=".ScanActivity"
             android:screenOrientation="portrait"></activity>
         <activity
