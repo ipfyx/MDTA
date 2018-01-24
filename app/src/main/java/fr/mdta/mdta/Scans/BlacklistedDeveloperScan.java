@@ -64,7 +64,7 @@ public class BlacklistedDeveloperScan extends Scan {
                             if (items.get(i).isBlacklisted()) {
                                 result = new SpecificResult(false, "Suspicious developper", "This developper is known as malicious application developper.");
                             } else {
-                                result = new SpecificResult(true, "Unknown developper", "This developper has never been known as a malicious developper.");
+                                result = new SpecificResult(true, "Unknown developper", "This developper is a legit developper.");
                             }
                             mResults.put(getmSimplifiedPackageInfo(items.get(i).getPackageName()), result);
                             float updatedState = mState + 50 / globalSize;

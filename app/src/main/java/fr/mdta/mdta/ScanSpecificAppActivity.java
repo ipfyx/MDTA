@@ -155,7 +155,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         if (Shell.SU.available())
 
         {
-            mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
+            //mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
             mScans.add(new DexScan(simplifiedPackageInfos, this));
         }
         try

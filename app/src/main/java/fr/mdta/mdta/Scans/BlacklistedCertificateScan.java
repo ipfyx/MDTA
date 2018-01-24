@@ -64,7 +64,7 @@ public class BlacklistedCertificateScan extends Scan {
                             if (items.get(i).isBlacklisted()) {
                                 result = new SpecificResult(false, "Blacklisted Application", "This application is known as malicious application.");
                             } else {
-                                result = new SpecificResult(true, "Unknown application", "This application has never been known as a malicious aplication.");
+                                result = new SpecificResult(true, "Unknown application", "This application is benign.");
                             }
                             mResults.put(getmSimplifiedPackageInfo(items.get(i).getPackageName()), result);
                             float updatedState = mState + 50 / globalSize;
