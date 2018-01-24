@@ -47,6 +47,7 @@ public class IntegrityScan extends Scan {
 
     private int listPackageInfoCounter = 0;
 
+    private float sizeListProcess = 0;
 
     private String sha256DigestManifest = "SHA-256-Digest-Manifest";
     private String sha1DigestManifest = "SHA1-Digest-Manifest";
@@ -113,9 +114,10 @@ public class IntegrityScan extends Scan {
     //}
 
     protected void updateStateHashCalculated() {
-        float sizeListProcess = CommandFactory.listProcessIntegrity.size();
         float number_of_app_scanned = listPackageInfo.size();
         mState += 100/(sizeListProcess*number_of_app_scanned);
+        //Log.d("sizeProcess,",Float.toString(sizeListProcess));
+        //Log.d("updating",Float.toString(mState));
 
     }
 
@@ -158,7 +160,7 @@ public class IntegrityScan extends Scan {
             }
 
             //listPackageInfo.remove(simplifiedPackageInfo);
-            updateStateHashCalculated();
+            //updateStateHashCalculated();
             if ( listPackageInfoCounter < listPackageInfo.size() ) {
                 scanApp(listPackageInfo.get(listPackageInfoCounter));
                 listPackageInfoCounter+=1;
@@ -191,15 +193,19 @@ public class IntegrityScan extends Scan {
 
             @Override
             public void OnTaskCompleted(Object object) {
-                fr.mdta.mdta.Tools.CommandFactory.COUNT -= 1;
+                //fr.mdta.mdta.Tools.CommandFactory.COUNT -= 1;
                 fr.mdta.mdta.Tools.CommandFactory.removeCommandIntegrity(commandToExecute);
-                //fr.mdta.mdta.Tools.CommandFactory.launchVerification(mycallback, appInfo);
+                fr.mdta.mdta.Tools.CommandFactory.launchVerification(mycallback, appInfo);
 
                 String calculatedHash = ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
 
                 if (hash.equals(calculatedHash)) {
                     updateStateHashCalculated();
+                    if (CommandFactory.listProcessIntegrity.isEmpty()) {
+                        mycallback.OnTaskCompleted(appInfo);
+                    }
+
                 } else {
                     resultScanAppTempered(appInfo,filePath,hashMethod,calculatedHash,hash);
                 }
@@ -245,6 +251,7 @@ public class IntegrityScan extends Scan {
             }
             CommandFactory.listProcessIntegrity.clear();
             CommandFactory.listProcessIntegrity = listProcess;
+            sizeListProcess = listProcess.size();
             CommandFactory.launchVerification(mycallback, appInfo);
 
         } catch (IOException e) {
