@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -107,19 +106,19 @@ public class IntegrityScan extends Scan {
         callback.OnScanTerminated();
     }
 
-    protected void updateState() {
+    //protected void updateStateEndScanApp() {
+    //    float number_of_app_scanned = listPackageInfo.size();
+    //    mState += (100/number_of_app_scanned);
+    //}
+
+    protected void updateStateHashCalculated() {
+        float sizeListProcess = CommandFactory.listProcessIntegrity.size();
         float number_of_app_scanned = listPackageInfo.size();
-        float a = (100/number_of_app_scanned);
-        int b = (int) a;
-        mState += b;
+        mState += 100/(sizeListProcess*number_of_app_scanned);
 
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
-
-        //Log.d("scan",app.packageName);
-
-        //unzipApk(app.uid, app);
 
         if ( getFileAppSELinuxContext() != null ) {
             fr.mdta.mdta.Tools.CommandFactory.unzipCommand(new Callback() {
@@ -149,7 +148,6 @@ public class IntegrityScan extends Scan {
         // could be a
         // risk to rm -rf /&
 
-        //Log.d("ending",app.packageName);
         CommandFactory.endScanApp(simplifiedPackageInfo,unzipApkToFolder);
 
         if ( listPackageInfo.contains(simplifiedPackageInfo) ) {
@@ -159,7 +157,7 @@ public class IntegrityScan extends Scan {
             }
 
             //listPackageInfo.remove(simplifiedPackageInfo);
-            updateState();
+            updateStateHashCalculated();
             if ( listPackageInfoCounter < listPackageInfo.size() ) {
                 scanApp(listPackageInfo.get(listPackageInfoCounter));
                 listPackageInfoCounter+=1;
@@ -198,15 +196,11 @@ public class IntegrityScan extends Scan {
 
                 String calculatedHash = ((String) object).replaceAll("\\n", "")
                         .replaceAll("\\r", "");
-                Log.d(filePath, hash + " / " + calculatedHash);
 
                 if (hash.equals(calculatedHash)) {
-
+                    updateStateHashCalculated();
                 } else {
-
                     resultScanAppTempered(appInfo,filePath,hashMethod,calculatedHash,hash);
-
-                    //Log.d("false", "calc: " + calculatedHash + hashMethod + " " + hash + " " + filePath + " " + appInfo.getAppUid());
                 }
             }
         }, commandToExecute);
@@ -263,7 +257,6 @@ public class IntegrityScan extends Scan {
         }
         CommandFactory.listProcessIntegrity.clear();
         mycallback.OnTaskCompleted(appInfo);
-        Log.d("FileScan", filepath + " hash is wrong");
     }
 
     private String getFileAppSELinuxContext() {
@@ -306,7 +299,6 @@ public class IntegrityScan extends Scan {
 
         //the full path is generated in addFileToListVerification
         String manifestPath = "META-INF/MANIFEST.MF";
-        Log.d("manifestPath",manifestPath);
         String[] hashEntryManifest;
         String hashManifest = "";
         try {

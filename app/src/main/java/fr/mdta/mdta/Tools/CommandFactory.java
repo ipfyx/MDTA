@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
@@ -43,8 +42,6 @@ public final class CommandFactory {
                 */
 
         };
-
-        //Log.d("CommandFactory",listCommand[6]);
 
         Command exec_command = new Command(callback, listCommand);
         exec_command.execute(listCommand);

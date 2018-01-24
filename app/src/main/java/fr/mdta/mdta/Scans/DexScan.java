@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.dexbacked.DexBackedDexFile;
@@ -50,7 +49,6 @@ public class DexScan extends Scan {
         suAvailable = Shell.SU.available();
 
         my_uid = context.getApplicationInfo().uid;
-        Log.d("uid",Integer.toString(my_uid));
 
         fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
 
@@ -179,8 +177,6 @@ public class DexScan extends Scan {
             scanDexFile(listDexFile.get(i),appInfo);
         }
 
-        Log.d("mapMethodCall", mapDangerousMethodCall.toString());
-
         endScanApp(appInfo);
 
     }
@@ -191,7 +187,6 @@ public class DexScan extends Scan {
 
             //TODO give non null opcode
             DexBackedDexFile dexFile = DexFileFactory.loadDexFile(file, null);
-            Log.d("scanning", file.getPath());
             for (Object o : dexFile.getMethods()) {
                 String a = o.toString();
                 for (String pattern : mapDangerousMethodPattern.keySet()) {
