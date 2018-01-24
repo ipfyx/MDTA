@@ -203,7 +203,6 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
                     Intent myIntent = new Intent(mActivity, ResultSpecificAppActivity.class);
                     myIntent.putExtra(ResultSpecificAppActivity.KEY_RESULT, result);
                     mActivity.startActivity(myIntent);
-                    mActivity.finish();
                 }
             });
 
@@ -287,10 +286,10 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    mTitle = "Warned Applications";
+                    mTitle = "Suspicious Apps";
                     break;
                 case 1:
-                    mTitle = "Safe Applications";
+                    mTitle = "Safe Apps";
                     break;
 
             }

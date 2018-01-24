@@ -91,60 +91,6 @@ public class SpecifyAppActivity extends AppCompatActivity implements ActionBar.T
 
     }
 
-
-    /**
-     * Pager Adapter to represent the different tabs
-     */
-    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
-
-        /**
-         * Tab title
-         */
-        private String mTitle;
-        /**
-         * Elements to display in the tab
-         */
-        private ArrayList<SimplifiedPackageInfo> mList;
-
-        public ScreenSlidePagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-
-            switch (position) {
-                case 0:
-                    mList = mApplicationsPackageInfos;
-                    break;
-                case 1:
-                    mList = mSystemPackageInfos;
-                    break;
-            }
-
-            return new ScreenSlidePageFragment(mList);
-
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    mTitle = "Applications";
-                    break;
-                case 1:
-                    mTitle = "System";
-                    break;
-            }
-            return mTitle;
-        }
-    }
-
-
     public static class ScreenSlidePageFragment extends Fragment {
 
 
@@ -177,7 +123,6 @@ public class SpecifyAppActivity extends AppCompatActivity implements ActionBar.T
 
 
     }
-
 
     /**
      * Inclass custom adapter to fill the different pager
@@ -268,6 +213,58 @@ public class SpecifyAppActivity extends AppCompatActivity implements ActionBar.T
             }
         }
 
+    }
+
+    /**
+     * Pager Adapter to represent the different tabs
+     */
+    private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
+
+        /**
+         * Tab title
+         */
+        private String mTitle;
+        /**
+         * Elements to display in the tab
+         */
+        private ArrayList<SimplifiedPackageInfo> mList;
+
+        public ScreenSlidePagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position) {
+                case 0:
+                    mList = mApplicationsPackageInfos;
+                    break;
+                case 1:
+                    mList = mSystemPackageInfos;
+                    break;
+            }
+
+            return new ScreenSlidePageFragment(mList);
+
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    mTitle = "Your apps";
+                    break;
+                case 1:
+                    mTitle = "System apps";
+                    break;
+            }
+            return mTitle;
+        }
     }
 
 

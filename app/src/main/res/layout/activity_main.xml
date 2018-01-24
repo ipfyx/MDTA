@@ -14,7 +14,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:background="@drawable/back"
-        android:text="Scan your device for malware
+        android:text="Scan your device to detect malware
 and spyware applications."
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff" />
@@ -64,7 +64,7 @@ and spyware applications."
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/logo"
+        android:layout_above="@id/scanApplications"
         android:layout_below="@id/title"
-        android:layout_above="@id/scanApplications" />
+        android:src="@drawable/logo" />
 </RelativeLayout>

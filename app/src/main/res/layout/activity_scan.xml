@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/back"
-        android:text="You have chosen to proceed a full scan, this can may take a long period."
+        android:text="You chose to proceed a scan on various applications, this could take some time."
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="#ffffff" />
 

@@ -126,6 +126,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                                 (mSimplifiedPackageInfo));
                     }
                     result = new Result(mSimplifiedPackageInfo, scanResults);
+                    mResultButton.setClickable(true);
                 }
             });
         } catch (ScanLauncher.ScanLauncherException e) {
@@ -139,7 +140,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         //Access result interaction
-        mResultButton.setClickable(true);
+        mResultButton.setClickable(false);
         mResultButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
