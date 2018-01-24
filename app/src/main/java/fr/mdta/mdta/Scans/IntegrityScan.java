@@ -315,8 +315,6 @@ public class IntegrityScan extends Scan {
                         .replaceAll("\\r", "");
                 String certPath = pathMETAINF+nameCERT+".SF";
 
-                Log.d("certPath",certPath);
-
                 //the full path is generated in addFileToListVerification
                 String manifestPath = "META-INF/MANIFEST.MF";
                 String[] hashEntryManifest;

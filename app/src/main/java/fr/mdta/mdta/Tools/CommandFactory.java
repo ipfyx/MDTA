@@ -111,8 +111,6 @@ public final class CommandFactory {
                 "ls " + pathToMETAINF+"| grep \\\\.SF | cut -d \".\" -f1"
         };
 
-        Log.d("command",listCommand[0]);
-
         Command exec_command = new Command(callback, listCommand);
         exec_command.execute(listCommand);
     }
