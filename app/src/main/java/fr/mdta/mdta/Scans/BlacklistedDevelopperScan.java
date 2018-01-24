@@ -7,6 +7,7 @@ import fr.mdta.mdta.API.APIModel.ReceivedItem.DeveloperSignatureScanResultItem;
 import fr.mdta.mdta.API.APIModel.SentItem.DeveloperSignatureList;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.DeveloperSignatureScanRequester;
+import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 public class BlacklistedDevelopperScan extends Scan {

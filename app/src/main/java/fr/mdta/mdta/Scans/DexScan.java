@@ -18,6 +18,7 @@ import java.util.HashMap;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.API.Callback.Callback;
+import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Tools.CommandFactory;
 import fr.mdta.mdta.Tools.DangerousMethodCall;

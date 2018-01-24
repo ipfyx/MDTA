@@ -3,7 +3,7 @@ package fr.mdta.mdta.Tools;
 
 import java.util.ArrayList;
 
-import fr.mdta.mdta.Scans.Scan;
+import fr.mdta.mdta.Model.Scan;
 
 /**
  * ScanLauncher is responsible to manage scan concurrency and to launch scans

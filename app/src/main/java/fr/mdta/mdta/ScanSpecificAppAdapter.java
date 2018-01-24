@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import fr.mdta.mdta.Scans.Scan;
+import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Tools.ScanLauncher;
 
 

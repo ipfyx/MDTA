@@ -7,6 +7,7 @@ import fr.mdta.mdta.API.APIModel.ReceivedItem.BasicScanResultItem;
 import fr.mdta.mdta.API.APIModel.SentItem.PackagesList;
 import fr.mdta.mdta.API.Callback.Callback;
 import fr.mdta.mdta.API.Requester.BasicScanRequester;
+import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**

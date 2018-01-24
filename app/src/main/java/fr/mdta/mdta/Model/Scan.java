@@ -1,11 +1,8 @@
-package fr.mdta.mdta.Scans;
+package fr.mdta.mdta.Model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import fr.mdta.mdta.Model.Result;
-import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 /**
  * This class represent any scans, every scan should be extended from this class, that makes the common basics of a scan.

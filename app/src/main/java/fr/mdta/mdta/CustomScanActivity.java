@@ -13,12 +13,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import eu.chainfire.libsuperuser.Shell;
+import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
-import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.CacheStorage;
 import fr.mdta.mdta.Tools.PackageInfoFactory;
 

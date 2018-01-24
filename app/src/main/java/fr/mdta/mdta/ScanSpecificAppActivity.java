@@ -18,13 +18,13 @@ import java.util.Date;
 
 import eu.chainfire.libsuperuser.Shell;
 import fr.mdta.mdta.Model.Result;
+import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
 import fr.mdta.mdta.Scans.PermissionScan;
-import fr.mdta.mdta.Scans.Scan;
 import fr.mdta.mdta.Tools.ScanLauncher;
 
 
