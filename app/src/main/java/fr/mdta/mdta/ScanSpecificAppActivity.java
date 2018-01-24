@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,11 +35,16 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
     //static value
     public final static String CURRENT_SIMPLIFIED_APP_PACKAGE_INFO = "currentsimplifiedpackageinfo";
     private final static String APPLICATION_DATE_FORMAT = "MM/dd/yyyy HH:mm";
+    private final static String TIMER_FORMAT = "mm:ss";
+
 
     //Model
     private SimplifiedPackageInfo mSimplifiedPackageInfo;
     private ArrayList<Scan> mScans = new ArrayList<>();
     private Result result;
+    private Date mStartingTime;
+    private Handler mHandler = new Handler();
+
 
     //UI components
     private ImageView mIconImageView;
@@ -53,6 +59,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private Button mResultButton;
     private ScanSpecificAppAdapter mAdapter;
+    private TextView mTimerTextView;
 
 
     @Override
@@ -66,6 +73,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
 
         //Retrieve UI components
         mIconImageView = (ImageView) findViewById(R.id.icon);
+        mTimerTextView = (TextView) findViewById(R.id.timer);
         mAppNameTextView = (TextView) findViewById(R.id.appName);
         mPackageNameTextView = (TextView) findViewById(R.id.packageName);
         mVersionNameTextView = (TextView) findViewById(R.id.versionName);
@@ -77,10 +85,32 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.scansRecyclerView);
         mResultButton = (Button) findViewById(R.id.accessResult);
 
+
+        //Progressbar and Scan Timer animation
+        mStartingTime = new Date();
+        final SimpleDateFormat tf = new SimpleDateFormat(TIMER_FORMAT);
+        long dif = (new Date()).getTime() - mStartingTime.getTime();
+        Date difDate = new Date(dif);
+        mTimerTextView.setText(tf.format(difDate));
+        mHandler.postDelayed(new Runnable() {
+
+            public void run() {
+
+                if (result == null) {
+                    long dif = (new Date()).getTime() - mStartingTime.getTime();
+                    Date difDate = new Date(dif);
+                    mTimerTextView.setText(tf.format(difDate));
+                    mHandler.postDelayed(this, 50);
+                }
+            }
+        }, 50);
+
         //Fill application data
 
         SimpleDateFormat df = new SimpleDateFormat(APPLICATION_DATE_FORMAT);
-        try {
+        try
+
+        {
             Drawable icon = getPackageManager().getApplicationIcon(mSimplifiedPackageInfo
                     .getPackageName());
             mIconImageView.setImageDrawable(icon);
@@ -100,22 +130,37 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                     .getPermissions().size()));
             mIsApplicationSystemTextView.setText(getResources().getString(R.string
                     .title_is_system_app) + Boolean.toString(mSimplifiedPackageInfo.isSystemApp()));
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (
+                PackageManager.NameNotFoundException e)
+
+        {
             e.printStackTrace();
         }
 
         //TODO add other scans
         ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos = new ArrayList<>();
         simplifiedPackageInfos.add(mSimplifiedPackageInfo);
-        mScans.add(new PermissionScan(simplifiedPackageInfos));
-        mScans.add(new CertificateScan(simplifiedPackageInfos));
-        mScans.add(new BlacklistedDeveloperScan(simplifiedPackageInfos));
-        mScans.add(new BlacklistedCertificateScan(simplifiedPackageInfos));
-        if (Shell.SU.available()) {
+        mScans.add(new
+
+                PermissionScan(simplifiedPackageInfos));
+        mScans.add(new
+
+                CertificateScan(simplifiedPackageInfos));
+        mScans.add(new
+
+                BlacklistedDeveloperScan(simplifiedPackageInfos));
+        mScans.add(new
+
+                BlacklistedCertificateScan(simplifiedPackageInfos));
+        if (Shell.SU.available())
+
+        {
             mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
             mScans.add(new DexScan(simplifiedPackageInfos, this));
         }
-        try {
+        try
+
+        {
             ScanLauncher.getInstance().launchScansParallel(mScans, new ScanLauncher
                     .ScanLauncherCallback() {
                 @Override
@@ -129,20 +174,29 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
                     mResultButton.setClickable(true);
                 }
             });
-        } catch (ScanLauncher.ScanLauncherException e) {
+        } catch (
+                ScanLauncher.ScanLauncherException e)
+
+        {
             e.printStackTrace();
         }
 
         //Fill adapter with values
-        mAdapter = new ScanSpecificAppAdapter(this, mScans);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager
+        mAdapter = new
+
+                ScanSpecificAppAdapter(this, mScans);
+        mRecyclerView.setLayoutManager(new
+
+                LinearLayoutManager(this, LinearLayoutManager
                 .VERTICAL, false));
         mRecyclerView.setAdapter(mAdapter);
 
         //Access result interaction
         mResultButton.setClickable(false);
         mResultButton.setOnClickListener(
-                new View.OnClickListener() {
+                new View.OnClickListener()
+
+                {
                     @Override
                     public void onClick(View v) {
                         Intent myIntent = new Intent(ScanSpecificAppActivity.this,

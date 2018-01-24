@@ -40,8 +40,9 @@
                 android:padding="5dp" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="5"
                 android:orientation="vertical">
 
                 <TextView
@@ -64,6 +65,20 @@
                     android:textColor="@color/colorGrey"
                     android:textSize="15dp" />
             </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/timer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+
+                android:padding="2dp"
+                android:textColor="#449def"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
 
         </LinearLayout>
 

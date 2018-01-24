@@ -38,12 +38,11 @@ public class ScanActivity extends AppCompatActivity {
     private static final int mProgressBarMaxValue = 100;
     private final ArrayList<Scan> mScans = new ArrayList<>();
     private final ArrayList<Result> mResults = new ArrayList<>();
-    private Handler mHandler = new Handler();
     //Model
     private TypeOfScan mTypeOfScan;
     private int mCounter;
     private Date mStartingTime;
-    private Handler mTimerHandler = new Handler();
+    private Handler mHandler = new Handler();
     //UI components
     private TextView mTimerTextView;
     private TextView mPercentTextView;
@@ -82,7 +81,6 @@ public class ScanActivity extends AppCompatActivity {
                                          public void run() {
 
                                              mCounter = (int) ScanLauncher.getInstance().getScansGlobalState();
-                                             //TODO replace fake animation by an update with scanlist and state arguments
                                              long dif = (new Date()).getTime() - mStartingTime.getTime();
                                              Date difDate = new Date(dif);
                                              mTimerTextView.setText(df.format(difDate));
