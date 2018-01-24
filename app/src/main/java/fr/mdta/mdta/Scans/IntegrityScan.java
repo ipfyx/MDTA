@@ -1,7 +1,6 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -174,11 +173,11 @@ public class IntegrityScan extends Scan {
     private void addFileToListVerification(final String filePath, final String hash, final
     SimplifiedPackageInfo appInfo, final String hashMethod, final ArrayList<Command> listProcess) {
 
-        final String[] commandToExecute = new String[]{hashMethod + " -b " + fr.mdta.mdta
+        final String[] commandToExecute = new String[]{hashMethod + " -b " + "\'"+fr.mdta.mdta
                 .Tools.CommandFactory
                 .pathToApkUnzipFolder +
                 unzipApkToFolder + "_" +
-                Integer.toString(appInfo.getAppUid()) + "/" + filePath + "| xxd -r -p | base64"};
+                Integer.toString(appInfo.getAppUid()) + "/" + filePath + "\'| xxd -r -p | base64"};
 
         Command command = new Command(new Callback() {
             @Override
