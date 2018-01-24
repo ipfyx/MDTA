@@ -51,6 +51,8 @@ public class IntegrityScan extends Scan {
     private String sha256DigestManifest = "SHA-256-Digest-Manifest";
     private String sha1DigestManifest = "SHA1-Digest-Manifest";
 
+    private int numberOfEntriesInManifest;
+
     private Callback mycallback = new Callback() {
         @Override
         public void OnErrorHappended() {
@@ -230,6 +232,8 @@ public class IntegrityScan extends Scan {
 
             openCERTSF(appInfo, listProcess);
 
+            numberOfEntriesInManifest = map.size();
+
             for (Map.Entry<String, Attributes> entry : map.entrySet()) {
 
                 String filePath = entry.getKey();
@@ -359,7 +363,8 @@ public class IntegrityScan extends Scan {
     private void resultScanAppOK(SimplifiedPackageInfo appInfo) {
         SpecificResult result = new SpecificResult(true,
                 "This application was not tampered",
-                "This application was not tampered");
+                "This application was not tampered, number of files scanned : "+
+        Integer.toString(numberOfEntriesInManifest));
         mResults.put(appInfo,result);
     }
 
@@ -368,7 +373,8 @@ public class IntegrityScan extends Scan {
                                       String hash) {
         SpecificResult result = new SpecificResult(false,
                 "InvalidHash",filePath + " " + hashMethod + " is not valid : " +
-                calculatedHash + " != " + hash);
+                calculatedHash + " != " + hash+", number of files scanned : "+
+                Integer.toString(numberOfEntriesInManifest));
         mResults.put(appInfo,result);
 
         cancelVerification(appInfo, filePath);
@@ -377,7 +383,7 @@ public class IntegrityScan extends Scan {
     private void resultScanFail(SimplifiedPackageInfo appInfo, String reason, String detail) {
         SpecificResult result = new SpecificResult(true,
                 reason,
-                detail);
+                detail+", number of files scanned : "+ Integer.toString(numberOfEntriesInManifest));
         mResults.put(appInfo,result);
     }
 
