@@ -2,6 +2,7 @@ package fr.mdta.mdta.Tools;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,11 +76,10 @@ public final class CommandFactory {
             callback.OnTaskCompleted(appInfo);
         } else {
             for (int i = 0; i < listProcessIntegrity.size(); i++) {
-                if (COUNT < MAX_PROCESS_INTEGRITY && listProcessIntegrity.get(i).getStatus() == AsyncTask.Status.PENDING) {
+                if (listProcessIntegrity.get(i).getStatus() != AsyncTask.Status.RUNNING) {
+                    //if (COUNT < MAX_PROCESS_INTEGRITY && listProcessIntegrity.get(i).getStatus() == AsyncTask.Status.PENDING) {
                     listProcessIntegrity.get(i).execute(listProcessIntegrity.get(i).getCommand());
-                    COUNT += 1;
-                } else {
-                    return;
+                    //COUNT += 1;
                 }
             }
         }
