@@ -19,7 +19,7 @@ import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Scans.BlacklistedCertificateScan;
-import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
+import fr.mdta.mdta.Scans.BlacklistedDeveloperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
@@ -104,7 +104,7 @@ public class ScanActivity extends AppCompatActivity {
                 //TODO add other scans
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this)));
-                mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this)));
+                mScans.add(new BlacklistedDeveloperScan(PackageInfoFactory.getInstalledPackages(this)));
                 mScans.add(new BlacklistedCertificateScan(PackageInfoFactory.getInstalledPackages(this)));
                 if (Shell.SU.available()) {
                     mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this), this));
@@ -115,7 +115,7 @@ public class ScanActivity extends AppCompatActivity {
                 //TODO add other scans
                 mScans.add(new PermissionScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 mScans.add(new CertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
-                mScans.add(new BlacklistedDevelopperScan(PackageInfoFactory.getInstalledPackages(this, false)));
+                mScans.add(new BlacklistedDeveloperScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 mScans.add(new BlacklistedCertificateScan(PackageInfoFactory.getInstalledPackages(this, false)));
                 if (Shell.SU.available()) {
                     mScans.add(new DexScan(PackageInfoFactory.getInstalledPackages(this, false), this));

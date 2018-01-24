@@ -10,12 +10,12 @@ import fr.mdta.mdta.API.Requester.DeveloperSignatureScanRequester;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
-public class BlacklistedDevelopperScan extends Scan {
+public class BlacklistedDeveloperScan extends Scan {
 
     //static values
-    private final static String BLACKLISTED_DEVELOPPER_SCANNER_NAME = "Blacklisted Developper Scanner";
-    private final static String BLACKLISTED_DEVELOPPER_SCANNER_DESCRIPTION = "This scan consists on verifying " +
-            "each application's developper key and warn user if the developper is known as malicious";
+    private final static String BLACKLISTED_DEVELOPER_SCANNER_NAME = "Blacklisted Developer Scanner";
+    private final static String BLACKLISTED_DEVELOPER_SCANNER_DESCRIPTION = "This scan consists on verifying " +
+            "each application's developer key and warn user if the developer is known as malicious";
 
     private final static int MAX_SENT_ITEM = 50;
     private int endedRequest = 0;
@@ -23,8 +23,8 @@ public class BlacklistedDevelopperScan extends Scan {
     /**
      * @param simplifiedPackageInfos
      */
-    public BlacklistedDevelopperScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos) {
-        super(BLACKLISTED_DEVELOPPER_SCANNER_NAME, BLACKLISTED_DEVELOPPER_SCANNER_DESCRIPTION, simplifiedPackageInfos);
+    public BlacklistedDeveloperScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos) {
+        super(BLACKLISTED_DEVELOPER_SCANNER_NAME, BLACKLISTED_DEVELOPER_SCANNER_DESCRIPTION, simplifiedPackageInfos);
     }
 
     @Override

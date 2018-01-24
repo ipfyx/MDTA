@@ -21,7 +21,7 @@ import fr.mdta.mdta.Model.Result;
 import fr.mdta.mdta.Model.Scan;
 import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 import fr.mdta.mdta.Scans.BlacklistedCertificateScan;
-import fr.mdta.mdta.Scans.BlacklistedDevelopperScan;
+import fr.mdta.mdta.Scans.BlacklistedDeveloperScan;
 import fr.mdta.mdta.Scans.CertificateScan;
 import fr.mdta.mdta.Scans.DexScan;
 import fr.mdta.mdta.Scans.IntegrityScan;
@@ -109,7 +109,7 @@ public class ScanSpecificAppActivity extends AppCompatActivity {
         simplifiedPackageInfos.add(mSimplifiedPackageInfo);
         mScans.add(new PermissionScan(simplifiedPackageInfos));
         mScans.add(new CertificateScan(simplifiedPackageInfos));
-        mScans.add(new BlacklistedDevelopperScan(simplifiedPackageInfos));
+        mScans.add(new BlacklistedDeveloperScan(simplifiedPackageInfos));
         mScans.add(new BlacklistedCertificateScan(simplifiedPackageInfos));
         if (Shell.SU.available()) {
             mScans.add(new IntegrityScan(simplifiedPackageInfos, this));
