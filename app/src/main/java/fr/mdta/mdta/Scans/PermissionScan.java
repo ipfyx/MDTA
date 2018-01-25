@@ -91,42 +91,51 @@ public class PermissionScan extends Scan {
     }
 
     private SpecificResult buildSpecificResult(BasicScanResultItem.PackageResult packageResult) {
-        final int DeprecatedPermissionsNumber = 75;
-        final int FinancialImpactPermissionsNumber = 50;
-        final int PrivacyImpactPermissionsNumber = 50;
-        final int SystemImpactPermissionsNumber = 100;
-        final int BatteryImpactPermissionsNumber = 20;
-        final int LocationImpactPermissionsNumber = 25;
-        final int PermissionLevelNoProtection = 0;
-        final int PermissionLevelNormal = 0;
-        final int PermissionLevelDangerous = 50;
-        final int PermissionLevelSignature = 50;
-        final int PermissionLevelSystemOrSignature = 75;
-        final int PermissionLevelSystem = 100;
-        final int PermissionLevelSignatureOrPrivileged = 100;
-        final int PermissionLevelNoThirdParty = 100;
+        final int costDeprecatedPermissionsNumber = 75;
+        final int costFinancialImpactPermissionsNumber = 200;
+        final int costPrivacyImpactPermissionsNumber = 300;
+        final int costSystemImpactPermissionsNumber = 500;
+        final int costBatteryImpactPermissionsNumber = 50;
+        final int costLocationImpactPermissionsNumber = 50;
+        final int costPermissionLevelNoProtection = 0;
+        final int costPermissionLevelNormal = 0;
+        final int costPermissionLevelDangerous = 0;
+        final int costPermissionLevelSignature = 0;
+        final int costPermissionLevelSystemOrSignature = 0;
+        final int costPermissionLevelSystem = 0;
+        final int costPermissionLevelSignatureOrPrivileged = 0;
+        final int costPermissionLevelNoThirdParty = 0;
 
-        final int MAX_ACCEPTABLE_VALUE = 100;
+        final int DeprecatedPermissionsNumber = 7;
+        final int FinancialImpactPermissionsNumber = 10;
+        final int PrivacyImpactPermissionsNumber = 53;
+        final int SystemImpactPermissionsNumber = 95;
+        final int BatteryImpactPermissionsNumber = 25;
+        final int LocationImpactPermissionsNumber = 7;
 
-        int value = packageResult.getDeprecatedPermissionsNumber() * DeprecatedPermissionsNumber +
-                packageResult.getFinancialImpactPermissionsNumber() * FinancialImpactPermissionsNumber +
-                packageResult.getPrivacyImpactPermissionsNumber() * PrivacyImpactPermissionsNumber +
-                packageResult.getSystemImpactPermissionsNumber() * SystemImpactPermissionsNumber +
-                packageResult.getBatteryImpactPermissionsNumber() * BatteryImpactPermissionsNumber +
-                packageResult.getLocationImpactPermissionsNumber() * LocationImpactPermissionsNumber +
-                packageResult.getPermissionLevelNoProtection() * PermissionLevelNoProtection +
-                packageResult.getPermissionLevelNormal() * PermissionLevelNormal +
-                packageResult.getPermissionLevelDangerous() * PermissionLevelDangerous +
-                packageResult.getPermissionLevelSignature() * PermissionLevelSignature +
-                packageResult.getPermissionLevelSystemOrSignature() * PermissionLevelSystemOrSignature +
-                packageResult.getPermissionLevelSystem() * PermissionLevelSystem +
-                packageResult.getPermissionLevelSignatureOrPrivileged() * PermissionLevelSignatureOrPrivileged +
-                packageResult.getPermissionLevelNoThirdParty() * PermissionLevelNoThirdParty;
+        final int MAX_ACCEPTABLE_VALUE = 2000;
 
-        if (value < MAX_ACCEPTABLE_VALUE) {
-            return new SpecificResult(true, "Application not too much permissive", "Calculated risk over 100: " + value + "\n" + packageResult.toString());
+        int value = packageResult.getDeprecatedPermissionsNumber() * costDeprecatedPermissionsNumber +
+                packageResult.getFinancialImpactPermissionsNumber() * costFinancialImpactPermissionsNumber +
+                packageResult.getPrivacyImpactPermissionsNumber() * costPrivacyImpactPermissionsNumber +
+                packageResult.getSystemImpactPermissionsNumber() * costSystemImpactPermissionsNumber +
+                packageResult.getBatteryImpactPermissionsNumber() * costBatteryImpactPermissionsNumber +
+                packageResult.getLocationImpactPermissionsNumber() * costLocationImpactPermissionsNumber +
+                packageResult.getPermissionLevelNoProtection() * costPermissionLevelNoProtection +
+                packageResult.getPermissionLevelNormal() * costPermissionLevelNormal +
+                packageResult.getPermissionLevelDangerous() * costPermissionLevelDangerous +
+                packageResult.getPermissionLevelSignature() * costPermissionLevelSignature +
+                packageResult.getPermissionLevelSystemOrSignature() * costPermissionLevelSystemOrSignature +
+                packageResult.getPermissionLevelSystem() * costPermissionLevelSystem +
+                packageResult.getPermissionLevelSignatureOrPrivileged() * costPermissionLevelSignatureOrPrivileged +
+                packageResult.getPermissionLevelNoThirdParty() * costPermissionLevelNoThirdParty;
+
+        if ( packageResult.getPermissionsNumber() < 10 && value > 1000 ) {
+            return new SpecificResult(false, "Application too permissive", "Calculated risk over 100: " + value + "\n" + packageResult.toString());
+        } else if ( packageResult.getPermissionsNumber() > 15 || value > 4000 ) {
+            return new SpecificResult(false, "Application too permissive", "Calculated risk over 100: " + value + "\n" + packageResult.toString());
         } else {
-            return new SpecificResult(false, "Application a lot permissive", "Calculated risk over 100: " + value + "\n" + packageResult.toString());
+            return new SpecificResult(true, "Application not too permissive", "Calculated risk over 100: " + value + "\n" + packageResult.toString());
         }
     }
 

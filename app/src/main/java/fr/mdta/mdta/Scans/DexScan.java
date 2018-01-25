@@ -35,10 +35,10 @@ public class DexScan extends Scan {
     private final static String DEX_SCANNER_DESCRIPTION = "This scan looks for dangerous" +
             "methods in the code of an application";
 
-    private final int MAX_NUMBER_SHELL_CALL = 20;
-    private final int MAX_NUMBER_LOAD_CPP = 4;
+    private final int MAX_NUMBER_SHELL_CALL = 4;
+    private final int MAX_NUMBER_LOAD_CPP = 2;
     private final int MAX_NUMBER_SELINUX_CALL = 0;
-    private final int MAX_NUMBER_REFLECTION = 30;
+    private final int MAX_NUMBER_REFLECTION = 2;
 
 
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
