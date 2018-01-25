@@ -89,7 +89,8 @@ public class DexScan extends Scan {
 
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
-        mState += (int) (100/(number_of_app_scanned*numberOfDexScan));
+        mState += (100/(number_of_app_scanned*numberOfDexScan));
+
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
@@ -185,39 +186,44 @@ public class DexScan extends Scan {
 
         final ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
-        numberOfDexScan = listDexFile.size();
-        numberOfDexScan = listDexFile.size();
+        if ( listDexFile.isEmpty() ) {
+            updateState();
+            endScanApp(appInfo);
+        } else {
+            numberOfDexScan = listDexFile.size();
 
-        final int[] numberOfDexFileScanned = {0};
+            final int[] numberOfDexFileScanned = {0};
 
-        for (int i = 0; i < listDexFile.size(); i++) {
-            scanDexFile(listDexFile.get(i), appInfo, new Callback() {
-                @Override
-                public void OnErrorHappended() {
+            for (int i = 0; i < listDexFile.size(); i++) {
+                scanDexFile(listDexFile.get(i), appInfo, new Callback() {
+                    @Override
+                    public void OnErrorHappended() {
 
-                }
-
-                @Override
-                public void OnErrorHappended(String error) {
-
-                }
-
-                @Override
-                public void OnTaskCompleted(Object object) {
-
-                    if ((Boolean) object.equals(true)) {
-                        updateState();
-                        numberOfDexFileScanned[0]++;
-                        if (numberOfDexFileScanned[0] >= listDexFile.size()) {
-                            endScanApp(appInfo);
-                        }
-                    } else {
-                        endScanApp(appInfo);
                     }
 
+                    @Override
+                    public void OnErrorHappended(String error) {
 
-                }
-            });
+                    }
+
+                    @Override
+                    public void OnTaskCompleted(Object object) {
+
+                        updateState();
+
+                        if ((Boolean) object.equals(true)) {
+                            numberOfDexFileScanned[0]++;
+                            if (numberOfDexFileScanned[0] >= listDexFile.size()) {
+                                endScanApp(appInfo);
+                            }
+                        } else {
+                            endScanApp(appInfo);
+                        }
+
+
+                    }
+                });
+            }
         }
 
     }
