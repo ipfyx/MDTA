@@ -134,7 +134,7 @@ public class ScanActivity extends AppCompatActivity {
         }
 
         try {
-            ScanLauncher.getInstance().launchScansSerial(mScans, new ScanLauncher.ScanLauncherCallback() {
+            ScanLauncher.getInstance().launchScansParallel(mScans, new ScanLauncher.ScanLauncherCallback() {
                 @Override
                 public void OnScansTerminated(ArrayList<Scan> arrayListScanWithResult) {
                     fillResultList(arrayListScanWithResult);

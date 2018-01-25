@@ -286,10 +286,10 @@ public class ResultActivity extends AppCompatActivity implements ActionBar.TabLi
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    mTitle = "Suspicious Apps";
+                    mTitle = "Suspicious Apps " + mWarnedResult.size();
                     break;
                 case 1:
-                    mTitle = "Safe Apps";
+                    mTitle = "Safe Apps " + mSafeResult.size();
                     break;
 
             }

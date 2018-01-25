@@ -25,13 +25,49 @@ public class BasicScanResultItem {
         private int SystemImpactPermissionsNumber;
         private int BatteryImpactPermissionsNumber;
         private int LocationImpactPermissionsNumber;
+        private int PermissionLevelNoProtection;
+        private int PermissionLevelNormal;
+        private int PermissionLevelDangerous;
+        private int PermissionLevelSignature;
+        private int PermissionLevelSystemOrSignature;
+        private int PermissionLevelSystem;
+        private int PermissionLevelSignatureOrPrivileged;
+        private int PermissionLevelNoThirdParty;
+
+        @Override
+        public String toString() {
+            return "PackageResult{" +
+                    "PermissionsNumber=" + getPermissionsNumber() +
+                    ", DeprecatedPermissionsNumber=" + DeprecatedPermissionsNumber +
+                    ", FinancialImpactPermissionsNumber=" + FinancialImpactPermissionsNumber +
+                    ", PrivacyImpactPermissionsNumber=" + PrivacyImpactPermissionsNumber +
+                    ", SystemImpactPermissionsNumber=" + SystemImpactPermissionsNumber +
+                    ", BatteryImpactPermissionsNumber=" + BatteryImpactPermissionsNumber +
+                    ", LocationImpactPermissionsNumber=" + LocationImpactPermissionsNumber +
+                    ", PermissionLevelNoProtection=" + PermissionLevelNoProtection +
+                    ", PermissionLevelNormal=" + PermissionLevelNormal +
+                    ", PermissionLevelDangerous=" + PermissionLevelDangerous +
+                    ", PermissionLevelSignature=" + PermissionLevelSignature +
+                    ", PermissionLevelSystemOrSignature=" + PermissionLevelSystemOrSignature +
+                    ", PermissionLevelSystem=" + PermissionLevelSystem +
+                    ", PermissionLevelSignatureOrPrivileged=" + PermissionLevelSignatureOrPrivileged +
+                    ", PermissionLevelNoThirdParty=" + PermissionLevelNoThirdParty +
+                    '}';
+        }
 
         public String getPackageName() {
             return PackageName;
         }
 
         public int getPermissionsNumber() {
-            return PermissionsNumber;
+            return PermissionLevelNoProtection +
+                    PermissionLevelNormal +
+                    PermissionLevelDangerous
+                    + PermissionLevelSignature
+                    + PermissionLevelSystemOrSignature
+                    + PermissionLevelSystem
+                    + PermissionLevelSignatureOrPrivileged
+                    + PermissionLevelNoThirdParty;
         }
 
         public int getDeprecatedPermissionsNumber() {
@@ -58,18 +94,36 @@ public class BasicScanResultItem {
             return LocationImpactPermissionsNumber;
         }
 
-        @Override
-        public String toString() {
-            return "PackageResult{" +
-                    "PackageName='" + PackageName + '\'' +
-                    ", PermissionsNumber=" + PermissionsNumber +
-                    ", DeprecatedPermissionsNumber=" + DeprecatedPermissionsNumber +
-                    ", FinancialImpactPermissionsNumber=" + FinancialImpactPermissionsNumber +
-                    ", PrivacyImpactPermissionsNumber=" + PrivacyImpactPermissionsNumber +
-                    ", SystemImpactPermissionsNumber=" + SystemImpactPermissionsNumber +
-                    ", BatteryImpactPermissionsNumber=" + BatteryImpactPermissionsNumber +
-                    ", LocationImpactPermissionsNumber=" + LocationImpactPermissionsNumber +
-                    '}';
+        public int getPermissionLevelNoProtection() {
+            return PermissionLevelNoProtection;
+        }
+
+        public int getPermissionLevelNormal() {
+            return PermissionLevelNormal;
+        }
+
+        public int getPermissionLevelDangerous() {
+            return PermissionLevelDangerous;
+        }
+
+        public int getPermissionLevelSignature() {
+            return PermissionLevelSignature;
+        }
+
+        public int getPermissionLevelSystemOrSignature() {
+            return PermissionLevelSystemOrSignature;
+        }
+
+        public int getPermissionLevelSystem() {
+            return PermissionLevelSystem;
+        }
+
+        public int getPermissionLevelSignatureOrPrivileged() {
+            return PermissionLevelSignatureOrPrivileged;
+        }
+
+        public int getPermissionLevelNoThirdParty() {
+            return PermissionLevelNoThirdParty;
         }
     }
 
