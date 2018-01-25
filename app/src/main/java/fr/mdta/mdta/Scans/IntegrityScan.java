@@ -81,9 +81,9 @@ public class IntegrityScan extends Scan {
 
         my_uid = context.getApplicationInfo().uid;
 
-        seLinuxFileContext = getFileAppSELinuxContext();
-
         fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
+
+        seLinuxFileContext = getFileAppSELinuxContext();
 
     }
 
