@@ -1,6 +1,7 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -53,6 +54,8 @@ public class IntegrityScan extends Scan {
 
     private int numberOfEntriesInManifest;
 
+    private String seLinuxFileContext;
+
     private Callback mycallback = new Callback() {
         @Override
         public void OnErrorHappended() {
@@ -77,6 +80,8 @@ public class IntegrityScan extends Scan {
         suAvailable = Shell.SU.available();
 
         my_uid = context.getApplicationInfo().uid;
+
+        seLinuxFileContext = getFileAppSELinuxContext();
 
         fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
 
@@ -124,7 +129,7 @@ public class IntegrityScan extends Scan {
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
 
-        if ( getFileAppSELinuxContext() != null ) {
+        if ( seLinuxFileContext != null ) {
             fr.mdta.mdta.Tools.CommandFactory.unzipCommand(new Callback() {
                 @Override
                 public void OnErrorHappended() {
@@ -140,7 +145,7 @@ public class IntegrityScan extends Scan {
                 public void OnTaskCompleted(Object object) {
                     verifyHashesManifest(appInfo);
                 }
-            }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
+            }, appInfo, my_uid, seLinuxFileContext, unzipApkToFolder);
         } else {
             resultScanFail(appInfo,"Could not get MDTA SELinux file context",
                     "getFileAppSELinuxContext() return null");

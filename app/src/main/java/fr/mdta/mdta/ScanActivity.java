@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -80,21 +81,21 @@ public class ScanActivity extends AppCompatActivity {
 
                                          public void run() {
 
-                                             mCounter = (int) ScanLauncher.getInstance().getScansGlobalState();
-                                             long dif = (new Date()).getTime() - mStartingTime.getTime();
-                                             Date difDate = new Date(dif);
-                                             mTimerTextView.setText(df.format(difDate));
-                                             if (mCounter < mProgressBarMaxValue && !mPercentTextView.getText().equals("100% ")) {
-                                                 mProgressBar.setProgress(mCounter);
-                                                 int percent_num = (mCounter * 100 / mProgressBarMaxValue);
-                                                 mPercentTextView.setText(percent_num + "%");
-                                                 mHandler.postDelayed(this, 50);
-                                             } else {
-                                                 mPercentTextView.setText("100% ");
-                                                 mProgressBar.setProgress(mProgressBarMaxValue);
-                                             }
-                                         }
-                                     }, 50);
+                 mCounter = (int) ScanLauncher.getInstance().getScansGlobalState();
+                 long dif = (new Date()).getTime() - mStartingTime.getTime();
+                 Date difDate = new Date(dif);
+                 mTimerTextView.setText(df.format(difDate));
+                 if (mCounter < mProgressBarMaxValue && !mPercentTextView.getText().equals("100% ")) {
+                     mProgressBar.setProgress(mCounter);
+                     int percent_num = (mCounter * 100 / mProgressBarMaxValue);
+                     mPercentTextView.setText(percent_num + "%");
+                     mHandler.postDelayed(this, 50);
+                 } else {
+                     mPercentTextView.setText("100% ");
+                     mProgressBar.setProgress(mProgressBarMaxValue);
+                 }
+             }
+         }, 50);
 
         //Scan preparation according to type of scan
         switch (mTypeOfScan) {

@@ -71,7 +71,7 @@ public final class CommandFactory {
 
     public static void launchVerification(Callback callback, SimplifiedPackageInfo appInfo) {
 
-        COUNT = 0;
+        //COUNT = 0;
         if (listProcessIntegrity.isEmpty()) {
             callback.OnTaskCompleted(appInfo);
         } else {
