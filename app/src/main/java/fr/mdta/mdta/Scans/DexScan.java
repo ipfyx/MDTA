@@ -1,7 +1,7 @@
 package fr.mdta.mdta.Scans;
 
 import android.content.Context;
-import android.util.Log;
+import android.os.AsyncTask;
 
 import org.jf.dexlib2.DexFileFactory;
 import org.jf.dexlib2.dexbacked.DexBackedDexFile;
@@ -53,6 +53,8 @@ public class DexScan extends Scan {
 
     private String seLinuxFileContext;
 
+    private int numberOfDexScan = 1;
+
     public DexScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos, Context context) {
         super(DEX_SCANNER_NAME, DEX_SCANNER_DESCRIPTION, simplifiedPackageInfos);
 
@@ -60,9 +62,9 @@ public class DexScan extends Scan {
 
         my_uid = context.getApplicationInfo().uid;
 
-        seLinuxFileContext = getFileAppSELinuxContext();
-
         fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
+
+        seLinuxFileContext = getFileAppSELinuxContext();
 
     }
 
@@ -87,7 +89,7 @@ public class DexScan extends Scan {
 
     protected void updateState() {
         float number_of_app_scanned = listPackageInfo.size();
-        mState += (int) (100/number_of_app_scanned);
+        mState += (int) (100/(number_of_app_scanned*numberOfDexScan));
     }
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
@@ -127,8 +129,6 @@ public class DexScan extends Scan {
             if ( mResults.get(appInfo) == null ) {
                 resultScanOK(appInfo);
             }
-
-            updateState();
             if ( listPackageInfoCounter < listPackageInfo.size() ) {
                 scanApp(listPackageInfo.get(listPackageInfoCounter));
                 listPackageInfoCounter+=1;
@@ -173,7 +173,7 @@ public class DexScan extends Scan {
         }
     }
 
-    private void scanAppDexFile(SimplifiedPackageInfo appInfo) {
+    private void scanAppDexFile(final SimplifiedPackageInfo appInfo) {
 
         mapDangerousMethodCall.put(DangerousMethodCall.LOAD_CPP_LIBRARY, 0);
         mapDangerousMethodCall.put(DangerousMethodCall.REFLECTION, 0);
@@ -183,39 +183,49 @@ public class DexScan extends Scan {
         final String appDirectory = CommandFactory.pathToApkUnzipFolder + unzipApkToFolder + "_" +
         appInfo.getAppUid();
 
-        ArrayList<File> listDexFile = getDexFiles(appDirectory);
+        final ArrayList<File> listDexFile = getDexFiles(appDirectory);
+
+        numberOfDexScan = listDexFile.size();
+        numberOfDexScan = listDexFile.size();
+
+        final int[] numberOfDexFileScanned = {0};
 
         for (int i = 0; i < listDexFile.size(); i++) {
-            scanDexFile(listDexFile.get(i),appInfo);
-        }
+            scanDexFile(listDexFile.get(i), appInfo, new Callback() {
+                @Override
+                public void OnErrorHappended() {
 
-        endScanApp(appInfo);
+                }
+
+                @Override
+                public void OnErrorHappended(String error) {
+
+                }
+
+                @Override
+                public void OnTaskCompleted(Object object) {
+
+                    if ((Boolean) object.equals(true)) {
+                        updateState();
+                        numberOfDexFileScanned[0]++;
+                        if (numberOfDexFileScanned[0] >= listDexFile.size()) {
+                            endScanApp(appInfo);
+                        }
+                    } else {
+                        endScanApp(appInfo);
+                    }
+
+
+                }
+            });
+        }
 
     }
 
-    private void scanDexFile(File file, SimplifiedPackageInfo appInfo) {
+    private void scanDexFile(File file, SimplifiedPackageInfo appInfo, Callback callback) {
 
-        try {
-
-            //TODO give non null opcode
-            DexBackedDexFile dexFile = DexFileFactory.loadDexFile(file, null);
-            for (Object o : dexFile.getMethods()) {
-                String a = o.toString();
-                for (String pattern : mapDangerousMethodPattern.keySet()) {
-                    if (a.toLowerCase().contains(pattern)) {
-                        mapDangerousMethodCall.put(
-                                mapDangerousMethodPattern.get(pattern),
-                                mapDangerousMethodCall.get(mapDangerousMethodPattern.get(pattern)
-                                ) + 1
-                        );
-                    }
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            resultScanFail(appInfo,file.getAbsolutePath()+" : Fail to read this dex file",e.getMessage());
-        }
+        DexFileScanner dexFileScanner = new DexFileScanner(file, appInfo, callback);
+        dexFileScanner.execute();
     }
 
     private ArrayList<File> getDexFiles(String appDirectory) {
@@ -256,5 +266,60 @@ public class DexScan extends Scan {
                 reason,
                 detail);
         mResults.put(appInfo, result);
+    }
+
+    private class DexFileScanner extends AsyncTask<Void, Void, Boolean> {
+        private Callback callback;
+        private File file;
+        private SimplifiedPackageInfo simplifiedPackageInfo;
+
+
+        public DexFileScanner(File file, SimplifiedPackageInfo simplifiedPackageInfo, Callback callback) {
+            this.callback = callback;
+            this.file = file;
+            this.simplifiedPackageInfo = simplifiedPackageInfo;
+        }
+
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            Boolean result = true;
+
+            try {
+
+                //TODO give non null opcode
+                DexBackedDexFile dexFile = DexFileFactory.loadDexFile(file, null);
+                for (Object o : dexFile.getMethods()) {
+                    String a = o.toString();
+                    for (String pattern : mapDangerousMethodPattern.keySet()) {
+                        if (a.toLowerCase().contains(pattern)) {
+                            mapDangerousMethodCall.put(
+                                    mapDangerousMethodPattern.get(pattern),
+                                    mapDangerousMethodCall.get(mapDangerousMethodPattern.get(pattern)
+                                    ) + 1
+                            );
+                        }
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                resultScanFail(simplifiedPackageInfo,file.getAbsolutePath()+" : Fail to read this dex file",e.getMessage());
+                result  = false;
+            } finally {
+                return result;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            callback.OnTaskCompleted(result);
+        }
     }
 }
