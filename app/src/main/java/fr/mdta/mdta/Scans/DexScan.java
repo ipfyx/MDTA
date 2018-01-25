@@ -51,12 +51,16 @@ public class DexScan extends Scan {
     private int listPackageInfoCounter = 0;
     private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<>();
 
+    private String seLinuxFileContext;
+
     public DexScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos, Context context) {
         super(DEX_SCANNER_NAME, DEX_SCANNER_DESCRIPTION, simplifiedPackageInfos);
 
         suAvailable = Shell.SU.available();
 
         my_uid = context.getApplicationInfo().uid;
+
+        seLinuxFileContext = getFileAppSELinuxContext();
 
         fr.mdta.mdta.Tools.CommandFactory.pathToApkUnzipFolder = context.getFilesDir().toString() + "/";
 
@@ -88,7 +92,7 @@ public class DexScan extends Scan {
 
     private void scanApp(final SimplifiedPackageInfo appInfo) {
 
-        if ( getFileAppSELinuxContext() != null ) {
+        if ( seLinuxFileContext != null ) {
             fr.mdta.mdta.Tools.CommandFactory.unzipCommand(new Callback() {
                 @Override
                 public void OnErrorHappended() {
@@ -104,7 +108,7 @@ public class DexScan extends Scan {
                 public void OnTaskCompleted(Object object) {
                     scanAppDexFile(appInfo);
                 }
-            }, appInfo, my_uid, getFileAppSELinuxContext(), unzipApkToFolder);
+            }, appInfo, my_uid, seLinuxFileContext, unzipApkToFolder);
         } else {
             resultScanFail(appInfo,"Could not get MDTA SELinux file context",
                     "getFileAppSELinuxContext() return null");
