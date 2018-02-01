@@ -16,7 +16,7 @@ import fr.mdta.mdta.Model.SimplifiedPackageInfo;
 
 public class CertificateScan extends Scan {
 
-    //static values
+    //scanner description
     private final static String CERTIFICATE_SCANNER_NAME = "Application Certificates Scanner";
     private final static String CERTIFICATE_SCANNER_DESCRIPTION = "This scan consists on verifying " +
             "each application's certificate and warn user if one was tempered";
@@ -33,6 +33,7 @@ public class CertificateScan extends Scan {
     @Override
     public void launchScan(ScanCallback callback) {
 
+        //get list app to scan
         listPackageInfo = getmSimplifiedPackageInfos();
 
         for ( int i = 0; i < listPackageInfo.size(); i++) {
@@ -40,7 +41,7 @@ public class CertificateScan extends Scan {
             SpecificResult result = null;
 
             try {
-
+                //for each app, verify certificat
                 listPackageInfo.get(i).getAppDeveloperCertificate().verify(
                         listPackageInfo.get(i).getAppDeveloperCertificate().getPublicKey()
                 );
@@ -76,7 +77,7 @@ public class CertificateScan extends Scan {
                 updateState();
             }
         }
-
+        //callback to end scan
         callback.OnScanTerminated();
     }
 

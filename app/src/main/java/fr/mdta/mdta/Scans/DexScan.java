@@ -30,29 +30,47 @@ import fr.mdta.mdta.Tools.DangerousMethodPatternMap;
 
 public class DexScan extends Scan {
 
-    //static values
+    //description of the scan
     private final static String DEX_SCANNER_NAME = "Application Dex Scanner";
     private final static String DEX_SCANNER_DESCRIPTION = "This scan looks for dangerous" +
             "methods in the code of an application";
 
+    //max values allowed for an app
     private final int MAX_NUMBER_SHELL_CALL = 4;
     private final int MAX_NUMBER_LOAD_CPP = 2;
     private final int MAX_NUMBER_SELINUX_CALL = 0;
     private final int MAX_NUMBER_REFLECTION = 2;
 
-
+    //map of dangerous method called strings, associated with their danger (reflection, shell...)
+    //its a singleton
     private final HashMap<String, DangerousMethodCall> mapDangerousMethodPattern =
             DangerousMethodPatternMap.getMapDangerousMethodPattern();
+
+    //need root access
     private boolean suAvailable = false;
+
+    //need uid of app, set properly in constructor
     private int my_uid = 0;
+
+    //set beginning of name of the directory where app are unziped
     private String unzipApkToFolder = "unzipedApkDex";
+
+    //list of app to scan
     private ArrayList<SimplifiedPackageInfo> listPackageInfo;
+
+    //callback to call when scan is done
     private ScanCallback endScanCallback = null;
+
+    //counter to browse listpackage
     private int listPackageInfoCounter = 0;
+
+    //map to count number of called to reflection, shell command etc.
     private HashMap<DangerousMethodCall, Integer> mapDangerousMethodCall = new HashMap<>();
 
+    //we need the file context required for the app to read files from java
     private String seLinuxFileContext;
 
+    //there is always at least one dex file
     private int numberOfDexScan = 1;
 
     public DexScan(ArrayList<SimplifiedPackageInfo> simplifiedPackageInfos, Context context) {
@@ -93,6 +111,11 @@ public class DexScan extends Scan {
 
     }
 
+    /**
+     * app scanning starts here
+     * @param appInfo
+     */
+
     private void scanApp(final SimplifiedPackageInfo appInfo) {
 
         if ( seLinuxFileContext != null ) {
@@ -117,6 +140,12 @@ public class DexScan extends Scan {
                     "getFileAppSELinuxContext() return null");
         }
     }
+
+    /**
+     * end of scan, remove folder where app was unziped
+     * launch next scan on next app
+     * @param appInfo
+     */
 
     private void endScanApp(SimplifiedPackageInfo appInfo) {
         //Just in case unzipApkToFolder is empty, we move to directory /data/local since there
@@ -176,6 +205,8 @@ public class DexScan extends Scan {
 
     private void scanAppDexFile(final SimplifiedPackageInfo appInfo) {
 
+        //each attribut in mapDangerousMethodCall is set to 0 to count properly
+
         mapDangerousMethodCall.put(DangerousMethodCall.LOAD_CPP_LIBRARY, 0);
         mapDangerousMethodCall.put(DangerousMethodCall.REFLECTION, 0);
         mapDangerousMethodCall.put(DangerousMethodCall.SELINUX, 0);
@@ -184,9 +215,12 @@ public class DexScan extends Scan {
         final String appDirectory = CommandFactory.pathToApkUnzipFolder + unzipApkToFolder + "_" +
         appInfo.getAppUid();
 
+        //there can be more than one dexfile per app
+
         final ArrayList<File> listDexFile = getDexFiles(appDirectory);
 
         if ( listDexFile.isEmpty() ) {
+            //update graphics when one dexfile is done scanning
             updateState();
             endScanApp(appInfo);
         } else {
@@ -214,6 +248,7 @@ public class DexScan extends Scan {
                         if ((Boolean) object.equals(true)) {
                             numberOfDexFileScanned[0]++;
                             if (numberOfDexFileScanned[0] >= listDexFile.size()) {
+                                //end scan app if all dex files where scanned
                                 endScanApp(appInfo);
                             }
                         } else {
@@ -228,11 +263,23 @@ public class DexScan extends Scan {
 
     }
 
+    /**
+     * launch the process to scan the dex file
+     * @param file
+     * @param appInfo
+     * @param callback
+     */
     private void scanDexFile(File file, SimplifiedPackageInfo appInfo, Callback callback) {
 
         DexFileScanner dexFileScanner = new DexFileScanner(file, appInfo, callback);
         dexFileScanner.execute();
     }
+
+    /**
+     * get the list of dex files to scan
+     * @param appDirectory
+     * @return
+     */
 
     private ArrayList<File> getDexFiles(String appDirectory) {
         File classesDex = new File(appDirectory + "/classes.dex");
@@ -247,6 +294,11 @@ public class DexScan extends Scan {
         }
         return listDexFile;
     }
+
+    /**
+     * the scan is successful
+     * @param appInfo
+     */
 
     private void resultScanOK(SimplifiedPackageInfo appInfo) {
 
@@ -267,12 +319,23 @@ public class DexScan extends Scan {
 
     }
 
+    /**
+     * the scan failed
+     * @param appInfo
+     * @param reason
+     * @param detail
+     */
+
     private void resultScanFail(SimplifiedPackageInfo appInfo, String reason, String detail) {
         SpecificResult result = new SpecificResult(true,
                 reason,
                 detail);
         mResults.put(appInfo, result);
     }
+
+    /**
+     * asyncTash to scan a dex file
+     */
 
     private class DexFileScanner extends AsyncTask<Void, Void, Boolean> {
         private Callback callback;
