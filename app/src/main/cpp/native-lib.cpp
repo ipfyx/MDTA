@@ -1,6 +1,9 @@
 #include <jni.h>
 #include <string>
 
+//This is useless for our app but we keep it
+//to make sure that loadCppLibrary is detected by DexScanner
+
 extern "C"
 JNIEXPORT jstring JNICALL
 Java_fr_mdta_mdta_MainActivity_stringFromJNI(

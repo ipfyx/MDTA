@@ -1,7 +1,8 @@
 package fr.mdta.mdta.Tools;
 
 /**
- * Created by manwefm on 16/01/18.
+ * We detect 4 types of dangerous method usage
+ * TODO : detect cryptography
  */
 
 public enum DangerousMethodCall {
